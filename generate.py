@@ -5,6 +5,9 @@ from typeguard import typechecked
 
 import grf
 
+import lib
+
+
 g = grf.NewGRF(
     grfid=b'TODO',
     name='BonkyGFX',
@@ -70,7 +73,7 @@ replace_old(1420, tmpl_flattile_single(general_concrete_png, 0, 0))
 
 def tmpl_vehicle_road_8view(png, x, y, **kw):
     # Same spriteset template as in OpenGFX2
-    func = lambda x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=grf.ZOOM_4X, **kw)
+    func = lambda x, y, *args, **kw: lib.CCReplacingFileSprite(png, x, y, *args, zoom=grf.ZOOM_4X, **kw)
     z = 1
     return [
         func((1 + 0 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z, **kw),
@@ -84,7 +87,7 @@ def tmpl_vehicle_road_8view(png, x, y, **kw):
     ]
 
 def replace_rv_generation(file, generation):
-    png = grf.ImageFile(file, colourkey=(0, 0, 255))
+    png = grf.ImageFile(file)
     # base_graphics spr3284(3284, "../graphics/vehicles/64/road_buses_8bpp.png") { template_vehicle_road_8view(0, 0, 1) } // bus
     o = {1: 0, 2: -192, 3: 192}[generation]
     replace_old(3292 + o, tmpl_vehicle_road_8view(png, 0, 0))  # coal unloaded
@@ -112,8 +115,8 @@ def replace_rv_generation(file, generation):
     replace_old(3468 + o, tmpl_vehicle_road_8view(png, 1, 13))  # rubber loaded
 
 
-replace_rv_generation('sprites/road_lorries_firstgeneration_32bpp.png', 1)
+# replace_rv_generation('sprites/road_lorries_firstgeneration_32bpp.png', 1)
 replace_rv_generation('sprites/road_lorries_secondgeneration_32bpp.png', 2)
-replace_rv_generation('sprites/road_lorries_thirdgeneration_32bpp.png', 3)
+# replace_rv_generation('sprites/road_lorries_thirdgeneration_32bpp.png', 3)
 
 grf.main(g, 'bonkygfx.grf')
