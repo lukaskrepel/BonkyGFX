@@ -22,7 +22,6 @@ def replace_old(first_id, sprites):
 
 def tmpl_groundtiles(png, y, **kw):
     func = lambda x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=grf.ZOOM_2X, **kw)
-    # Same spriteset template as in OpenGFX2
     x, z = 0, 2
     return [
         func(1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
@@ -50,13 +49,23 @@ def tmpl_groundtiles(png, y, **kw):
         func(1437 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z, **kw),
     ]
 
-# Normal land
 
+# Terrain: Single flat tile
+def tmpl_flattile_single(png, x, y, **kw):
+    func = lambda x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=grf.ZOOM_2X, **kw)
+    z = 2
+    return [func(1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0*z, **kw)]
+
+
+# Normal land
 temperate_ground_png = grf.ImageFile('sprites/temperate_groundtiles_32bpp.png', colourkey=(0, 0, 255))
 replace_old(3924, tmpl_groundtiles(temperate_ground_png, 144))  # 0% grass
 replace_old(3943, tmpl_groundtiles(temperate_ground_png, 96))   # 33% grass
 replace_old(3962, tmpl_groundtiles(temperate_ground_png, 48))   # 66% grass
 replace_old(3981, tmpl_groundtiles(temperate_ground_png, 0))    # 100% grass
+
+general_concrete_png = grf.ImageFile('sprites/general_concretetiles_32bpp.png', colourkey=(0, 0, 255))
+replace_old(1420, tmpl_flattile_single(general_concrete_png, 0, 0))
 
 
 def tmpl_vehicle_road_8view(png, x, y, **kw):
@@ -73,7 +82,6 @@ def tmpl_vehicle_road_8view(png, x, y, **kw):
         func((7 + 113 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-15 * z, yofs=-9 * z, **kw),
         func((8 + 144 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-10 * z, **kw),
     ]
-
 
 def replace_rv_generation(file, generation):
     png = grf.ImageFile(file, colourkey=(0, 0, 255))
