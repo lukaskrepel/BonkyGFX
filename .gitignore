@@ -3,3 +3,6 @@
 
 # grf files
 *.grf
+
+# reference images folder
+REF/
