@@ -120,3 +120,6 @@ replace_rv_generation('sprites/road_lorries_secondgeneration_32bpp.png', 2)
 # replace_rv_generation('sprites/road_lorries_thirdgeneration_32bpp.png', 3)
 
 grf.main(g, 'bonkygfx.grf')
+
+# png = grf.ImageFile('sprites/road_lorries_secondgeneration_32bpp.png')
+# lib.debug_cc_recolour(tmpl_vehicle_road_8view(png, 0, 0) + tmpl_vehicle_road_8view(png, 1, 0))
