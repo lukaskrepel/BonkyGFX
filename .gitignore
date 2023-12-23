@@ -1,5 +1,6 @@
-# cache folder
+# cache folders
 .cache/
+__pycache__/
 
 # grf files
 *.grf
