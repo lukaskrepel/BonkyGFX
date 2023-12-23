@@ -61,13 +61,13 @@ def tmpl_flattile_single(png, x, y, **kw):
 
 
 # Normal land
-temperate_ground_png = grf.ImageFile('sprites/temperate_groundtiles_32bpp.png', colourkey=(0, 0, 255))
+temperate_ground_png = grf.ImageFile('sprites/terrain/temperate_groundtiles_32bpp.png', colourkey=(0, 0, 255))
 replace_old(3924, tmpl_groundtiles(temperate_ground_png, 144))  # 0% grass
 replace_old(3943, tmpl_groundtiles(temperate_ground_png, 96))   # 33% grass
 replace_old(3962, tmpl_groundtiles(temperate_ground_png, 48))   # 66% grass
 replace_old(3981, tmpl_groundtiles(temperate_ground_png, 0))    # 100% grass
 
-general_concrete_png = grf.ImageFile('sprites/general_concretetiles_32bpp.png', colourkey=(0, 0, 255))
+general_concrete_png = grf.ImageFile('sprites/terrain/general_concretetiles_32bpp.png', colourkey=(0, 0, 255))
 replace_old(1420, tmpl_flattile_single(general_concrete_png, 0, 0))
 
 
@@ -116,7 +116,7 @@ def replace_rv_generation(file, generation):
 
 
 # replace_rv_generation('sprites/road_lorries_firstgeneration_32bpp.png', 1)
-replace_rv_generation('sprites/road_lorries_secondgeneration_32bpp.png', 2)
+replace_rv_generation('sprites/vehicles/road_lorries_secondgeneration_32bpp.png', 2)
 # replace_rv_generation('sprites/road_lorries_thirdgeneration_32bpp.png', 3)
 
 grf.main(g, 'bonkygfx.grf')
