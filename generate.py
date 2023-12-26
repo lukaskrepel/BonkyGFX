@@ -103,7 +103,6 @@ def tmpl_roadtiles(png, x, y, z, **kw):
 
 
 def make_infra_overlay_sprites(ground, infra):
-    print(len(ground), len(infra))
     GROUND_INFRA_RANGES = (
         ([0] * 11, range(11)),
         ((12, 6, 3, 9), range(15, 19)),
@@ -114,9 +113,6 @@ def make_infra_overlay_sprites(ground, infra):
         for rg, ri in GROUND_INFRA_RANGES for i, j in zip(rg, ri)
     ]
 
-
-# road_png = lib.AseImageFile('sprites/infrastructure/road_overlayalpha.ase')
-# road = tmpl_roadtiles()
 
 road_town_png = lib.AseImageFile('sprites/infrastructure/road_town_overlayalpha.ase')
 road_town = tmpl_roadtiles(road_town_png, 0, 0, 2)

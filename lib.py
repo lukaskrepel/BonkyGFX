@@ -144,7 +144,7 @@ class CompositeSprite(grf.Sprite):
 
             if nm is not None:
                 if npmask is None:
-                    npmask = ni.copy()
+                    npmask = nm.copy()
                 else:
                     mask = (nm[:, :] != 0)
                     npmask[mask] = nm[mask]
