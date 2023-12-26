@@ -87,8 +87,10 @@ class CompositeSprite(grf.Sprite):
     def __init__(self, sprites, **kw):
         if len(sprites) == 0:
             raise ValueError('CompositeSprite requires a non-empty list of sprites to compose')
+        if len(set(s.zoom for s in sprites)) > 1:
+            raise ValueError('CompositeSprite requires a list of sprites of same zoom level')
         self.sprites = sprites
-        super().__init__(sprites[0].w, sprites[0].h, **kw)
+        super().__init__(sprites[0].w, sprites[0].h, xofs=sprites[0].xofs, yofs=sprites[0].yofs, zoom=sprites[0].zoom, **kw)
 
     def get_data_layers(self, encoder=None, crop=None):
         npimg = None
@@ -102,27 +104,43 @@ class CompositeSprite(grf.Sprite):
             if nh is None:
                 nh = h
             if nw != w or nh != h:
-                raise RuntimeError('CompositeSprite layers have different size: ({nw}, {nh}) vs ({w}, {h})')
+                print([x.name for x in self.sprites])
+                raise RuntimeError(f'CompositeSprite layers have different size: ({nw}, {nh}) vs {s.name}({w}, {h})')
+
+            if na is None and ni.shape[2] == 4:
+                na = ni[:, :, 3]
+                ni = ni[:, :, :3]
+
             if ni is not None:
-                if npimg is None:
+                if npimg is None or na is None:
                     npimg = ni.copy()
                     if na is not None:
                         npalpha = na.copy()
-                else:
-                    if na is None and na.shape[2] == 4:
-                        na = ni[:, :, 3]
-
-                    if na is None:
-                        npimg = ni.copy()
-                        npalpha = None
                     else:
-                        partial_mask = (0 < na[:, :] < 255)
-                        if np.any(partial_mask):
-                            raise RuntimeError("Compositing opaque sprites is not supported")
-                        full_mask = (na[:, :] == 255)
-                        npimg[full_mask, :3] = ni[full_mask, :3]
-                        if npalpha is not None:
-                            npalpha[full_mask] = 255
+                        npalpha = None
+                else:
+                    full_mask = (na[:, :] == 255)
+                    partial_mask = (na[:, :] > 0) & ~full_mask
+
+                    npimg[full_mask] = ni[full_mask]
+                    if npalpha is not None:
+                        npalpha[full_mask] = 255
+
+                    if npalpha is None:
+                        npalpha_norm_mask = np.full((len(partial_mask)), 1.0)
+                    else:
+                        npalpha_norm_mask = npalpha[partial_mask] / 255.0
+
+                    na_norm_mask = na[partial_mask] / 255.0
+                    resa = npalpha_norm_mask + na_norm_mask * (1 - npalpha_norm_mask)
+
+                    np.set_printoptions(threshold=100000)
+                    npimg[partial_mask] = (
+                        npimg[partial_mask] * npalpha_norm_mask[..., np.newaxis] +
+                        ni[partial_mask] * (na_norm_mask * (1.0 - npalpha_norm_mask))[..., np.newaxis]
+                    ) / resa[..., np.newaxis]
+                    if npalpha is not None:
+                        npalpha[partial_mask] = (resa * 255).astype(np.uint8)
 
             if nm is not None:
                 if npmask is None:
@@ -134,13 +152,17 @@ class CompositeSprite(grf.Sprite):
         crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha, crop=crop)
         if npmask is not None:
             npmask = npmask[crop_y: crop_y + h, crop_x: crop_x + w]
-        w, h, self.xofs + crop_x, self.yofs + crop_y, npimg, npalpha, npmask
+
+        colourkey = (0, 0, 255)
+        npalpha = 255 * np.any(np.not_equal(npimg, colourkey), axis=2)
+        npalpha = npalpha.astype(np.uint8, copy=False)
+        return w, h, self.xofs + crop_x, self.yofs + crop_y, npimg, npalpha, npmask
 
 
     def get_resource_files(self):
         res = [THIS_FILE]
         for s in self.sprites:
-            res.extend(s.get_resource_files)
+            res.extend(s.get_resource_files())
         return res
 
 
