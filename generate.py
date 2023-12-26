@@ -61,13 +61,13 @@ def tmpl_flattile_single(png, x, y, **kw):
 
 
 # Normal land
-temperate_ground_png = grf.ImageFile('sprites/terrain/temperate_groundtiles_32bpp.png', colourkey=(0, 0, 255))
+temperate_ground_png = lib.AseImageFile('sprites/terrain/temperate_groundtiles_32bpp.ase', colourkey=(0, 0, 255))
 replace_old(3924, tmpl_groundtiles(temperate_ground_png, 144))  # 0% grass
 replace_old(3943, tmpl_groundtiles(temperate_ground_png, 96))   # 33% grass
 replace_old(3962, tmpl_groundtiles(temperate_ground_png, 48))   # 66% grass
 replace_old(3981, tmpl_groundtiles(temperate_ground_png, 0))    # 100% grass
 
-general_concrete_png = grf.ImageFile('sprites/terrain/general_concretetiles_32bpp.png', colourkey=(0, 0, 255))
+general_concrete_png = lib.AseImageFile('sprites/terrain/general_concretetiles_32bpp.ase', colourkey=(0, 0, 255))
 replace_old(1420, tmpl_flattile_single(general_concrete_png, 0, 0))
 
 
@@ -87,7 +87,7 @@ def tmpl_vehicle_road_8view(png, x, y, **kw):
     ]
 
 def replace_rv_generation(file, generation):
-    png = grf.ImageFile(file)
+    png = lib.AseImageFile(file)
     # base_graphics spr3284(3284, "../graphics/vehicles/64/road_buses_8bpp.png") { template_vehicle_road_8view(0, 0, 1) } // bus
     o = {1: 0, 2: -192, 3: 192}[generation]
     replace_old(3292 + o, tmpl_vehicle_road_8view(png, 0, 0))  # coal unloaded
@@ -115,9 +115,9 @@ def replace_rv_generation(file, generation):
     replace_old(3468 + o, tmpl_vehicle_road_8view(png, 1, 13))  # rubber loaded
 
 
-# replace_rv_generation('sprites/road_lorries_firstgeneration_32bpp.png', 1)
-replace_rv_generation('sprites/vehicles/road_lorries_secondgeneration_32bpp.png', 2)
-# replace_rv_generation('sprites/road_lorries_thirdgeneration_32bpp.png', 3)
+replace_rv_generation('sprites/vehicles/road_lorries_firstgeneration_32bpp.ase', 1)
+replace_rv_generation('sprites/vehicles/road_lorries_secondgeneration_32bpp.ase', 2)
+replace_rv_generation('sprites/vehicles/road_lorries_thirdgeneration_32bpp.ase', 3)
 
 grf.main(g, 'bonkygfx.grf')
 

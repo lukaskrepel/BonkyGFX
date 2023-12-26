@@ -1,4 +1,7 @@
+import os
+import subprocess
 import time
+import tempfile
 
 import numpy as np
 from PIL import Image
@@ -18,16 +21,17 @@ THIS_FILE = grf.PythonFile(__file__)
 
 class CCReplacingFileSprite(grf.FileSprite):
     def __init__(self, file, *args, **kw):
-        super().__init__(file, *args, **kw, mask=None, bpp=grf.BPP_32)
+        super().__init__(file, *args, **kw, mask=None)
 
     def get_data_layers(self, encoder=None):
         w, h, img, bpp = self._do_get_image(encoder)
 
         t0 = time.time()
 
-        if bpp != grf.BPP_32:
+        if bpp != grf.BPP_32 and bpp != grf.BPP_24:
             raise RuntimeError('Only 32-bit RGB sprites are currently supported for CC replacement')
 
+        self.bpp = bpp
         npimg = np.asarray(img).copy()
 
         crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, None)
@@ -55,6 +59,97 @@ class CCReplacingFileSprite(grf.FileSprite):
 
     def get_resource_files(self):
         return super().get_resource_files() + (THIS_FILE,)
+
+
+class AseImageFile(grf.ImageFile):
+    def load(self):
+        if self._image is not None:
+            return
+
+        aseprite_executible = os.environ.get('ASEPRITE_EXECUTABLE', 'aseprite')
+        with tempfile.NamedTemporaryFile(suffix='.png') as f:
+            res = subprocess.run([aseprite_executible, '-b', self.path, '--color-mode', 'rgb', '--save-as', f.name])
+            if res.returncode != 0:
+                raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
+            img = Image.open(f.name)
+
+        if img.mode == 'P':
+            self._image = (img, grf.BPP_8)
+        elif img.mode == 'RGB':
+            self._image = (img, grf.BPP_24)
+        else:
+            if img.mode != 'RGBA':
+                img = img.convert('RGBA')
+            self._image = (img, grf.BPP_32)
+
+
+class CompositeSprite(grf.Sprite):
+    def __init__(self, sprites, **kw):
+        if len(sprites) == 0:
+            raise ValueError('CompositeSprite requires a non-empty list of sprites to compose')
+        self.sprites = sprites
+        super().__init__(sprites[0].w, sprites[0].h, **kw)
+
+    def get_data_layers(self, encoder=None, crop=None):
+        npimg = None
+        npalpha = None
+        npmask = None
+        nw, nh = self.w, self.h
+        for s in self.sprites:
+            w, h, _, _, ni, na, nm = s.get_data_layers(encoder, crop=False)
+            if nw is None:
+                nw = w
+            if nh is None:
+                nh = h
+            if nw != w or nh != h:
+                raise RuntimeError('CompositeSprite layers have different size: ({nw}, {nh}) vs ({w}, {h})')
+            if ni is not None:
+                if npimg is None:
+                    npimg = ni.copy()
+                    if na is not None:
+                        npalpha = na.copy()
+                else:
+                    if na is None and na.shape[2] == 4:
+                        na = ni[:, :, 3]
+
+                    if na is None:
+                        npimg = ni.copy()
+                        npalpha = None
+                    else:
+                        partial_mask = (0 < na[:, :] < 255)
+                        if np.any(partial_mask):
+                            raise RuntimeError("Compositing opaque sprites is not supported")
+                        full_mask = (na[:, :] == 255)
+                        npimg[full_mask, :3] = ni[full_mask, :3]
+                        if npalpha is not None:
+                            npalpha[full_mask] = 255
+
+            if nm is not None:
+                if npmask is None:
+                    npmask = ni.copy()
+                else:
+                    mask = (nm[:, :] != 0)
+                    npmask[mask] = nm[mask]
+
+        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha, crop=crop)
+        if npmask is not None:
+            npmask = npmask[crop_y: crop_y + h, crop_x: crop_x + w]
+        w, h, self.xofs + crop_x, self.yofs + crop_y, npimg, npalpha, npmask
+
+
+    def get_resource_files(self):
+        res = [THIS_FILE]
+        for s in self.sprites:
+            res.extend(s.get_resource_files)
+        return res
+
+
+    def get_fingerprint(self):
+        return {
+            'class': self.__class__.__name__,
+            'sprites': [s.get_fingerprint() for s in self.sprites]
+        }
+
 
 
 def adjust_brightness(c, brightness):
