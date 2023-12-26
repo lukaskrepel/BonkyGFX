@@ -119,8 +119,10 @@ def make_infra_overlay_sprites(ground, infra):
 # road = tmpl_roadtiles()
 
 road_town_png = lib.AseImageFile('sprites/infrastructure/road_town_overlayalpha.ase')
-road = tmpl_roadtiles(road_town_png, 0, 0, 2)
-replace_old(1313, make_infra_overlay_sprites(general_concrete, road))
+road_town = tmpl_roadtiles(road_town_png, 0, 0, 2)
+road_png = lib.AseImageFile('sprites/infrastructure/road_overlayalpha.ase')
+road = tmpl_roadtiles(road_png, 0, 0, 2)
+replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
 replace_old(1332, make_infra_overlay_sprites(temperate_ground_100, road))
 
 
