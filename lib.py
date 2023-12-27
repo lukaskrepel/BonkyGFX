@@ -62,9 +62,10 @@ class CCReplacingFileSprite(grf.FileSprite):
 
 
 class AseImageFile(grf.ImageFile):
-    def __init__(self, *args, layer=None, **kw):
+    def __init__(self, *args, layer=None, ignore_layer=None, **kw):
         super().__init__(*args, **kw)
         self.layer = layer
+        self.ignore_layer = ignore_layer
 
     def load(self):
         if self._image is not None:
@@ -75,6 +76,8 @@ class AseImageFile(grf.ImageFile):
             args = [aseprite_executible, '-b', self.path, '--color-mode', 'rgb']
             if self.layer is not None:
                 args.extend(('--layer', self.layer))
+            if self.ignore_layer is not None:
+                args.extend(('--ignore-layer', self.ignore_layer))
             res = subprocess.run(args + ['--save-as', f.name])
             if res.returncode != 0:
                 raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')

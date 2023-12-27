@@ -216,7 +216,7 @@ def tmpl_road_depot(imgfront, imgback, zoom):
 
     def func(imgfile, x, y, h, ox, oy, **kw):
         xofs = -31 * z + ox * z
-        yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
+        yofs = 32 * z - h * z + oy * z - z - 1
 
         return lib.CCReplacingFileSprite(imgfile,
             1 * z + x * z, 1 * z + y * z, 64 * z, h * z - z + 1,
@@ -231,9 +231,12 @@ def tmpl_road_depot(imgfront, imgback, zoom):
         func(imgfront, 0, 130, 64, 30, -14),
     ]
 
-imgfront = lib.AseImageFile('sprites/stations/roaddepots_1x.ase')
-imgback = lib.AseImageFile('sprites/stations/roaddepots_1x.ase', layer='Behind')
-replace_old(1408, tmpl_road_depot(imgfront, imgback, grf.ZOOM_NORMAL))
+imgfront_1x = lib.AseImageFile('sprites/stations/roaddepots_1x.ase')
+imgback_1x = lib.AseImageFile('sprites/stations/roaddepots_1x.ase', layer='Behind')
+imgfront_2x = lib.AseImageFile('sprites/stations/roaddepots_2x.ase', ignore_layer='Behind')
+imgback_2x = lib.AseImageFile('sprites/stations/roaddepots_2x.ase', layer='Behind')
+replace_old(1408, zip_alternative(tmpl_road_depot(imgfront_1x, imgback_1x, grf.ZOOM_NORMAL),
+                                  tmpl_road_depot(imgfront_2x, imgback_2x, grf.ZOOM_2X)))
 
 
 def cmd_debugcc_add_args(parser):
