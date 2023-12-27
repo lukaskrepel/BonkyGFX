@@ -25,8 +25,8 @@ def replace_old(first_id, sprites):
     g.add(*sprites)
 
 
-def tmpl_groundtiles(name, png, y, **kw):
-    func = lambda i, x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=grf.ZOOM_2X, name=f'{name}_{i}', **kw)
+def tmpl_groundtiles(name, imgfile, y, **kw):
+    func = lambda i, x, y, *args, **kw: grf.FileSprite(imgfile, x, y, *args, zoom=grf.ZOOM_2X, name=f'{name}_{i}', **kw)
     x, z = 0, 2
     return [
         func('FLAT', 1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
@@ -68,6 +68,11 @@ replace_old(3924, temperate_ground_0 := tmpl_groundtiles('temperate_ground_0', t
 replace_old(3943, temperate_ground_33 := tmpl_groundtiles('temperate_ground_33', temperate_ground_png, 96))   # 33% grass
 replace_old(3962, temperate_ground_66 := tmpl_groundtiles('temperate_ground_66', temperate_ground_png, 48))   # 66% grass
 replace_old(3981, temperate_ground_100 := tmpl_groundtiles('temperate_ground_100', temperate_ground_png, 0))    # 100% grass
+
+ase = lib.AseImageFile('sprites/terrain/temperate_groundtiles_rough_32bpp.ase', colourkey=(0, 0, 255))
+replace_old(4000, tmpl_groundtiles('temperate_rough', ase, 0))
+ase = lib.AseImageFile('sprites/terrain/temperate_groundtiles_rocks_32bpp.ase', colourkey=(0, 0, 255))
+replace_old(4023, tmpl_groundtiles('temperate_rocks', ase, 0))
 
 general_concrete_png = lib.AseImageFile('sprites/terrain/general_concretetiles_32bpp.ase', colourkey=(0, 0, 255))
 general_concrete = tmpl_groundtiles('general_concrete', general_concrete_png, 0)
