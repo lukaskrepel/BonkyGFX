@@ -25,9 +25,13 @@ def replace_old(first_id, sprites):
     g.add(*sprites)
 
 
-def tmpl_groundtiles(name, imgfile, y, **kw):
-    func = lambda i, x, y, *args, **kw: grf.FileSprite(imgfile, x, y, *args, zoom=grf.ZOOM_2X, name=f'{name}_{i}', **kw)
-    x, z = 0, 2
+def tmpl_groundtiles(name, imgfile, y, zoom, **kw):
+    z = {
+        grf.ZOOM_NORMAL: 1,
+        grf.ZOOM_2X: 2,
+    }[zoom]
+    func = lambda i, x, y, *args, **kw: grf.FileSprite(imgfile, x, y, *args, zoom=zoom, name=f'{name}_{i}_{z}x', **kw)
+    x = 0
     return [
         func('FLAT', 1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
         func('W', 81 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
@@ -55,27 +59,41 @@ def tmpl_groundtiles(name, imgfile, y, **kw):
     ]
 
 
+def zip_alternative(*sequences):
+    res = []
+    for sprites in zip(*sequences):
+        res.append(grf.AlternativeSprites(*sprites))
+    return res
+
 # Terrain: Single flat tile
 # def tmpl_flattile_single(png, x, y, **kw):
 #     func = lambda x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=grf.ZOOM_2X, **kw)
 #     z = 2
 #     return [func(1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0*z, **kw)]
 
+def make_groundtile_sprites(name, img_1x, img_2x, tmpl_y):
+    return zip_alternative(
+        tmpl_groundtiles(name, img_1x, tmpl_y, grf.ZOOM_NORMAL),
+        tmpl_groundtiles(name, img_2x, tmpl_y, grf.ZOOM_2X),
+    )
 
 # Normal land
-temperate_ground_png = lib.AseImageFile('sprites/terrain/temperate_groundtiles_32bpp.ase', colourkey=(0, 0, 255))
-replace_old(3924, temperate_ground_0 := tmpl_groundtiles('temperate_ground_0', temperate_ground_png, 144))  # 0% grass
-replace_old(3943, temperate_ground_33 := tmpl_groundtiles('temperate_ground_33', temperate_ground_png, 96))   # 33% grass
-replace_old(3962, temperate_ground_66 := tmpl_groundtiles('temperate_ground_66', temperate_ground_png, 48))   # 66% grass
-replace_old(3981, temperate_ground_100 := tmpl_groundtiles('temperate_ground_100', temperate_ground_png, 0))    # 100% grass
+ase_temperate_ground_1x = lib.AseImageFile('sprites/terrain/temperate_groundtiles_32bpp_1x.ase', colourkey=(0, 0, 255))
+ase_temperate_ground_2x = lib.AseImageFile('sprites/terrain/temperate_groundtiles_32bpp.ase', colourkey=(0, 0, 255))
+temperate_ground_1x = tmpl_groundtiles('temperate_ground', ase_temperate_ground_1x, 0, grf.ZOOM_NORMAL)
+temperate_ground_2x = tmpl_groundtiles('temperate_ground', ase_temperate_ground_2x, 0, grf.ZOOM_2X)
+replace_old(3924, make_groundtile_sprites('temperate_ground_bare', ase_temperate_ground_1x, ase_temperate_ground_2x, 144))  # 0% grass
+replace_old(3943, make_groundtile_sprites('temperate_ground_33', ase_temperate_ground_1x, ase_temperate_ground_2x, 96))   # 33% grass
+replace_old(3962, make_groundtile_sprites('temperate_ground_66', ase_temperate_ground_1x, ase_temperate_ground_2x, 48))   # 66% grass
+replace_old(3981, zip_alternative(temperate_ground_1x, temperate_ground_2x))    # 100% grass
 
 ase = lib.AseImageFile('sprites/terrain/temperate_groundtiles_rough_32bpp.ase', colourkey=(0, 0, 255))
-replace_old(4000, tmpl_groundtiles('temperate_rough', ase, 0))
+replace_old(4000, tmpl_groundtiles('temperate_rough', ase, 0, grf.ZOOM_2X))
 ase = lib.AseImageFile('sprites/terrain/temperate_groundtiles_rocks_32bpp.ase', colourkey=(0, 0, 255))
-replace_old(4023, tmpl_groundtiles('temperate_rocks', ase, 0))
+replace_old(4023, tmpl_groundtiles('temperate_rocks', ase, 0, grf.ZOOM_2X))
 
 general_concrete_png = lib.AseImageFile('sprites/terrain/general_concretetiles_32bpp.ase', colourkey=(0, 0, 255))
-general_concrete = tmpl_groundtiles('general_concrete', general_concrete_png, 0)
+general_concrete = tmpl_groundtiles('general_concrete', general_concrete_png, 0, grf.ZOOM_2X)
 replace_old(1420, general_concrete[0])
 
 
@@ -124,12 +142,12 @@ road_town = tmpl_roadtiles(road_town_png, 0, 0, 2)
 road_png = lib.AseImageFile('sprites/infrastructure/road_overlayalpha.ase')
 road = tmpl_roadtiles(road_png, 0, 0, 2)
 replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
-replace_old(1332, make_infra_overlay_sprites(temperate_ground_100, road))
+replace_old(1332, make_infra_overlay_sprites(temperate_ground_2x, road))
 
 
 def tmpl_vehicle_road_8view(png, x, y, **kw):
     # Same spriteset template as in OpenGFX2
-    func = lambda x, y, *args, **kw: lib.CCReplacingFileSprite(png, x, y, *args, zoom=grf.ZOOM_4X, **kw)
+    func = lambda x, y, *args, **kw: lib.CCReplacingFileSprite(png, x, y, *args, zoom=grf.ZOOM_NORMAL, **kw)
     z = 1
     return [
         func((1 + 0 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z, **kw),
