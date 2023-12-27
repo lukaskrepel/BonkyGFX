@@ -236,5 +236,27 @@ imgback = lib.AseImageFile('sprites/stations/roaddepots_1x.ase', layer='Behind')
 replace_old(1408, tmpl_road_depot(imgfront, imgback, grf.ZOOM_NORMAL))
 
 
+def cmd_debugcc_add_args(parser):
+    parser.add_argument('ase_file', help='Aseprite image file')
+    parser.add_argument('--horizontal', action='store_true', help='Stack resulting images horizontally')
+    parser.add_argument('--layer', help='Name of the layer in aseprite file to export')
 
-grf.main(g, 'bonkygfx.grf')
+
+def cmd_debugcc_handler(g, grf_file, args):
+    ase = lib.AseImageFile(args.ase_file, layer=args.layer)
+    sprite = lib.CCReplacingFileSprite(ase, 0, 0, None, None, name=args.ase_file)
+    lib.debug_cc_recolour([sprite], horizontal=args.horizontal)
+
+
+grf.main(
+    g,
+    'bonkygfx.grf',
+    commands=[
+        {
+            'name': 'debugcc',
+            'help': 'Takes an image and produces another image with all variants of CC recolour',
+            'add_args': cmd_debugcc_add_args,
+            'handler': cmd_debugcc_handler,
+        }
+    ]
+)

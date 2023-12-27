@@ -215,32 +215,48 @@ def adjust_brightness(c, brightness):
     )
 
 
-def debug_cc_recolour(sprites):
-    x, xpos = 1, [1]
-    rh = 0
-    for s in sprites:
-        x += s.w + 1
-        rh = max(rh, s.h)
-        xpos.append(x)
-    rh += 1
+def debug_cc_recolour(sprites, horizontal=False):
+    PADDING = 10
 
-    npres = np.zeros((rh * (1 + len(grf.CC_COLOURS)) + 1, xpos[-1], 4), dtype=np.uint8)
-    x = y = 1
+    slayers = []
+    for i, s in enumerate(sprites):
+        slayers.append(s.get_data_layers())
 
-    for s in sprites:
-        w, h, img, bpp = s._do_get_image()
-        npres[y : y + h, x : x + w] = np.asarray(img)
-        x += w + 1
+    pos = []
+    if horizontal:
+        maxw = max(x[0] for x in slayers)
+        x = PADDING
+        for i in range(len(grf.CC_COLOURS)):
+            y = PADDING
+            row = []
+            for s in slayers:
+                row.append(((x, y)))
+                y += s[1] + PADDING
+            pos.append(row)
+            x += maxw + PADDING
+    else:
+        # s = (sumh + (len(slayers) + 1) * PADDING, maxw + 2 * PADDING)
+        y = PADDING
+        maxh = max(x[1] for x in slayers)
+        for i in range(len(grf.CC_COLOURS)):
+            x = PADDING
+            row = []
+            for s in slayers:
+                row.append(((x, y)))
+                x += s[0] + PADDING
+            pos.append(row)
+            y += maxh + PADDING
 
-    x = 1
-    for s in sprites:
-        y = 1
-        w, h, xofs, yofs, npimg, npalpha, npmask = s.get_data_layers()
-        for cl in grf.CC_COLOURS:
-            y += rh
+    npres = np.zeros((y, x, 4), dtype=np.uint8)
+    for jj, s, (w, h, xofs, yofs, npimg, npalpha, npmask) in zip(range(len(sprites)), sprites, slayers):
+        if npmask is None:
+            raise ValueError(f'Sprite {s.name} has no mask!')
+
+        for ii, cl in enumerate(grf.CC_COLOURS):
             r = grf.PaletteRemap(((0xC6, 0xCD, cl),))
             ni = r.remap_array(npmask)
 
+            x, y = pos[ii][jj]
             for i in range(h):
                 for j in range(w):
                     m = ni[i, j]
@@ -251,7 +267,6 @@ def debug_cc_recolour(sprites):
                         b = max(npimg[i, j][:3])
                         npres[y + i, x + j][:3] = adjust_brightness(rgb, b)
                     npres[y + i, x + j, 3] = npimg[i, j][3]
-        x += s.w + 1
 
     im = Image.fromarray(npres, mode='RGBA')
     im.show()
