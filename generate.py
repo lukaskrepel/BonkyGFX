@@ -16,6 +16,13 @@ g = grf.NewGRF(
     version=0,
 )
 
+def zoom_to_factor(zoom):
+    return {
+        grf.ZOOM_NORMAL: 1,
+        grf.ZOOM_2X: 2,
+        grf.ZOOM_4X: 4,
+    }[zoom]
+
 
 def replace_old(first_id, sprites):
     if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
@@ -26,10 +33,7 @@ def replace_old(first_id, sprites):
 
 
 def tmpl_groundtiles(name, imgfile, y, zoom, **kw):
-    z = {
-        grf.ZOOM_NORMAL: 1,
-        grf.ZOOM_2X: 2,
-    }[zoom]
+    z = zoom_to_factor(zoom)
     func = lambda i, x, y, *args, **kw: grf.FileSprite(imgfile, x, y, *args, zoom=zoom, name=f'{name}_{i}_{z}x', **kw)
     x = 0
     return [
@@ -61,10 +65,7 @@ def tmpl_groundtiles(name, imgfile, y, zoom, **kw):
 
 def tmpl_groundtiles_extra(name, imgfile, zoom, **kw):
     func = lambda i, x, y, *args, **kw: grf.FileSprite(imgfile, x, y, *args, zoom=zoom, name=f'{name}_{i}_{z}x', **kw)
-    z = {
-        grf.ZOOM_NORMAL: 1,
-        grf.ZOOM_2X: 2,
-    }[zoom]
+    z = zoom_to_factor(zoom)
     x, y = 0, 0
     return tmpl_groundtiles(name, imgfile, y, zoom, **kw) + [
         func('EXTRA1', 1502 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
@@ -160,9 +161,9 @@ replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
 replace_old(1332, make_infra_overlay_sprites(temperate_ground_2x, road))
 
 
-def tmpl_vehicle_road_8view(png, x, y, **kw):
+def tmpl_vehicle_road_8view(imgfile, x, y, **kw):
     # Same spriteset template as in OpenGFX2
-    func = lambda x, y, *args, **kw: lib.CCReplacingFileSprite(png, x, y, *args, zoom=grf.ZOOM_NORMAL, **kw)
+    func = lambda x, y, *args, **kw: lib.CCReplacingFileSprite(imgfile, x, y, *args, zoom=grf.ZOOM_NORMAL, **kw)
     z = 1
     return [
         func((1 + 0 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z, **kw),
@@ -209,7 +210,31 @@ replace_rv_generation('sprites/vehicles/road_lorries_firstgeneration_32bpp.ase',
 replace_rv_generation('sprites/vehicles/road_lorries_secondgeneration_32bpp.ase', 2)
 replace_rv_generation('sprites/vehicles/road_lorries_thirdgeneration_32bpp.ase', 3)
 
-grf.main(g, 'bonkygfx.grf')
 
-# png = grf.ImageFile('sprites/road_lorries_secondgeneration_32bpp.png')
-# lib.debug_cc_recolour(tmpl_vehicle_road_8view(png, 0, 0) + tmpl_vehicle_road_8view(png, 1, 0))
+def tmpl_road_depot(imgfront, imgback, zoom):
+    z = zoom_to_factor(zoom)
+
+    def func(imgfile, x, y, h, ox, oy, **kw):
+        xofs = -31 * z + ox * z
+        yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
+
+        return lib.CCReplacingFileSprite(imgfile,
+            1 * z + x * z, 1 * z + y * z, 64 * z, h * z - z + 1,
+            xofs=xofs, yofs=yofs, zoom=zoom, **kw)
+
+    return [
+        func(imgback, 0, 0, 64, 0, 1),
+        func(imgfront, 0, 0, 64, 30, -14),
+        func(imgback, 0, 65, 64, 0, 1),
+        func(imgfront, 0, 65, 64, -30, -14),
+        func(imgfront, 0, 195, 64, -30, -14),
+        func(imgfront, 0, 130, 64, 30, -14),
+    ]
+
+imgfront = lib.AseImageFile('sprites/stations/roaddepots_1x.ase')
+imgback = lib.AseImageFile('sprites/stations/roaddepots_1x.ase', layer='Behind')
+replace_old(1408, tmpl_road_depot(imgfront, imgback, grf.ZOOM_NORMAL))
+
+
+
+grf.main(g, 'bonkygfx.grf')
