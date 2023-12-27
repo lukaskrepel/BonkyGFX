@@ -109,7 +109,7 @@ def make_infra_overlay_sprites(ground, infra):
         ([0] * 4, range(11, 15)),
     )
     return [
-        lib.CompositeSprite((ground[i], infra[j]), name='{ground[i].name}_{infra[j].name}')
+        lib.CompositeSprite((ground[i], infra[j]), name='{ground[i].name}_{infra[j].name}', colourkey=(0, 0, 255))
         for rg, ri in GROUND_INFRA_RANGES for i, j in zip(rg, ri)
     ]
 

@@ -72,7 +72,6 @@ class AseImageFile(grf.ImageFile):
             if res.returncode != 0:
                 raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
             img = Image.open(f.name)
-
         if img.mode == 'P':
             self._image = (img, grf.BPP_8)
         elif img.mode == 'RGB':
@@ -84,13 +83,17 @@ class AseImageFile(grf.ImageFile):
 
 
 class CompositeSprite(grf.Sprite):
-    def __init__(self, sprites, **kw):
+    def __init__(self, sprites, colourkey=None, **kw):
         if len(sprites) == 0:
             raise ValueError('CompositeSprite requires a non-empty list of sprites to compose')
         if len(set(s.zoom for s in sprites)) > 1:
             raise ValueError('CompositeSprite requires a list of sprites of same zoom level')
         self.sprites = sprites
+        self.colourkey = colourkey
         super().__init__(sprites[0].w, sprites[0].h, xofs=sprites[0].xofs, yofs=sprites[0].yofs, zoom=sprites[0].zoom, **kw)
+
+    def get_colourkey(self):
+        return self.colourkey
 
     def get_data_layers(self, encoder=None, crop=None):
         npimg = None
@@ -104,7 +107,6 @@ class CompositeSprite(grf.Sprite):
             if nh is None:
                 nh = h
             if nw != w or nh != h:
-                print([x.name for x in self.sprites])
                 raise RuntimeError(f'CompositeSprite layers have different size: ({nw}, {nh}) vs {s.name}({w}, {h})')
 
             if na is None and ni.shape[2] == 4:
@@ -134,7 +136,6 @@ class CompositeSprite(grf.Sprite):
                     na_norm_mask = na[partial_mask] / 255.0
                     resa = npalpha_norm_mask + na_norm_mask * (1 - npalpha_norm_mask)
 
-                    np.set_printoptions(threshold=100000)
                     npimg[partial_mask] = (
                         npimg[partial_mask] * npalpha_norm_mask[..., np.newaxis] +
                         ni[partial_mask] * (na_norm_mask * (1.0 - npalpha_norm_mask))[..., np.newaxis]
@@ -153,11 +154,15 @@ class CompositeSprite(grf.Sprite):
         if npmask is not None:
             npmask = npmask[crop_y: crop_y + h, crop_x: crop_x + w]
 
-        colourkey = (0, 0, 255)
-        npalpha = 255 * np.any(np.not_equal(npimg, colourkey), axis=2)
-        npalpha = npalpha.astype(np.uint8, copy=False)
+        colourkey = self.get_colourkey()
+        if colourkey is not None:
+            mask = np.all(np.equal(npimg, colourkey), axis=2)
+            np.set_printoptions(threshold=10000)
+            if np.any(mask):
+                if npalpha is None:
+                    npalpha = np.fill((h, w), 255, dtype=np.uint8)
+                npalpha[mask] = 0
         return w, h, self.xofs + crop_x, self.yofs + crop_y, npimg, npalpha, npmask
-
 
     def get_resource_files(self):
         res = [THIS_FILE]
@@ -171,7 +176,6 @@ class CompositeSprite(grf.Sprite):
             'class': self.__class__.__name__,
             'sprites': [s.get_fingerprint() for s in self.sprites]
         }
-
 
 
 def adjust_brightness(c, brightness):
