@@ -59,6 +59,21 @@ def tmpl_groundtiles(name, imgfile, y, zoom, **kw):
     ]
 
 
+def tmpl_groundtiles_extra(name, imgfile, zoom, **kw):
+    func = lambda i, x, y, *args, **kw: grf.FileSprite(imgfile, x, y, *args, zoom=zoom, name=f'{name}_{i}_{z}x', **kw)
+    z = {
+        grf.ZOOM_NORMAL: 1,
+        grf.ZOOM_2X: 2,
+    }[zoom]
+    x, y = 0, 0
+    return tmpl_groundtiles(name, imgfile, y, zoom, **kw) + [
+        func('EXTRA1', 1502 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
+        func('EXTRA2', 1567 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
+        func('EXTRA3', 1632 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
+        func('EXTRA4', 1697 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
+    ]
+
+
 def zip_alternative(*sequences):
     res = []
     for sprites in zip(*sequences):
@@ -88,7 +103,7 @@ replace_old(3962, make_groundtile_sprites('temperate_ground_66', ase_temperate_g
 replace_old(3981, zip_alternative(temperate_ground_1x, temperate_ground_2x))    # 100% grass
 
 ase = lib.AseImageFile('sprites/terrain/temperate_groundtiles_rough_32bpp.ase', colourkey=(0, 0, 255))
-replace_old(4000, tmpl_groundtiles('temperate_rough', ase, 0, grf.ZOOM_2X))
+replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, grf.ZOOM_2X))
 ase = lib.AseImageFile('sprites/terrain/temperate_groundtiles_rocks_32bpp.ase', colourkey=(0, 0, 255))
 replace_old(4023, tmpl_groundtiles('temperate_rocks', ase, 0, grf.ZOOM_2X))
 
