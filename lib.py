@@ -71,6 +71,8 @@ class DebugRecolourSprite(grf.Sprite):
         w, h, xofs, yofs, ni, na, nm = self.sprite.get_data_layers(encoder, crop=False)
         factors = self.factors
         if ni is not None:
+            if not ni.flags.writeable:
+                ni = ni.copy()
             ni[:, :, :3] *= self.factors
         return w, h, xofs, yofs, ni, na, nm
 
@@ -206,7 +208,7 @@ class CompositeSprite(grf.Sprite):
         res = [THIS_FILE]
         for s in self.sprites:
             res.extend(s.get_resource_files())
-        return res
+        return tuple(res)
 
 
     def get_fingerprint(self):
