@@ -14,7 +14,7 @@ TERRAIN_DIR = SPRITE_DIR / 'terrain'
 VEHICLE_DIR = SPRITE_DIR / 'vehicles'
 INFRA_DIR = SPRITE_DIR / 'infrastructure'
 STATION_DIR = SPRITE_DIR / 'stations'
-
+DEBUG_ZOOM = False
 
 g = grf.NewGRF(
     grfid=b'TODO',
@@ -53,8 +53,10 @@ def template(sprite_class):
                     if isinstance(p, (str, pathlib.Path)):
                         p = get_ase(p)
                     def sprite_func(suffix, *args, **kw):
-                        # print(p, z, p.path, p.layer, suffix, args, kw)
-                        return sprite_class(p, *args, **kw, zoom=zoom, name=name.format(suffix=suffix, zoom=z))
+                        sprite = sprite_class(p, *args, **kw, zoom=zoom, name=name.format(suffix=suffix, zoom=z))
+                        if DEBUG_ZOOM:
+                            sprite = lib.DebugRecolourSprite(sprite, (1, 0, 0) if zoom == ZOOM_NORMAL else (0, 0, 1))
+                        return sprite
                     return sprite_func
 
                 return map(make_sprite_func, it)

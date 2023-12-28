@@ -23,7 +23,7 @@ class CCReplacingFileSprite(grf.FileSprite):
     def __init__(self, file, *args, **kw):
         super().__init__(file, *args, **kw, mask=None)
 
-    def get_data_layers(self, encoder=None):
+    def get_data_layers(self, encoder=None, *args, **kw):
         w, h, img, bpp = self._do_get_image(encoder)
 
         t0 = time.time()
@@ -59,6 +59,33 @@ class CCReplacingFileSprite(grf.FileSprite):
 
     def get_resource_files(self):
         return super().get_resource_files() + (THIS_FILE,)
+
+
+class DebugRecolourSprite(grf.Sprite):
+    def __init__(self, sprite, factors):
+        self.sprite = sprite
+        self.factors = np.array(factors, dtype=np.uint8)
+        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp)
+
+    def get_data_layers(self, encoder=None, *args, **kw):
+        w, h, xofs, yofs, ni, na, nm = self.sprite.get_data_layers(encoder, crop=False)
+        factors = self.factors
+        if ni is not None:
+            ni[:, :, :3] *= self.factors
+        return w, h, xofs, yofs, ni, na, nm
+
+    def get_image_files(self):
+        return ()
+
+    def get_resource_files(self):
+        return super().get_resource_files() + (THIS_FILE, ) + self.sprite.get_resource_files()
+
+    def get_fingerprint(self):
+        return {
+            'class': self.__class__.__name__,
+            'sprite': self.sprite.get_fingerprint(),
+            'factors': tuple(map(int, self.factors)),
+        }
 
 
 class AseImageFile(grf.ImageFile):
