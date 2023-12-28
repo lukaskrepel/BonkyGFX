@@ -97,7 +97,8 @@ class CompositeSprite(grf.Sprite):
         if len(sprites) == 0:
             raise ValueError('CompositeSprite requires a non-empty list of sprites to compose')
         if len(set(s.zoom for s in sprites)) > 1:
-            raise ValueError('CompositeSprite requires a list of sprites of same zoom level')
+            sprite_list = ', '.join(f'{s.name}<zoom={s.zoom}>' for s in sprites)
+            raise ValueError(f'CompositeSprite requires a list of sprites of same zoom level: {sprite_list}')
         self.sprites = sprites
         self.colourkey = colourkey
         super().__init__(sprites[0].w, sprites[0].h, xofs=sprites[0].xofs, yofs=sprites[0].yofs, zoom=sprites[0].zoom, **kw)

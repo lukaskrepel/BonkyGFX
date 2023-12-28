@@ -5,6 +5,7 @@ from typing import Optional, Union
 from typeguard import typechecked
 
 import grf
+from grf import ZOOM_NORMAL, ZOOM_2X, ZOOM_4X
 
 import lib
 
@@ -23,11 +24,64 @@ g = grf.NewGRF(
     version=0,
 )
 
+ASE_IDX = {}
+
+
+def get_ase(path, layer=None, ignore_layer=None):
+    key = (path, layer, ignore_layer)
+    ase = ASE_IDX.get(key)
+    if ase is None:
+        ase = ASE_IDX[key] = lib.AseImageFile(path, layer=layer, ignore_layer=ignore_layer)
+    return ase
+
+
+def template(sprite_class):
+    def decorator(tmpl_func):
+        def wrapper(name, path1x, path2x, *args, layer=None, ignore_layer=None, **kw):
+            def make_func_lists(path, zoom):
+                if path is None:
+                    return None
+                try:
+                    it = iter(path)
+                except TypeError:
+                    it = iter((path,))
+
+                res = []
+                z = zoom_to_factor(zoom)
+
+                def make_sprite_func(p):
+                    if isinstance(p, (str, pathlib.Path)):
+                        p = get_ase(p)
+                    def sprite_func(suffix, *args, **kw):
+                        # print(p, z, p.path, p.layer, suffix, args, kw)
+                        return sprite_class(p, *args, **kw, zoom=zoom, name=name.format(suffix=suffix, zoom=z))
+                    return sprite_func
+
+                return map(make_sprite_func, it)
+
+            func1x = make_func_lists(path1x, ZOOM_NORMAL)
+            func2x = make_func_lists(path2x, ZOOM_2X)
+            if path1x is None:
+                if path2x is None:
+                    raise ValueError('At least one of path1x or path2x should be not None')
+                return tmpl_func(func2x, *args, **kw, z=2)
+            else:
+                if path2x is None:
+                    return tmpl_func(func1x, *args, **kw, z=1),
+                return zip_alternative(
+                    tmpl_func(func1x, *args, **kw, z=1),
+                    tmpl_func(func2x, *args, **kw, z=2),
+                )
+
+        return wrapper
+    return decorator
+
+
 def zoom_to_factor(zoom):
     return {
-        grf.ZOOM_NORMAL: 1,
-        grf.ZOOM_2X: 2,
-        grf.ZOOM_4X: 4,
+        ZOOM_NORMAL: 1,
+        ZOOM_2X: 2,
+        ZOOM_4X: 4,
     }[zoom]
 
 
@@ -91,48 +145,49 @@ def zip_alternative(*sequences):
 
 def tmpl_alternative(name, tmpl, img1x, img2x, *args, **kw):
     if img2x is None:
-        return tmpl(name, img1x, *args, **kw, zoom=grf.ZOOM_NORMAL)
+        return tmpl(name, img1x, *args, **kw, zoom=ZOOM_NORMAL)
 
     return zip_alternative(
-        tmpl(name, img1x, *args, **kw, zoom=grf.ZOOM_NORMAL),
-        tmpl(name, img2x, *args, **kw, zoom=grf.ZOOM_2X),
+        tmpl(name, img1x, *args, **kw, zoom=ZOOM_NORMAL),
+        tmpl(name, img2x, *args, **kw, zoom=ZOOM_2X),
     )
 
 # Terrain: Single flat tile
 # def tmpl_flattile_single(png, x, y, **kw):
-#     func = lambda x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=grf.ZOOM_2X, **kw)
+#     func = lambda x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=ZOOM_2X, **kw)
 #     z = 2
 #     return [func(1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0*z, **kw)]
 
 def make_groundtile_sprites(name, img1x, img2x, tmpl_y):
     return zip_alternative(
-        tmpl_groundtiles(name, img1x, tmpl_y, grf.ZOOM_NORMAL),
-        tmpl_groundtiles(name, img2x, tmpl_y, grf.ZOOM_2X),
+        tmpl_groundtiles(name, img1x, tmpl_y, ZOOM_NORMAL),
+        tmpl_groundtiles(name, img2x, tmpl_y, ZOOM_2X),
     )
 
 # Normal land
 ase_temperate_ground_1x = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_32bpp_1x.ase', colourkey=(0, 0, 255))
 ase_temperate_ground_2x = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_32bpp.ase', colourkey=(0, 0, 255))
-temperate_ground_1x = tmpl_groundtiles('temperate_ground', ase_temperate_ground_1x, 0, grf.ZOOM_NORMAL)
-temperate_ground_2x = tmpl_groundtiles('temperate_ground', ase_temperate_ground_2x, 0, grf.ZOOM_2X)
+temperate_ground_1x = tmpl_groundtiles('temperate_ground', ase_temperate_ground_1x, 0, ZOOM_NORMAL)
+temperate_ground_2x = tmpl_groundtiles('temperate_ground', ase_temperate_ground_2x, 0, ZOOM_2X)
 replace_old(3924, make_groundtile_sprites('temperate_ground_bare', ase_temperate_ground_1x, ase_temperate_ground_2x, 144))  # 0% grass
 replace_old(3943, make_groundtile_sprites('temperate_ground_33', ase_temperate_ground_1x, ase_temperate_ground_2x, 96))   # 33% grass
 replace_old(3962, make_groundtile_sprites('temperate_ground_66', ase_temperate_ground_1x, ase_temperate_ground_2x, 48))   # 66% grass
 replace_old(3981, zip_alternative(temperate_ground_1x, temperate_ground_2x))    # 100% grass
 
 ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rough_32bpp.ase', colourkey=(0, 0, 255))
-replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, grf.ZOOM_2X))
+replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, ZOOM_2X))
 ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks_32bpp.ase', colourkey=(0, 0, 255))
-replace_old(4023, tmpl_groundtiles('temperate_rocks', ase, 0, grf.ZOOM_2X))
+replace_old(4023, tmpl_groundtiles('temperate_rocks', ase, 0, ZOOM_2X))
 
 general_concrete_png = lib.AseImageFile('sprites/terrain/general_concretetiles_2x.ase', colourkey=(0, 0, 255))
-general_concrete = tmpl_groundtiles('general_concrete', general_concrete_png, 0, grf.ZOOM_2X)
+general_concrete = tmpl_groundtiles('general_concrete', general_concrete_png, 0, ZOOM_2X)
 replace_old(1420, general_concrete[0])
 
 
 # Infrastructure: road tiles
-def tmpl_roadtiles(png, x, y, z, **kw):
-    func = lambda i, x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=grf.ZOOM_2X, name=f'road_{i}', **kw)
+def tmpl_roadtiles(png, x, y, zoom, **kw):
+    z = zoom_to_factor(zoom)
+    func = lambda i, x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=zoom, name=f'road_{i}', **kw)
     return [
         func('Y', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
         func('X', 66 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, **kw),
@@ -170,12 +225,16 @@ def make_infra_overlay_sprites(ground, infra):
     ]
 
 
-road_town_png = lib.AseImageFile(INFRA_DIR / 'road_town_overlayalpha_2x.ase')
-road_town = tmpl_roadtiles(road_town_png, 0, 0, 2)
-road_png = lib.AseImageFile(INFRA_DIR / 'road_overlayalpha_2x.ase')
-road = tmpl_roadtiles(road_png, 0, 0, 2)
-replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
-replace_old(1332, make_infra_overlay_sprites(temperate_ground_2x, road))
+img_road_town_1x = lib.AseImageFile(INFRA_DIR / 'road_town_overlayalpha_1x.ase')
+img_road_town_2x = lib.AseImageFile(INFRA_DIR / 'road_town_overlayalpha_2x.ase')
+road_town_1x = tmpl_roadtiles(img_road_town_1x, 0, 0, ZOOM_NORMAL)
+road_town_2x = tmpl_roadtiles(img_road_town_2x, 0, 0, ZOOM_2X)
+img_road_1x = lib.AseImageFile(INFRA_DIR / 'road_overlayalpha_1x.ase')
+img_road_2x = lib.AseImageFile(INFRA_DIR / 'road_overlayalpha_2x.ase')
+road_1x = tmpl_roadtiles(img_road_1x, 0, 0, ZOOM_NORMAL)
+road_2x = tmpl_roadtiles(img_road_2x, 0, 0, ZOOM_2X)
+replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town_2x))
+replace_old(1332, zip_alternative(make_infra_overlay_sprites(temperate_ground_1x, road_1x), make_infra_overlay_sprites(temperate_ground_2x, road_2x)))
 
 
 def tmpl_vehicle_road_8view(name, img, x, y, zoom, **kw):
@@ -230,32 +289,33 @@ replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration_32bpp.ase', V
 replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration_32bpp.ase', None, 3)
 
 
-def tmpl_road_depot(imgfront, imgback, zoom):
-    z = zoom_to_factor(zoom)
+@template(lib.CCReplacingFileSprite)
+def tmpl_road_depot(funcs, z):
+    func_front, func_back = funcs
 
-    def func(img, x, y, h, ox, oy, **kw):
+    def sprite(suffix, func, x, y, h, ox, oy):
         xofs = -31 * z + ox * z
         yofs = 32 * z - h * z + oy * z - z - 1
-
-        return lib.CCReplacingFileSprite(img,
+        return func(
+            suffix,
             1 * z + x * z, 1 * z + y * z, 64 * z, h * z - z + 1,
-            xofs=xofs, yofs=yofs, zoom=zoom, **kw)
+            xofs=xofs, yofs=yofs)
 
     return [
-        func(imgback, 0, 0, 64, 0, 1),
-        func(imgfront, 0, 0, 64, 30, -14),
-        func(imgback, 0, 65, 64, 0, 1),
-        func(imgfront, 0, 65, 64, -30, -14),
-        func(imgfront, 0, 195, 64, -30, -14),
-        func(imgfront, 0, 130, 64, 30, -14),
+        sprite('se_back', func_back, 0, 0, 64, 0, 1),
+        sprite('se_front', func_front, 0, 0, 64, 30, -14),
+        sprite('sw_back', func_back, 0, 65, 64, 0, 1),
+        sprite('sw_front', func_front, 0, 65, 64, -30, -14),
+        sprite('ne', func_front, 0, 195, 64, -30, -14),
+        sprite('nw', func_front, 0, 130, 64, 30, -14),
     ]
 
-imgfront1x = lib.AseImageFile(STATION_DIR / 'roaddepots_1x.ase', ignore_layer='Behind')
-imgback1x = lib.AseImageFile(STATION_DIR / 'roaddepots_1x.ase', layer='Behind')
-imgfront2x = lib.AseImageFile(STATION_DIR / 'roaddepots_2x.ase', ignore_layer='Behind')
-imgback2x = lib.AseImageFile(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')
-replace_old(1408, zip_alternative(tmpl_road_depot(imgfront1x, imgback1x, grf.ZOOM_NORMAL),
-                                  tmpl_road_depot(imgfront2x, imgback2x, grf.ZOOM_2X)))
+
+imgfront1x = get_ase(STATION_DIR / 'roaddepots_1x.ase', ignore_layer='Behind')
+imgback1x = get_ase(STATION_DIR / 'roaddepots_1x.ase', layer='Behind')
+imgfront2x = get_ase(STATION_DIR / 'roaddepots_2x.ase', ignore_layer='Behind')
+imgback2x = get_ase(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')
+replace_old(1408, tmpl_road_depot('road_depot_{suffix}_{zoom}x', (imgfront1x, imgback1x), (imgfront2x, imgback2x)))
 
 
 def cmd_debugcc_add_args(parser):
