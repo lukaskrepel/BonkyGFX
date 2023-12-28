@@ -108,7 +108,7 @@ replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, grf.ZOOM_2X))
 ase = lib.AseImageFile('sprites/terrain/temperate_groundtiles_rocks_32bpp.ase', colourkey=(0, 0, 255))
 replace_old(4023, tmpl_groundtiles('temperate_rocks', ase, 0, grf.ZOOM_2X))
 
-general_concrete_png = lib.AseImageFile('sprites/terrain/general_concretetiles_32bpp.ase', colourkey=(0, 0, 255))
+general_concrete_png = lib.AseImageFile('sprites/terrain/general_concretetiles_2x.ase', colourkey=(0, 0, 255))
 general_concrete = tmpl_groundtiles('general_concrete', general_concrete_png, 0, grf.ZOOM_2X)
 replace_old(1420, general_concrete[0])
 
