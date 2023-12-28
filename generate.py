@@ -166,6 +166,30 @@ replace_old(1420, general_concrete[0])
 
 
 @template(grf.FileSprite)
+def tmpl_airport_tiles(func, z):
+    return [
+        func('empty', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('square', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing1', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing2', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing3', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing4', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('1', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('2', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('3', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('4', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('5', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('6', z * (1 + 130), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('7', z * (1 + 195), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('8', z * (1 + 260), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('9', z * (1 + 325), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('10', z * (1 + 390), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+    ]
+
+replace_old(2634, tmpl_airport_tiles('airport_modern', INFRA_DIR / 'airport_modern_1x.ase', INFRA_DIR / 'airport_modern_2x.ase'))
+
+
+@template(grf.FileSprite)
 def tmpl_roadtiles(func, z, x, y):
     return [
         func('y', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
