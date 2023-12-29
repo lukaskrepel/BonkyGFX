@@ -86,7 +86,7 @@ def tmpl_groundtiles_extra(name, img, zoom):
 
 # Normal land
 ase_temperate_ground_1x = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_1x.ase', colourkey=(0, 0, 255))
-ase_temperate_ground_2x = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles.ase', colourkey=(0, 0, 255))
+ase_temperate_ground_2x = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_2x.ase', colourkey=(0, 0, 255))
 make_ground = lambda name, y: tmpl_groundtiles(name, ase_temperate_ground_1x, ase_temperate_ground_2x, 0)
 temperate_ground = make_ground('temperate_ground', 0)
 replace_old(3924, make_ground('temperate_ground_bare', 144))  # 0% grass
@@ -94,9 +94,9 @@ replace_old(3943, make_ground('temperate_ground_33', 96))   # 33% grass
 replace_old(3962, make_ground('temperate_ground_66', 48))   # 66% grass
 replace_old(3981, temperate_ground)  # 100% grass
 
-ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rough.ase', colourkey=(0, 0, 255))
+ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rough_2x.ase', colourkey=(0, 0, 255))
 replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, ZOOM_2X))
-ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks.ase', colourkey=(0, 0, 255))
+ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase', colourkey=(0, 0, 255))
 replace_old(4023, tmpl_groundtiles('temperate_rocks', None, ase, 0))
 ase = lib.AseImageFile(TERRAIN_DIR / 'tropical_groundtiles_desert_1x.ase')
 replace_old(4550, tmpl_groundtiles('tropical_desert', ase, None, 0))
@@ -252,9 +252,9 @@ def replace_rv_generation(path1x, path2x, generation):
     replace_old(3468 + o, tmpl('rubber_loaded', 1, 13))
 
 
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_firstgeneration.ase', None, 1)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration.ase', VEHICLE_DIR / 'road_lorries_secondgeneration_2x.ase', 2)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration.ase', None, 3)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_firstgeneration_1x.ase', None, 1)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration_1x.ase', VEHICLE_DIR / 'road_lorries_secondgeneration_2x.ase', 2)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration_1x.ase', None, 3)
 
 
 @lib.template(lib.CCReplacingFileSprite)
