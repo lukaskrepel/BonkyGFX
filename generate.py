@@ -99,7 +99,8 @@ replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, ZOOM_2X))
 ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase', colourkey=(0, 0, 255))
 replace_old(4023, tmpl_groundtiles('temperate_rocks', None, ase, 0))
 ase = lib.AseImageFile(TERRAIN_DIR / 'tropical_groundtiles_desert_1x.ase')
-replace_old(4550, tmpl_groundtiles('tropical_desert', ase, None, 0))
+tropical_desert = tmpl_groundtiles('tropical_desert', ase, None, 0)
+replace_old(4550, tropical_desert)
 ase = lib.AseImageFile(TERRAIN_DIR / 'tropical_groundtiles_deserttransition_1x.ase')
 replace_old(4512, tmpl_groundtiles('tropical_transition', ase, None, 0))
 
@@ -206,6 +207,9 @@ road_town = tmpl_roadtiles('road_town', INFRA_DIR / 'road_town_1x.ase', INFRA_DI
 road = tmpl_roadtiles('road', INFRA_DIR / 'road_1x.ase', INFRA_DIR / 'road_2x.ase', 0, 0)
 replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
 replace_old(1332, make_infra_overlay_sprites(temperate_ground, road))
+road_noline = tmpl_roadtiles('road_noline', INFRA_DIR / 'road_noline_1x.ase', INFRA_DIR / 'road_noline_2x.ase', 0, 0)
+replace_old(1332, make_infra_overlay_sprites(temperate_ground, road_noline))
+# replace_old(1351, make_infra_overlay_sprites(tropical_desert, road_noline))
 
 
 @lib.template(lib.CCReplacingFileSprite)
