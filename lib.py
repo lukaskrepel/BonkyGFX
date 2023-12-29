@@ -1,4 +1,5 @@
 import os
+import pathlib
 import subprocess
 import time
 import tempfile
@@ -17,6 +18,81 @@ VALUE_TO_BRIGHTNESS = np.array([0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 VALUE_TO_INDEX = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7])
 
 THIS_FILE = grf.PythonFile(__file__)
+
+
+ASE_IDX = {}
+def aseidx(path, layer=None, ignore_layer=None):
+    key = (path, layer, ignore_layer)
+    ase = ASE_IDX.get(key)
+    if ase is None:
+        ase = ASE_IDX[key] = AseImageFile(path, layer=layer, ignore_layer=ignore_layer)
+    return ase
+
+
+def zoom_to_factor(zoom):
+    return {
+        grf.ZOOM_NORMAL: 1,
+        grf.ZOOM_2X: 2,
+        grf.ZOOM_4X: 4,
+    }[zoom]
+
+
+# Takes a list of sprites or AlternativeSprites and shifts their xofs and yofs by provided values (multiplied by zoom factor)
+def move(sprites, *, xofs, yofs):
+    for s in sprites:
+        if isinstance(s, grf.AlternativeSprites):
+            sl = s.sprites
+        else:
+            sl = (s,)
+        for s in sl:
+            z = zoom_to_factor(s.zoom)
+            s.xofs += xofs * z
+            s.yofs += yofs * z
+    return sprites
+
+
+def template(sprite_class):
+    def decorator(tmpl_func):
+        def wrapper(name, path1x, path2x, *args, layer=None, ignore_layer=None, **kw):
+            def make_func_lists(path, zoom):
+                if path is None:
+                    return None
+                try:
+                    it = iter(path)
+                except TypeError:
+                    it = iter((path,))
+
+                z = zoom_to_factor(zoom)
+                def make_sprite_func(p):
+                    if isinstance(p, (str, pathlib.Path)):
+                        p = aseidx(p)
+                    def sprite_func(suffix, *args, **kw):
+                        return sprite_class(p, *args, **kw, zoom=zoom, name=name + f'_{suffix}_{z}x')
+                    return sprite_func
+
+                res = list(map(make_sprite_func, it))
+                if len(res) == 1:
+                    return res[0]
+                return res
+
+            func1x = make_func_lists(path1x, grf.ZOOM_NORMAL)
+            func2x = make_func_lists(path2x, grf.ZOOM_2X)
+            if path1x is None:
+                if path2x is None:
+                    raise ValueError('At least one of path1x or path2x should be not None')
+                return tmpl_func(func2x, 2, *args, **kw)
+            else:
+                if path2x is None:
+                    return tmpl_func(func1x, 1, *args, **kw)
+                res = []
+                x1 = tmpl_func(func1x, 1, *args, **kw)
+                x2 = tmpl_func(func2x, 2, *args, **kw)
+                for sprites in zip(x1, x2):
+                    res.append(grf.AlternativeSprites(*sprites))
+                return res
+
+        return wrapper
+    return decorator
 
 
 class CCReplacingFileSprite(grf.FileSprite):

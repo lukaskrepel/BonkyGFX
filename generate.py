@@ -24,78 +24,25 @@ g = grf.NewGRF(
     version=0,
 )
 
-ASE_IDX = {}
-
-
-def get_ase(path, layer=None, ignore_layer=None):
-    key = (path, layer, ignore_layer)
-    ase = ASE_IDX.get(key)
-    if ase is None:
-        ase = ASE_IDX[key] = lib.AseImageFile(path, layer=layer, ignore_layer=ignore_layer)
-    return ase
-
-
-def template(sprite_class):
-    def decorator(tmpl_func):
-        def wrapper(name, path1x, path2x, *args, layer=None, ignore_layer=None, **kw):
-            def make_func_lists(path, zoom):
-                if path is None:
-                    return None
-                try:
-                    it = iter(path)
-                except TypeError:
-                    it = iter((path,))
-
-                z = zoom_to_factor(zoom)
-                def make_sprite_func(p):
-                    if isinstance(p, (str, pathlib.Path)):
-                        p = get_ase(p)
-                    def sprite_func(suffix, *args, **kw):
-                        return sprite_class(p, *args, **kw, zoom=zoom, name=name + f'_{suffix}_{z}x')
-                    return sprite_func
-
-                res = list(map(make_sprite_func, it))
-                if len(res) == 1:
-                    return res[0]
-                return res
-
-            func1x = make_func_lists(path1x, ZOOM_NORMAL)
-            func2x = make_func_lists(path2x, ZOOM_2X)
-            if path1x is None:
-                if path2x is None:
-                    raise ValueError('At least one of path1x or path2x should be not None')
-                return tmpl_func(func2x, 2, *args, **kw)
-            else:
-                if path2x is None:
-                    return tmpl_func(func1x, 1, *args, **kw)
-                res = []
-                x1 = tmpl_func(func1x, 1, *args, **kw)
-                x2 = tmpl_func(func2x, 2, *args, **kw)
-                for sprites in zip(x1, x2):
-                    res.append(grf.AlternativeSprites(*sprites))
-                return res
-
-        return wrapper
-    return decorator
-
-
-def zoom_to_factor(zoom):
-    return {
-        ZOOM_NORMAL: 1,
-        ZOOM_2X: 2,
-        ZOOM_4X: 4,
-    }[zoom]
-
 
 def replace_old(first_id, sprites):
     if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
         sprites = [sprites]
+
     amount = len(sprites)
+    assert first_id + amount < 4896
     g.add(grf.ReplaceOldSprites([(first_id, amount)]))
     g.add(*sprites)
 
 
-@template(grf.FileSprite)
+def replace_new(set_type, offset, sprites):
+    if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
+        sprites = [sprites]
+    g.add(grf.ReplaceNewSprites(set_type, len(sprites), offset=offset))
+    g.add(*sprites)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_groundtiles(func, z, y):
     x = 0
     return [
@@ -127,7 +74,7 @@ def tmpl_groundtiles(func, z, y):
 
 def tmpl_groundtiles_extra(name, img, zoom):
     func = lambda i, x, y, *args, **kw: grf.FileSprite(img, x, y, *args, zoom=zoom, name=f'{name}_{i}_{z}x', **kw)
-    z = zoom_to_factor(zoom)
+    z = lib.zoom_to_factor(zoom)
     x, y = 0, 0
     return tmpl_groundtiles(name, None, img, 0) + [
         func('extra1', 1502 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
@@ -135,13 +82,6 @@ def tmpl_groundtiles_extra(name, img, zoom):
         func('extra3', 1632 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
         func('extra4', 1697 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
     ]
-
-
-# Terrain: Single flat tile
-# def tmpl_flattile_single(png, x, y, **kw):
-#     func = lambda x, y, *args, **kw: grf.FileSprite(png, x, y, *args, zoom=ZOOM_2X, **kw)
-#     z = 2
-#     return [func(1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0*z, **kw)]
 
 
 # Normal land
@@ -165,31 +105,46 @@ general_concrete = tmpl_groundtiles('general_concrete', ase1x, ase2x, 0)
 replace_old(1420, general_concrete[0])
 
 
-@template(grf.FileSprite)
+def on_grass(sprite):
+    grass = temperate_ground[0].get_sprite(zoom=sprite.zoom)
+    return lib.CompositeSprite((grass, sprite))
+
+
+@lib.template(grf.FileSprite)
 def tmpl_airport_tiles(func, z):
     return [
         func('empty', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
         func('square', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing1', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing2', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing3', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing4', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('1', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('2', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('3', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('4', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('5', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('6', z * (1 + 130), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('7', z * (1 + 195), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('8', z * (1 + 260), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('9', z * (1 + 325), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('10', z * (1 + 390), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        on_grass(func('taxi_w', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_s', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi1', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi2', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi3', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi4', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_e', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_n', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi5', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        func('landing1', z * (1 + 130), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing2', z * (1 + 195), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing3', z * (1 + 260), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing4', z * (1 + 325), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('landing5', z * (1 + 390), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
     ]
 
-replace_old(2634, tmpl_airport_tiles('airport_modern', INFRA_DIR / 'airport_modern_1x.ase', INFRA_DIR / 'airport_modern_2x.ase'))
+
+@lib.template(grf.FileSprite)
+def tmpl_flat_tile(func, z, suffix, x):
+    return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
 
 
-@template(grf.FileSprite)
+ase1x = lib.aseidx(INFRA_DIR / 'airport_modern_1x.ase')
+ase2x = lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase')
+replace_old(2634, tmpl_airport_tiles('airport_modern', ase1x, ase2x))
+replace_new(0x15, 86, lib.move(tmpl_flat_tile('airport_modern', ase1x, ase2x, 'helipad', 1365), xofs=9, yofs=-15))
+replace_new(0x10, 12, tmpl_flat_tile('airport_modern', ase1x, ase2x,'new_helipad', 1430))
+
+
+@lib.template(grf.FileSprite)
 def tmpl_roadtiles(func, z, x, y):
     return [
         func('y', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
@@ -242,7 +197,7 @@ replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
 replace_old(1332, make_infra_overlay_sprites(temperate_ground, road))
 
 
-@template(lib.CCReplacingFileSprite)
+@lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_road_8view(func, z, x, y):
     res = [
         func('n', (1 + 0 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z),
@@ -291,7 +246,7 @@ replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration_32bpp.ase', V
 replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration_32bpp.ase', None, 3)
 
 
-@template(lib.CCReplacingFileSprite)
+@lib.template(lib.CCReplacingFileSprite)
 def tmpl_road_depot(funcs, z):
     func_front, func_back = funcs
 
@@ -313,10 +268,10 @@ def tmpl_road_depot(funcs, z):
     ]
 
 
-imgfront1x = get_ase(STATION_DIR / 'roaddepots_1x.ase', ignore_layer='Behind')
-imgback1x = get_ase(STATION_DIR / 'roaddepots_1x.ase', layer='Behind')
-imgfront2x = get_ase(STATION_DIR / 'roaddepots_2x.ase', ignore_layer='Behind')
-imgback2x = get_ase(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')
+imgfront1x = lib.aseidx(STATION_DIR / 'roaddepots_1x.ase', ignore_layer='Behind')
+imgback1x = lib.aseidx(STATION_DIR / 'roaddepots_1x.ase', layer='Behind')
+imgfront2x = lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', ignore_layer='Behind')
+imgback2x = lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')
 replace_old(1408, tmpl_road_depot('road_depot', (imgfront1x, imgback1x), (imgfront2x, imgback2x)))
 
 
