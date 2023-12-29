@@ -202,8 +202,8 @@ def make_infra_overlay_sprites(ground, infra):
     return res
 
 
-road_town = tmpl_roadtiles('road_town', INFRA_DIR / 'road_town_overlayalpha_1x.ase', INFRA_DIR / 'road_town_overlayalpha_2x.ase', 0, 0)
-road = tmpl_roadtiles('road', INFRA_DIR / 'road_overlayalpha_1x.ase', INFRA_DIR / 'road_overlayalpha_2x.ase', 0, 0)
+road_town = tmpl_roadtiles('road_town', INFRA_DIR / 'road_town_1x.ase', INFRA_DIR / 'road_town_2x.ase', 0, 0)
+road = tmpl_roadtiles('road', INFRA_DIR / 'road_1x.ase', INFRA_DIR / 'road_2x.ase', 0, 0)
 replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
 replace_old(1332, make_infra_overlay_sprites(temperate_ground, road))
 
