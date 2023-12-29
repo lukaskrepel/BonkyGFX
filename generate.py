@@ -98,6 +98,10 @@ ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rough_32bpp.ase', co
 replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, ZOOM_2X))
 ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks_32bpp.ase', colourkey=(0, 0, 255))
 replace_old(4023, tmpl_groundtiles('temperate_rocks', None, ase, 0))
+ase = lib.AseImageFile(TERRAIN_DIR / 'tropical_groundtiles_desert_1x.ase')
+replace_old(4550, tmpl_groundtiles('tropical_desert', ase, None, 0))
+ase = lib.AseImageFile(TERRAIN_DIR / 'tropical_groundtiles_deserttransition_1x.ase')
+replace_old(4512, tmpl_groundtiles('tropical_transition', ase, None, 0))
 
 ase1x = lib.AseImageFile(TERRAIN_DIR / 'general_concretetiles_1x.ase', colourkey=(0, 0, 255))
 ase2x = lib.AseImageFile(TERRAIN_DIR / 'general_concretetiles_2x.ase', colourkey=(0, 0, 255))
