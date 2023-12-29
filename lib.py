@@ -51,6 +51,12 @@ def move(sprites, *, xofs, yofs):
     return sprites
 
 
+def make_writable(nparray):
+    if not nparray.flags.writeable:
+        return nparray.copy()
+    return nparray
+
+
 def template(sprite_class):
     def decorator(tmpl_func):
         def wrapper(name, path1x, path2x, *args, layer=None, ignore_layer=None, **kw):
@@ -119,6 +125,7 @@ class CCReplacingFileSprite(grf.FileSprite):
                 ((npimg[:, :, 1] == 0) & (npimg[:, :, 0] != 0))
             )
         )
+
         value = npimg[magenta_mask][:, 0].astype(np.uint16) + npimg[magenta_mask][:, 1]
         npimg[magenta_mask, 0] = VALUE_TO_BRIGHTNESS[value]
         npimg[magenta_mask, 1] = 0
@@ -137,6 +144,68 @@ class CCReplacingFileSprite(grf.FileSprite):
         return super().get_resource_files() + (THIS_FILE,)
 
 
+class MagentaToLight(grf.Sprite):
+    def __init__(self, sprite, order):
+        self.sprite = sprite
+        self.order = order
+        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
+
+    def get_data_layers(self, encoder=None, *args, **kw):
+        w, h, xofs, yofs, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder, crop=False)
+        assert npmask is None
+        ow, oh, _, _, ni, na, nm = self.order.get_data_layers(encoder, crop=False)
+        assert na is None and nm is None
+        assert w == ow and h == oh
+
+        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha)
+        magenta_mask = (
+            (npimg[:, :, 0] == npimg[:, :, 2]) &
+            (
+                ((npimg[:, :, 0] == 255) & (npimg[:, :, 1] != 255)) |
+                ((npimg[:, :, 1] == 0) & (npimg[:, :, 0] != 0))
+            )
+        )
+
+        if na is None:
+            assert ni.shape[2] == 4
+            na = ni[:, :, 3]
+            ni = ni[:, :, :3]
+
+        order_mask = (na > 0)
+        colours = list(set(map(tuple, ni[order_mask])))
+        if len(colours) != 4:
+            raise ValueError(f'Expected 4 colors in order mask, found {len(colours)} in {self.order.name}')
+        colours.sort(key=lambda x: int(x[0]) + x[1] + x[2])
+
+        order_mask = order_mask[crop_y:crop_y + h, crop_x:crop_x + w] & magenta_mask
+        order = ni[crop_y:crop_y + h, crop_x:crop_x + w][order_mask]
+        if np.any(magenta_mask != order_mask):
+            raise ValueError(f'Not all magenta pixels of sprite {self.sprite.name} have a defined order in {self.order.name}')
+
+        npmask = np.zeros((h, w), dtype=np.uint8)
+        ordered = np.zeros(order.shape[0], dtype=np.uint8)
+        for i, c in enumerate(colours):
+            ordered[(order == c).all(axis=1)] = 0xf1 + i
+        npmask[order_mask] = ordered
+        return w, h, xofs + crop_x, yofs + crop_y, npimg, npalpha, npmask
+
+
+    def get_image_files(self):
+        return ()
+
+
+    def get_resource_files(self):
+        return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files() + self.order.get_resource_files()
+
+
+    def get_fingerprint(self):
+        return {
+            'class': self.__class__.__name__,
+            'sprite': self.sprite.get_fingerprint(),
+            'order': self.order.get_fingerprint(),
+        }
+
+
 class DebugRecolourSprite(grf.Sprite):
     def __init__(self, sprite, factors):
         self.sprite = sprite
@@ -147,8 +216,7 @@ class DebugRecolourSprite(grf.Sprite):
         w, h, xofs, yofs, ni, na, nm = self.sprite.get_data_layers(encoder, crop=False)
         factors = self.factors
         if ni is not None:
-            if not ni.flags.writeable:
-                ni = ni.copy()
+            ni = make_writable(ni)
             ni[:, :, :3] *= self.factors
         return w, h, xofs, yofs, ni, na, nm
 
@@ -273,7 +341,6 @@ class CompositeSprite(grf.Sprite):
         colourkey = self.get_colourkey()
         if colourkey is not None:
             mask = np.all(np.equal(npimg, colourkey), axis=2)
-            np.set_printoptions(threshold=10000)
             if np.any(mask):
                 if npalpha is None:
                     npalpha = np.fill((h, w), 255, dtype=np.uint8)
@@ -324,7 +391,7 @@ def adjust_brightness(c, brightness):
     )
 
 
-def debug_cc_recolour(sprites, horizontal=False):
+def debug_recolour(sprites, recolours, horizontal=False):
     PADDING = 10
 
     slayers = []
@@ -335,7 +402,7 @@ def debug_cc_recolour(sprites, horizontal=False):
     if horizontal:
         maxw = max(x[0] for x in slayers)
         x = PADDING
-        for i in range(len(grf.CC_COLOURS)):
+        for i in range(len(recolours)):
             y = PADDING
             row = []
             for s in slayers:
@@ -347,7 +414,7 @@ def debug_cc_recolour(sprites, horizontal=False):
         # s = (sumh + (len(slayers) + 1) * PADDING, maxw + 2 * PADDING)
         y = PADDING
         maxh = max(x[1] for x in slayers)
-        for i in range(len(grf.CC_COLOURS)):
+        for i in range(len(recolours)):
             x = PADDING
             row = []
             for s in slayers:
@@ -361,21 +428,39 @@ def debug_cc_recolour(sprites, horizontal=False):
         if npmask is None:
             raise ValueError(f'Sprite {s.name} has no mask!')
 
-        for ii, cl in enumerate(grf.CC_COLOURS):
-            r = grf.PaletteRemap(((0xC6, 0xCD, cl),))
-            ni = r.remap_array(npmask)
-
+        for ii, recolour in enumerate(recolours):
             x, y = pos[ii][jj]
             for i in range(h):
                 for j in range(w):
-                    m = ni[i, j]
-                    if m == 0:
+                    rgb = recolour.get(npmask[i, j])
+                    if rgb is None:
                         npres[y + i, x + j][:3] = npimg[i, j][:3]
                     else:
-                        rgb = grf.PALETTE[m * 3:m * 3 + 3]
                         b = max(npimg[i, j][:3])
                         npres[y + i, x + j][:3] = adjust_brightness(rgb, b)
                     npres[y + i, x + j, 3] = npimg[i, j][3]
 
     im = Image.fromarray(npres, mode='RGBA')
     im.show()
+
+
+def debug_cc_recolour(sprites, horizontal=False):
+    recolours = []
+    for cl in grf.CC_COLOURS:
+        recolours.append({
+            0xC6 + i : grf.PALETTE[m * 3: m * 3 + 3]
+            for i, m in enumerate(cl)
+        })
+    debug_recolour(sprites, recolours, horizontal=horizontal)
+
+
+def debug_light_cycle(sprites, horizontal=False):
+    ON = (240, 208, 0)
+    OFF = (0, 0, 0)
+    recolours = [
+        {0xf1: ON, 0xf2: OFF, 0xf3: OFF, 0xf4: OFF},
+        {0xf1: OFF, 0xf2: ON, 0xf3: OFF, 0xf4: OFF},
+        {0xf1: OFF, 0xf2: OFF, 0xf3: ON, 0xf4: OFF},
+        {0xf1: OFF, 0xf2: OFF, 0xf3: OFF, 0xf4: ON},
+    ]
+    debug_recolour(sprites, recolours, horizontal=horizontal)

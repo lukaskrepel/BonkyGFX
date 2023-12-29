@@ -111,24 +111,28 @@ def on_grass(sprite):
 
 
 @lib.template(grf.FileSprite)
-def tmpl_airport_tiles(func, z):
+def tmpl_airport_tiles(funcs, z):
+    func, order = funcs
+    with_light = lambda *args, **kw: lib.MagentaToLight(func(*args, **kw), order(*args, **kw))
     return [
-        func('empty', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('square', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        on_grass(func('taxi_w', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi_s', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi1', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi2', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi3', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi4', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi_e', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi_n', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        on_grass(func('taxi5', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
-        func('landing1', z * (1 + 130), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing2', z * (1 + 195), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing3', z * (1 + 260), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing4', z * (1 + 325), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('landing5', z * (1 + 390), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('apron', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('stand', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        on_grass(func('taxi_ns_west', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_ew_south', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_xing_south', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_xing_west', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_ns_ctr', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_xing_east', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_ns_east', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_ew_north', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        on_grass(func('taxi_ew_ctr', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)),
+        with_light('runway_a', z * (1 + 130), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        with_light('runway_b', z * (1 + 195), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        with_light('runway_c', z * (1 + 260), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        with_light('runway_d', z * (1 + 325), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        with_light('runway_end', z * (1 + 390), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        with_light('helipad', z * (1 + 1365), z, 64 * z, 32 * z - 1, xofs=-22 * z, yofs=-15 * z),
+        func('new_helipad', z * (1 + 1430), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
     ]
 
 
@@ -137,11 +141,14 @@ def tmpl_flat_tile(func, z, suffix, x):
     return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
 
 
-ase1x = lib.aseidx(INFRA_DIR / 'airport_modern_1x.ase')
-ase2x = lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase')
-replace_old(2634, tmpl_airport_tiles('airport_modern', ase1x, ase2x))
-replace_new(0x15, 86, lib.move(tmpl_flat_tile('airport_modern', ase1x, ase2x, 'helipad', 1365), xofs=9, yofs=-15))
-replace_new(0x10, 12, tmpl_flat_tile('airport_modern', ase1x, ase2x,'new_helipad', 1430))
+ase1x = lib.aseidx(INFRA_DIR / 'airport_modern_1x.ase', ignore_layer='Light order')
+ase1x_order = lib.aseidx(INFRA_DIR / 'airport_modern_1x.ase', layer='Light order')
+ase2x = lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', ignore_layer='Light order')
+ase2x_order = lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', layer='Light order')
+airport_tiles = tmpl_airport_tiles('airport_modern', (ase1x, ase1x_order), (ase2x, ase2x_order))
+replace_old(2634, airport_tiles[:16])
+replace_new(0x15, 86, airport_tiles[16])
+replace_new(0x10, 12, airport_tiles[17])
 
 
 @lib.template(grf.FileSprite)
@@ -275,6 +282,17 @@ imgback2x = lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')
 replace_old(1408, tmpl_road_depot('road_depot', (imgfront1x, imgback1x), (imgfront2x, imgback2x)))
 
 
+if DEBUG_ZOOM:
+    def wrap_sprite(sprite):
+        return lib.DebugRecolourSprite(sprite, (1, 0, 0) if sprite.zoom == ZOOM_NORMAL else (0, 0, 1))
+
+    for s in g.generators:
+        if isinstance(s, grf.AlternativeSprites):
+            s.sprites = list(map(wrap_sprite, s.sprites))
+        elif isinstance(s, grf.SingleResourceAction):
+            s.resource = wrap_sprite(s.resource)
+
+
 def cmd_debugcc_add_args(parser):
     parser.add_argument('ase_file', help='Aseprite image file')
     parser.add_argument('--horizontal', action='store_true', help='Stack resulting images horizontally')
@@ -287,26 +305,32 @@ def cmd_debugcc_handler(g, grf_file, args):
     lib.debug_cc_recolour([sprite], horizontal=args.horizontal)
 
 
-if DEBUG_ZOOM:
-    def wrap_sprite(sprite):
-        return lib.DebugRecolourSprite(sprite, (1, 0, 0) if sprite.zoom == ZOOM_NORMAL else (0, 0, 1))
+def cmd_debuglight_add_args(parser):
+    parser.add_argument('ase_file', help='Aseprite image file')
+    parser.add_argument('--horizontal', action='store_true', help='Stack resulting images horizontally')
 
-    for s in g.generators:
-        if isinstance(s, grf.AlternativeSprites):
-            s.sprites = list(map(wrap_sprite, s.sprites))
-        elif isinstance(s, grf.SingleResourceAction):
-            s.resource = wrap_sprite(s.resource)
+
+def cmd_debuglight_handler(g, grf_file, args):
+    in_file = args.ase_file
+    ase = lib.AseImageFile(in_file, ignore_layer='Light order')
+    aseo = lib.AseImageFile(in_file, layer='Light order')
+    sprite = grf.FileSprite(ase, 0, 0, None, None, name=f'{in_file}_image')
+    order = grf.FileSprite(aseo, 0, 0, None, None, name=f'{in_file}_order')
+    lib.debug_light_cycle([lib.MagentaToLight(sprite, order)], horizontal=args.horizontal)
 
 
 grf.main(
     g,
     'bonkygfx.grf',
-    commands=[
-        {
-            'name': 'debugcc',
-            'help': 'Takes an image and produces another image with all variants of CC recolour',
-            'add_args': cmd_debugcc_add_args,
-            'handler': cmd_debugcc_handler,
-        }
-    ]
+    commands=[{
+        'name': 'debugcc',
+        'help': 'Takes an image and produces another image with all variants of CC recolour',
+        'add_args': cmd_debugcc_add_args,
+        'handler': cmd_debugcc_handler,
+    }, {
+        'name': 'debuglight',
+        'help': 'Takes an image and produces animated gif with light cycle',
+        'add_args': cmd_debuglight_add_args,
+        'handler': cmd_debuglight_handler,
+    }]
 )
