@@ -206,6 +206,71 @@ class MagentaToLight(grf.Sprite):
         }
 
 
+class MagentaAndMask(grf.Sprite):
+    def __init__(self, sprite, mask):
+        self.sprite = sprite
+        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
+        self.mask = mask  # TODO sprite mask has a special meaning
+
+    def get_data_layers(self, encoder=None, *args, **kw):
+        w, h, xofs, yofs, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder, crop=False)
+        assert npmask is None
+        ow, oh, _, _, ni, na, nm = self.mask.get_data_layers(encoder, crop=False)
+        assert na is None and nm is None
+        assert w == ow and h == oh
+
+        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha)
+        magenta_mask = (
+            (npimg[:, :, 0] == npimg[:, :, 2]) &
+            (
+                ((npimg[:, :, 0] == 255) & (npimg[:, :, 1] != 255)) |
+                ((npimg[:, :, 1] == 0) & (npimg[:, :, 0] != 0))
+            )
+        )
+
+        if na is None:
+            assert ni.shape[2] == 4
+            na = ni[crop_y:crop_y + h, crop_x:crop_x + w, 3]
+            ni = ni[crop_y:crop_y + h, crop_x:crop_x + w, :3]
+        else:
+            na = na[crop_y:crop_y + h, crop_x:crop_x + w]
+            ni = ni[crop_y:crop_y + h, crop_x:crop_x + w, :]
+
+        mask = (na > 0) & magenta_mask
+        if np.any(magenta_mask != mask):
+            raise ValueError(f'Not all magenta pixels of sprite {self.sprite.name} have a defined mask in {self.mask.name}')
+
+        masked = ni[mask]
+        colours = set(map(tuple, masked))
+        npmask = np.zeros((h, w), dtype=np.uint8)
+        new_masked = np.zeros(masked.shape[0], dtype=np.uint8)
+
+        for c in colours:
+            m = grf.PALETTE_IDX.get(c)
+            if m is None:
+                raise ValueError(f'Color {c} is not in the palette in sprite {self.mask.name}')
+            new_masked[(masked == c).all(axis=1)] = m
+
+        npmask[mask] = new_masked
+        return w, h, xofs + crop_x, yofs + crop_y, npimg, npalpha, npmask
+
+
+    def get_image_files(self):
+        return ()
+
+
+    def get_resource_files(self):
+        return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files() + self.mask.get_resource_files()
+
+
+    def get_fingerprint(self):
+        return {
+            'class': self.__class__.__name__,
+            'sprite': self.sprite.get_fingerprint(),
+            'mask': self.mask.get_fingerprint(),
+        }
+
+
 class DebugRecolourSprite(grf.Sprite):
     def __init__(self, sprite, factors):
         self.sprite = sprite

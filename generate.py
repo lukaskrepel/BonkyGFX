@@ -291,6 +291,18 @@ imgback2x = lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')
 replace_old(1408, tmpl_road_depot('road_depot', (imgfront1x, imgback1x), (imgfront2x, imgback2x)))
 
 
+@lib.template(grf.FileSprite)
+def tmpl_water(funcs, z, suffix, x):
+    magenta, mask = funcs
+    func = lambda *args, **kw: lib.MagentaAndMask(magenta(*args, **kw), mask(*args, **kw))
+    return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
+
+
+ase_magenta = lib.aseidx(TERRAIN_DIR / 'shorelines_1x.ase', layer='Magenta')
+ase_mask = lib.aseidx(TERRAIN_DIR / 'shorelines_1x.ase', ignore_layer='Magenta')
+replace_old(4061, tmpl_water('water', (ase_magenta, ase_mask), None, 'flat', 0))
+
+
 if DEBUG_ZOOM:
     def wrap_sprite(sprite):
         return lib.DebugRecolourSprite(sprite, (1, 0, 0) if sprite.zoom == ZOOM_NORMAL else (0, 0, 1))
