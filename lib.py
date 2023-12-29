@@ -175,7 +175,7 @@ class MagentaToLight(grf.Sprite):
         colours = list(set(map(tuple, ni[order_mask])))
         if len(colours) != 4:
             raise ValueError(f'Expected 4 colors in order mask, found {len(colours)} in {self.order.name}')
-        colours.sort(key=lambda x: int(x[0]) + x[1] + x[2])
+        colours.sort(key=lambda x: int(x[0]) + x[1] + x[2], reverse=True)
 
         order_mask = order_mask[crop_y:crop_y + h, crop_x:crop_x + w] & magenta_mask
         order = ni[crop_y:crop_y + h, crop_x:crop_x + w][order_mask]
