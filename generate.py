@@ -96,8 +96,9 @@ replace_old(3981, temperate_ground)  # 100% grass
 
 ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rough_2x.ase', colourkey=(0, 0, 255))
 replace_old(4000, tmpl_groundtiles_extra('temperate_rough', ase, ZOOM_2X))
-ase = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase', colourkey=(0, 0, 255))
-replace_old(4023, tmpl_groundtiles('temperate_rocks', None, ase, 0))
+ase1x = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks_1x.ase')
+ase2x = lib.AseImageFile(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase', colourkey=(0, 0, 255))
+replace_old(4023, tmpl_groundtiles('temperate_rocks', ase1x, ase2x, 0))
 ase1x = lib.aseidx(TERRAIN_DIR / 'tropical_groundtiles_desert_1x.ase')
 ase2x = lib.aseidx(TERRAIN_DIR / 'tropical_groundtiles_desert_2x.ase')
 tropical_desert = tmpl_groundtiles('tropical_desert', ase1x, ase2x, 0)
