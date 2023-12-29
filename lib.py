@@ -458,9 +458,9 @@ def debug_light_cycle(sprites, horizontal=False):
     ON = (240, 208, 0)
     OFF = (0, 0, 0)
     recolours = [
-        {0xf1: ON, 0xf2: OFF, 0xf3: OFF, 0xf4: OFF},
-        {0xf1: OFF, 0xf2: ON, 0xf3: OFF, 0xf4: OFF},
-        {0xf1: OFF, 0xf2: OFF, 0xf3: ON, 0xf4: OFF},
         {0xf1: OFF, 0xf2: OFF, 0xf3: OFF, 0xf4: ON},
+        {0xf1: OFF, 0xf2: OFF, 0xf3: ON, 0xf4: OFF},
+        {0xf1: OFF, 0xf2: ON, 0xf3: OFF, 0xf4: OFF},
+        {0xf1: ON, 0xf2: OFF, 0xf3: OFF, 0xf4: OFF},
     ]
     debug_recolour(sprites, recolours, horizontal=horizontal)
