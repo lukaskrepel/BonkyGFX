@@ -110,9 +110,9 @@ replace_old(4023, tmpl_groundtiles('temperate_rocks', ase1x, ase2x, 0))
 ase1x = lib.aseidx(TERRAIN_DIR / 'tropical_groundtiles_desert_1x.ase')
 ase2x = lib.aseidx(TERRAIN_DIR / 'tropical_groundtiles_desert_2x.ase')
 tropical_desert = tmpl_groundtiles('tropical_desert', ase1x, ase2x, 0)
-replace_old(4550, tropical_desert)
+replace_old(4550, tropical_desert, mode=TROPICAL)
 ase = lib.AseImageFile(TERRAIN_DIR / 'tropical_groundtiles_deserttransition_1x.ase')
-replace_old(4512, tmpl_groundtiles('tropical_transition', ase, None, 0))
+replace_old(4512, tmpl_groundtiles('tropical_transition', ase, None, 0), mode=TROPICAL)
 
 ase1x = lib.AseImageFile(TERRAIN_DIR / 'general_concretetiles_1x.ase', colourkey=(0, 0, 255))
 ase2x = lib.AseImageFile(TERRAIN_DIR / 'general_concretetiles_2x.ase', colourkey=(0, 0, 255))
@@ -193,6 +193,32 @@ def tmpl_roadtiles(func, z, x, y):
     ]
 
 
+def compose_sprites(a, b, **kw):
+    compose = lambda a, b: lib.CompositeSprite(
+        (a, b),
+        name=f'{a.name}_{b.name}',
+        **kw,
+    )
+
+    def list_zooms(s):
+        if isinstance(s, grf.AlternativeSprites):
+            return {x.zoom for x in s.sprites}
+        return {s.zoom}
+
+    def get_sprite(s, zoom):
+        if isinstance(s, grf.AlternativeSprites):
+            return s.get_sprite(zoom=zoom)
+        return s
+
+    a_zooms, b_zooms = list_zooms(a), list_zooms(b)
+    common_zooms = a_zooms & b_zooms
+
+    sprites = [compose(get_sprite(a, zoom), get_sprite(b, zoom)) for zoom in common_zooms]
+    if len(sprites) == 1:
+        return sprites[0]
+    return grf.AlternativeSprites(*sprites)
+
+
 def make_infra_overlay_sprites(ground, infra):
     GROUND_INFRA_RANGES = (
         ([0] * 11, range(11)),
@@ -202,14 +228,7 @@ def make_infra_overlay_sprites(ground, infra):
     res = []
     for rg, ri in GROUND_INFRA_RANGES:
         for i, j in zip(rg, ri):
-            sg, si = ground[i], infra[j]
-            assert isinstance(sg, grf.AlternativeSprites) and isinstance(si, grf.AlternativeSprites)
-            compose = lambda zoom: lib.CompositeSprite(
-                (sg.get_sprite(zoom=zoom), si.get_sprite(zoom=zoom)),
-                name='{sg.name}_{si.name}_{z}x',
-                colourkey=(0, 0, 255)
-            )
-            res.append(grf.AlternativeSprites(compose(ZOOM_NORMAL), compose(ZOOM_2X)))
+            res.append(compose_sprites(ground[i], infra[j], colourkey=(0, 0, 255)))
     return res
 
 
@@ -307,9 +326,44 @@ def tmpl_water(funcs, z, suffix, x):
     return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
 
 
+@lib.template(grf.FileSprite)
+def tmpl_water_full(funcs, z):
+    x = y = 0
+    magenta, mask = funcs
+    func = lambda *args, **kw: lib.MagentaAndMask(magenta(*args, **kw), mask(*args, **kw))
+    return [
+        func('full', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('1', 81 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('2', 161 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('3', 241 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('4', 321 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('5', 399 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('6', 479 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('7', 559 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('8', 639 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('9', 719 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('10', 799 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('11', 879 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('12', 959 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('13', 1039 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('14', 1119 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('15', 1197 * z + x * z, 1 * z + y * z, 64 * z, 48 * z - 1, xofs=-31 * z, yofs=16 * z),
+        func('16', 1277 * z + x * z, 1 * z + y * z, 64 * z, 16 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('17', 1357 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('18', 1437 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
+    ]
+
 ase_magenta = lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase')
 ase_mask = lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase', layer='Animated')
-replace_old(4061, tmpl_water('water', (ase_magenta, ase_mask), None, 'flat', 0))
+water = tmpl_water_full('water', (ase_magenta, ase_mask), None)
+replace_old(4061, water[0])
+
+
+def make_shore_sprites(ground, water):
+    ORDER = [16, 1, 2, 3, 4, 17, 6, 7, 8, 9, 15, 11, 12, 13, 14, 18]
+    return [compose_sprites(ground[i], water[i]) for i in ORDER]
+
+replace_new(0x0d, 0, make_shore_sprites(temperate_ground, water))
 
 
 def group_ranges(sprites):

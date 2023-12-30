@@ -212,14 +212,14 @@ class MagentaAndMask(grf.Sprite):
         super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
         self.mask = mask  # TODO sprite mask has a special meaning
 
-    def get_data_layers(self, encoder=None, *args, **kw):
+    def get_data_layers(self, encoder=None, crop=None):
         w, h, xofs, yofs, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder, crop=False)
         assert npmask is None
         ow, oh, _, _, ni, na, nm = self.mask.get_data_layers(encoder, crop=False)
         assert na is None and nm is None
         assert w == ow and h == oh
 
-        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha)
+        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha, crop=crop)
         magenta_mask = (
             (npimg[:, :, 0] == npimg[:, :, 2]) &
             (
@@ -356,7 +356,7 @@ class CompositeSprite(grf.Sprite):
             if nh is None:
                 nh = h
             if nw != w or nh != h:
-                raise RuntimeError(f'CompositeSprite layers have different size: ({nw}, {nh}) vs {s.name}({w}, {h})')
+                raise RuntimeError(f'CompositeSprite layers have different size: {self.sprites[0].name}({nw}, {nh}) vs {s.name}({w}, {h})')
 
             if na is None and ni.shape[2] == 4:
                 na = ni[:, :, 3]
@@ -499,11 +499,16 @@ def debug_recolour(sprites, recolours, horizontal=False):
                 for j in range(w):
                     rgb = recolour.get(npmask[i, j])
                     if rgb is None:
-                        npres[y + i, x + j][:3] = npimg[i, j][:3]
+                        npres[y + i, x + j, :3] = npimg[i, j, :3]
                     else:
-                        b = max(npimg[i, j][:3])
-                        npres[y + i, x + j][:3] = adjust_brightness(rgb, b)
-                    npres[y + i, x + j, 3] = npimg[i, j][3]
+                        b = max(npimg[i, j, :3])
+                        npres[y + i, x + j, :3] = adjust_brightness(rgb, b)
+                    if npalpha is not None:
+                        npres[y + i, x + j, 3] = npalpha[i, j]
+                    elif npimg.shape[2] == 4:
+                        npres[y + i, x + j, 3] = npimg[i, j, 3]
+                    else:
+                        npres[y + i, x + j, 3] = 255
 
     im = Image.fromarray(npres, mode='RGBA')
     im.show()
