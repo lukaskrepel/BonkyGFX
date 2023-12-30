@@ -16,7 +16,6 @@ TERRAIN_DIR = SPRITE_DIR / 'terrain'
 VEHICLE_DIR = SPRITE_DIR / 'vehicles'
 INFRA_DIR = SPRITE_DIR / 'infrastructure'
 STATION_DIR = SPRITE_DIR / 'stations'
-DEBUG_ZOOM = False
 MODES = (ALL_CLIMATES, TEMPERATE, ARCTIC, TOYLAND, TROPICAL)
 
 g = grf.NewGRF(
@@ -402,17 +401,6 @@ for mode in MODES:
             g.add(*sprites)
     if mode != ALL_CLIMATES:
         g.add(grf.Label(0, b''))
-
-
-if DEBUG_ZOOM:
-    def wrap_sprite(sprite):
-        return lib.DebugRecolourSprite(sprite, (1, 0, 0) if sprite.zoom == ZOOM_NORMAL else (0, 0, 1))
-
-    for s in g.generators:
-        if isinstance(s, grf.AlternativeSprites):
-            s.sprites = list(map(wrap_sprite, s.sprites))
-        elif isinstance(s, grf.SingleResourceAction):
-            s.resource = wrap_sprite(s.resource)
 
 
 def cmd_debugcc_add_args(parser):

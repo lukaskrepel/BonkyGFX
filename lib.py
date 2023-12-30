@@ -51,12 +51,6 @@ def move(sprites, *, xofs, yofs):
     return sprites
 
 
-def make_writable(nparray):
-    if not nparray.flags.writeable:
-        return nparray.copy()
-    return nparray
-
-
 def template(sprite_class):
     def decorator(tmpl_func):
         def wrapper(name, path1x, path2x, *args, layer=None, ignore_layer=None, **kw):
@@ -268,34 +262,6 @@ class MagentaAndMask(grf.Sprite):
             'class': self.__class__.__name__,
             'sprite': self.sprite.get_fingerprint(),
             'mask': self.mask.get_fingerprint(),
-        }
-
-
-class DebugRecolourSprite(grf.Sprite):
-    def __init__(self, sprite, factors):
-        self.sprite = sprite
-        self.factors = np.array(factors, dtype=np.uint8)
-        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp)
-
-    def get_data_layers(self, encoder=None, *args, **kw):
-        w, h, xofs, yofs, ni, na, nm = self.sprite.get_data_layers(encoder, crop=False)
-        factors = self.factors
-        if ni is not None:
-            ni = make_writable(ni)
-            ni[:, :, :3] *= self.factors
-        return w, h, xofs, yofs, ni, na, nm
-
-    def get_image_files(self):
-        return ()
-
-    def get_resource_files(self):
-        return super().get_resource_files() + (THIS_FILE, ) + self.sprite.get_resource_files()
-
-    def get_fingerprint(self):
-        return {
-            'class': self.__class__.__name__,
-            'sprite': self.sprite.get_fingerprint(),
-            'factors': tuple(map(int, self.factors)),
         }
 
 
