@@ -129,7 +129,7 @@ class CCReplacingFileSprite(grf.FileSprite):
         npmask[magenta_mask] = VALUE_TO_INDEX[value] + 0xC6
 
         if encoder is not None:
-            encoder.count_composing(time.time() - t0)
+            encoder.count_custom('Magenta and mask processing', time.time() - t0)
 
         return w, h, self.xofs + crop_x, self.yofs + crop_y, npimg, npalpha, npmask
 
@@ -146,10 +146,13 @@ class MagentaToLight(grf.Sprite):
 
     def get_data_layers(self, encoder=None, *args, **kw):
         w, h, xofs, yofs, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder, crop=False)
+
         assert npmask is None
         ow, oh, _, _, ni, na, nm = self.order.get_data_layers(encoder, crop=False)
         assert na is None and nm is None
         assert w == ow and h == oh
+
+        t0 = time.time()
 
         crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha)
         magenta_mask = (
@@ -181,6 +184,10 @@ class MagentaToLight(grf.Sprite):
         for i, c in enumerate(colours):
             ordered[(order == c).all(axis=1)] = 0xf1 + i
         npmask[order_mask] = ordered
+
+        if encoder is not None:
+            encoder.count_custom('Magenta and mask processing', time.time() - t0)
+
         return w, h, xofs + crop_x, yofs + crop_y, npimg, npalpha, npmask
 
 
@@ -212,6 +219,8 @@ class MagentaAndMask(grf.Sprite):
         ow, oh, _, _, ni, na, nm = self.mask.get_data_layers(encoder, crop=False)
         assert na is None and nm is None
         assert w == ow and h == oh
+
+        t0 = time.time()
 
         crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha, crop=crop)
         magenta_mask = (
@@ -246,6 +255,10 @@ class MagentaAndMask(grf.Sprite):
             new_masked[(masked == c).all(axis=1)] = m
 
         npmask[mask] = new_masked
+
+        if encoder is not None:
+            encoder.count_custom('Magenta and mask processing', time.time() - t0)
+
         return w, h, xofs + crop_x, yofs + crop_y, npimg, npalpha, npmask
 
 
@@ -317,6 +330,9 @@ class CompositeSprite(grf.Sprite):
         nw, nh = self.w, self.h
         for s in self.sprites:
             w, h, _, _, ni, na, nm = s.get_data_layers(encoder, crop=False)
+
+            t0 = time.time()
+
             if nw is None:
                 nw = w
             if nh is None:
@@ -364,6 +380,9 @@ class CompositeSprite(grf.Sprite):
                 else:
                     mask = (nm[:, :] != 0)
                     npmask[mask] = nm[mask]
+
+            if encoder is not None:
+                encoder.count_custom('Layering', time.time() - t0)
 
         crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha, crop=crop)
         if npmask is not None:
