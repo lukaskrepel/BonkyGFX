@@ -1,13 +1,15 @@
 import itertools
 import pathlib
+from collections import defaultdict
 from typing import Optional, Union
 
 from typeguard import typechecked
 
 import grf
-from grf import ZOOM_NORMAL, ZOOM_2X, ZOOM_4X
+from grf import ZOOM_NORMAL, ZOOM_2X, ZOOM_4X, TEMPERATE, ARCTIC, TROPICAL, TOYLAND, ALL_CLIMATES
 
 import lib
+
 
 SPRITE_DIR = pathlib.Path('sprites')
 TERRAIN_DIR = SPRITE_DIR / 'terrain'
@@ -15,6 +17,7 @@ VEHICLE_DIR = SPRITE_DIR / 'vehicles'
 INFRA_DIR = SPRITE_DIR / 'infrastructure'
 STATION_DIR = SPRITE_DIR / 'stations'
 DEBUG_ZOOM = False
+MODES = (ALL_CLIMATES, TEMPERATE, ARCTIC, TOYLAND, TROPICAL)
 
 g = grf.NewGRF(
     grfid=b'TODO',
@@ -24,22 +27,27 @@ g = grf.NewGRF(
     version=0,
 )
 
+old_sprites = defaultdict(dict)
+new_sprites = defaultdict(lambda: defaultdict(dict))
 
-def replace_old(first_id, sprites):
+
+def replace_old(first_id, sprites, *, mode=ALL_CLIMATES):
+    assert mode in MODES
     if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
         sprites = [sprites]
 
     amount = len(sprites)
     assert first_id + amount < 4896
-    g.add(grf.ReplaceOldSprites([(first_id, amount)]))
-    g.add(*sprites)
+    for i, s in enumerate(sprites):
+        old_sprites[mode][first_id + i] = s
 
 
-def replace_new(set_type, offset, sprites):
+def replace_new(set_type, offset, sprites, *, mode=ALL_CLIMATES):
+    assert mode in MODES
     if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
         sprites = [sprites]
-    g.add(grf.ReplaceNewSprites(set_type, len(sprites), offset=offset))
-    g.add(*sprites)
+    for i, s in enumerate(sprites):
+        new_sprites[mode][set_type][offset + i] = s
 
 
 @lib.template(grf.FileSprite)
@@ -208,9 +216,9 @@ def make_infra_overlay_sprites(ground, infra):
 road_town = tmpl_roadtiles('road_town', INFRA_DIR / 'road_town_1x.ase', INFRA_DIR / 'road_town_2x.ase', 0, 0)
 road = tmpl_roadtiles('road', INFRA_DIR / 'road_1x.ase', INFRA_DIR / 'road_2x.ase', 0, 0)
 replace_old(1313, make_infra_overlay_sprites(general_concrete, road_town))
-replace_old(1332, make_infra_overlay_sprites(temperate_ground, road))
+replace_old(1332, make_infra_overlay_sprites(temperate_ground, road), mode=TEMPERATE)
 road_noline = tmpl_roadtiles('road_noline', INFRA_DIR / 'road_noline_1x.ase', INFRA_DIR / 'road_noline_2x.ase', 0, 0)
-replace_old(1332, make_infra_overlay_sprites(temperate_ground, road_noline))
+replace_old(1332, make_infra_overlay_sprites(temperate_ground, road_noline), mode=TROPICAL)
 replace_old(1351, make_infra_overlay_sprites(tropical_desert, road_noline))
 
 
@@ -302,6 +310,44 @@ def tmpl_water(funcs, z, suffix, x):
 ase_magenta = lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase')
 ase_mask = lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase', layer='Animated')
 replace_old(4061, tmpl_water('water', (ase_magenta, ase_mask), None, 'flat', 0))
+
+
+def group_ranges(sprites):
+    last_id = cur_range = None
+    for i in sorted(sprites.keys()):
+        s = sprites[i]
+        if last_id is None:
+            cur_range = [s]
+        elif last_id + 1 == i and len(cur_range) < 255:
+            cur_range.append(s)
+        else:
+            yield (last_id - len(cur_range) + 1, cur_range)
+            cur_range = [s]
+        last_id = i
+    if cur_range:
+        yield (last_id - len(cur_range) + 1, cur_range)
+
+
+for mode in MODES:
+    ranges = list(group_ranges(old_sprites[mode]))
+    if not ranges and not new_sprites[mode]:
+        continue
+
+    if mode != ALL_CLIMATES:
+        if_value = {TEMPERATE: 0, ARCTIC: 1, TROPICAL: 2, TOYLAND: 3}[mode]
+        g.add(grf.If(is_static=False, variable=0x83, condition=0x03, value=if_value, skip=0, varsize=1))
+
+    if ranges:
+        g.add(grf.ReplaceOldSprites([(offset, len(sprites)) for offset, sprites in ranges]))
+        for offset, sprites in ranges:
+            g.add(*sprites)
+
+    for set_type, sprite_dict in new_sprites[mode].items():
+        for offset, sprites in group_ranges(sprite_dict):
+            g.add(grf.ReplaceNewSprites(set_type, len(sprites), offset=offset))
+            g.add(*sprites)
+    if mode != ALL_CLIMATES:
+        g.add(grf.Label(0, b''))
 
 
 if DEBUG_ZOOM:
