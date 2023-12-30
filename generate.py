@@ -299,8 +299,8 @@ def tmpl_water(funcs, z, suffix, x):
     return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
 
 
-ase_magenta = lib.aseidx(TERRAIN_DIR / 'shorelines_1x.ase', layer='Magenta')
-ase_mask = lib.aseidx(TERRAIN_DIR / 'shorelines_1x.ase', ignore_layer='Magenta')
+ase_magenta = lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase')
+ase_mask = lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase', layer='Animated')
 replace_old(4061, tmpl_water('water', (ase_magenta, ase_mask), None, 'flat', 0))
 
 
