@@ -97,7 +97,7 @@ def template(sprite_class):
 
 class CCReplacingFileSprite(grf.FileSprite):
     def __init__(self, file, *args, **kw):
-        super().__init__(file, *args, **kw, mask=None)
+        super().__init__(file, *args, **kw)
 
     def get_data_layers(self, encoder=None, *args, **kw):
         w, h, img, bpp = self._do_get_image(encoder)
@@ -109,8 +109,6 @@ class CCReplacingFileSprite(grf.FileSprite):
 
         self.bpp = bpp
         npimg = np.asarray(img).copy()
-
-        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, None)
 
         magenta_mask = (
             (npimg[:, :, 0] == npimg[:, :, 2]) &
@@ -125,13 +123,18 @@ class CCReplacingFileSprite(grf.FileSprite):
         npimg[magenta_mask, 1] = 0
         npimg[magenta_mask, 2] = 0
 
-        npmask = np.zeros((h, w), dtype=np.uint8)
-        npmask[magenta_mask] = VALUE_TO_INDEX[value] + 0xC6
+        mask = np.zeros((h, w), dtype=np.uint8)
+        mask[magenta_mask] = VALUE_TO_INDEX[value] + 0xC6
+
+        if bpp == grf.BPP_32:
+            rgb, alpha = npimg[:, :, :3], npimg[:, :, 3]
+        else:
+            rgb, alpha = npimg, None
 
         if encoder is not None:
             encoder.count_custom('Magenta and mask processing', time.time() - t0)
 
-        return w, h, self.xofs + crop_x, self.yofs + crop_y, npimg, npalpha, npmask
+        return w, h, rgb, alpha, mask
 
 
     def get_resource_files(self):
@@ -145,16 +148,15 @@ class MagentaToLight(grf.Sprite):
         super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
 
     def get_data_layers(self, encoder=None, *args, **kw):
-        w, h, xofs, yofs, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder, crop=False)
+        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder)
 
         assert npmask is None
-        ow, oh, _, _, ni, na, nm = self.order.get_data_layers(encoder, crop=False)
-        assert na is None and nm is None
+        ow, oh, ni, na, nm = self.order.get_data_layers(encoder)
+        assert nm is None
         assert w == ow and h == oh
 
         t0 = time.time()
 
-        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha)
         magenta_mask = (
             (npimg[:, :, 0] == npimg[:, :, 2]) &
             (
@@ -163,19 +165,14 @@ class MagentaToLight(grf.Sprite):
             )
         )
 
-        if na is None:
-            assert ni.shape[2] == 4
-            na = ni[:, :, 3]
-            ni = ni[:, :, :3]
-
         order_mask = (na > 0)
         colours = list(set(map(tuple, ni[order_mask])))
         if len(colours) != 4:
             raise ValueError(f'Expected 4 colors in order mask, found {len(colours)} in {self.order.name}')
         colours.sort(key=lambda x: int(x[0]) + x[1] + x[2], reverse=True)
 
-        order_mask = order_mask[crop_y:crop_y + h, crop_x:crop_x + w] & magenta_mask
-        order = ni[crop_y:crop_y + h, crop_x:crop_x + w][order_mask]
+        order_mask &= magenta_mask
+        order = ni[order_mask]
         if np.any(magenta_mask != order_mask):
             raise ValueError(f'Not all magenta pixels of sprite {self.sprite.name} have a defined order in {self.order.name}')
 
@@ -188,16 +185,13 @@ class MagentaToLight(grf.Sprite):
         if encoder is not None:
             encoder.count_custom('Magenta and mask processing', time.time() - t0)
 
-        return w, h, xofs + crop_x, yofs + crop_y, npimg, npalpha, npmask
-
+        return w, h, npimg, npalpha, npmask
 
     def get_image_files(self):
         return ()
 
-
     def get_resource_files(self):
         return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files() + self.order.get_resource_files()
-
 
     def get_fingerprint(self):
         return {
@@ -214,15 +208,14 @@ class MagentaAndMask(grf.Sprite):
         self.mask = mask  # TODO sprite mask has a special meaning
 
     def get_data_layers(self, encoder=None, crop=None):
-        w, h, xofs, yofs, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder, crop=False)
+        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder)
         assert npmask is None
-        ow, oh, _, _, ni, na, nm = self.mask.get_data_layers(encoder, crop=False)
-        assert na is None and nm is None
+        ow, oh, ni, na, nm = self.mask.get_data_layers(encoder)
+        assert nm is None
         assert w == ow and h == oh
 
         t0 = time.time()
 
-        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha, crop=crop)
         magenta_mask = (
             (npimg[:, :, 0] == npimg[:, :, 2]) &
             (
@@ -230,14 +223,6 @@ class MagentaAndMask(grf.Sprite):
                 ((npimg[:, :, 1] == 0) & (npimg[:, :, 0] != 0))
             )
         )
-
-        if na is None:
-            assert ni.shape[2] == 4
-            na = ni[crop_y:crop_y + h, crop_x:crop_x + w, 3]
-            ni = ni[crop_y:crop_y + h, crop_x:crop_x + w, :3]
-        else:
-            na = na[crop_y:crop_y + h, crop_x:crop_x + w]
-            ni = ni[crop_y:crop_y + h, crop_x:crop_x + w, :]
 
         mask = (na > 0) & magenta_mask
         if np.any(magenta_mask != mask):
@@ -259,7 +244,7 @@ class MagentaAndMask(grf.Sprite):
         if encoder is not None:
             encoder.count_custom('Magenta and mask processing', time.time() - t0)
 
-        return w, h, xofs + crop_x, yofs + crop_y, npimg, npalpha, npmask
+        return w, h, npimg, npalpha, npmask
 
 
     def get_image_files(self):
@@ -329,7 +314,7 @@ class CompositeSprite(grf.Sprite):
         npmask = None
         nw, nh = self.w, self.h
         for s in self.sprites:
-            w, h, _, _, ni, na, nm = s.get_data_layers(encoder, crop=False)
+            w, h, ni, na, nm = s.get_data_layers(encoder)
 
             t0 = time.time()
 
@@ -339,10 +324,6 @@ class CompositeSprite(grf.Sprite):
                 nh = h
             if nw != w or nh != h:
                 raise RuntimeError(f'CompositeSprite layers have different size: {self.sprites[0].name}({nw}, {nh}) vs {s.name}({w}, {h})')
-
-            if na is None and ni.shape[2] == 4:
-                na = ni[:, :, 3]
-                ni = ni[:, :, :3]
 
             if ni is not None:
                 if npimg is None or na is None:
@@ -360,7 +341,7 @@ class CompositeSprite(grf.Sprite):
                         npalpha[full_mask] = 255
 
                     if npalpha is None:
-                        npalpha_norm_mask = np.full((len(partial_mask)), 1.0)
+                        npalpha_norm_mask = np.full(partial_mask.sum(), 1.0)
                     else:
                         npalpha_norm_mask = npalpha[partial_mask] / 255.0
 
@@ -384,18 +365,14 @@ class CompositeSprite(grf.Sprite):
             if encoder is not None:
                 encoder.count_custom('Layering', time.time() - t0)
 
-        crop_x, crop_y, w, h, npimg, npalpha = self._do_crop(w, h, npimg, npalpha, crop=crop)
-        if npmask is not None:
-            npmask = npmask[crop_y: crop_y + h, crop_x: crop_x + w]
-
         colourkey = self.get_colourkey()
         if colourkey is not None:
             mask = np.all(np.equal(npimg, colourkey), axis=2)
             if np.any(mask):
                 if npalpha is None:
-                    npalpha = np.fill((h, w), 255, dtype=np.uint8)
+                    npalpha = np.full((h, w), 255, dtype=np.uint8)
                 npalpha[mask] = 0
-        return w, h, self.xofs + crop_x, self.yofs + crop_y, npimg, npalpha, npmask
+        return w, h, npimg, npalpha, npmask
 
     def get_resource_files(self):
         res = [THIS_FILE]
