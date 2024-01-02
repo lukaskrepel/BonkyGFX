@@ -37,6 +37,17 @@ old_sprites = defaultdict(dict)
 new_sprites = defaultdict(lambda: defaultdict(dict))
 
 
+for feature in (grf.RV, grf.TRAIN, grf.SHIP, grf.AIRCRAFT):
+    count = grf.DisableDefault.DISABLE_INFO[feature][0]
+    g.add(grf.DefineMultiple(
+        feature=feature,
+        first_id=0,
+        count=count,
+        props={
+            'climates_available': [grf.ALL_CLIMATES] * count,
+        }
+    ))
+
 def replace_old(first_id, sprites, *, mode=0):
     if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
         sprites = [sprites]
