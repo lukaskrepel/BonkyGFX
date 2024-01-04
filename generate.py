@@ -180,6 +180,7 @@ airport_tiles[17].replace_new(0x10, 12)
 
 @lib.template(grf.FileSprite)
 def tmpl_roadtiles(func, z, x, y):
+    x = y = 0
     return [
         func('y', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
         func('x', 66 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),

@@ -244,10 +244,10 @@ class CCReplacingFileSprite(grf.FileSprite):
     def __init__(self, file, *args, **kw):
         super().__init__(file, *args, **kw)
 
-    def get_data_layers(self, encoder=None, *args, **kw):
-        w, h, img, bpp = self._do_get_image(encoder)
+    def get_data_layers(self, context, *args, **kw):
+        w, h, img, bpp = self._do_get_image(context)
 
-        t0 = time.time()
+        timer = context.start_timer()
 
         if bpp != grf.BPP_32 and bpp != grf.BPP_24:
             raise RuntimeError('Only 32-bit RGB sprites are currently supported for CC replacement')
@@ -276,8 +276,7 @@ class CCReplacingFileSprite(grf.FileSprite):
         else:
             rgb, alpha = npimg, None
 
-        if encoder is not None:
-            encoder.count_custom('Magenta and mask processing', time.time() - t0)
+        timer.count_custom('Magenta and mask processing')
 
         return w, h, rgb, alpha, mask
 
@@ -292,15 +291,15 @@ class MagentaToLight(grf.Sprite):
         self.order = order
         super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
 
-    def get_data_layers(self, encoder=None, *args, **kw):
-        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder)
+    def get_data_layers(self, context):
+        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(context)
 
         assert npmask is None
-        ow, oh, ni, na, nm = self.order.get_data_layers(encoder)
+        ow, oh, ni, na, nm = self.order.get_data_layers(context)
         assert nm is None
         assert w == ow and h == oh
 
-        t0 = time.time()
+        timer = context.start_timer()
 
         magenta_mask = (
             (npimg[:, :, 0] == npimg[:, :, 2]) &
@@ -327,8 +326,7 @@ class MagentaToLight(grf.Sprite):
             ordered[(order == c).all(axis=1)] = 0xf1 + i
         npmask[order_mask] = ordered
 
-        if encoder is not None:
-            encoder.count_custom('Magenta and mask processing', time.time() - t0)
+        timer.count_custom('Magenta and mask processing')
 
         return w, h, npimg, npalpha, npmask
 
@@ -352,14 +350,14 @@ class MagentaAndMask(grf.Sprite):
         super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
         self.mask = mask  # TODO sprite mask has a special meaning
 
-    def get_data_layers(self, encoder=None, crop=None):
-        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(encoder)
+    def get_data_layers(self, context):
+        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(context)
         assert npmask is None
-        ow, oh, ni, na, nm = self.mask.get_data_layers(encoder)
+        ow, oh, ni, na, nm = self.mask.get_data_layers(context)
         assert nm is None
         assert w == ow and h == oh
 
-        t0 = time.time()
+        timer = context.start_timer()
 
         magenta_mask = (
             (npimg[:, :, 0] == npimg[:, :, 2]) &
@@ -386,8 +384,7 @@ class MagentaAndMask(grf.Sprite):
 
         npmask[mask] = new_masked
 
-        if encoder is not None:
-            encoder.count_custom('Magenta and mask processing', time.time() - t0)
+        timer.count_custom('Magenta and mask processing')
 
         return w, h, npimg, npalpha, npmask
 
@@ -449,15 +446,14 @@ class CompositeSprite(grf.Sprite):
         self.sprites = sprites
         super().__init__(sprites[0].w, sprites[0].h, xofs=sprites[0].xofs, yofs=sprites[0].yofs, zoom=sprites[0].zoom, **kw)
 
-    def get_data_layers(self, encoder=None):
+    def get_data_layers(self, context):
         npimg = None
         npalpha = None
         npmask = None
         nw, nh = self.w, self.h
         for s in self.sprites:
-            w, h, ni, na, nm = s.get_data_layers(encoder)
-
-            t0 = time.time()
+            w, h, ni, na, nm = s.get_data_layers(context)
+            timer = context.start_timer()
 
             if nw is None:
                 nw = w
@@ -503,8 +499,7 @@ class CompositeSprite(grf.Sprite):
                     mask = (nm[:, :] != 0)
                     npmask[mask] = nm[mask]
 
-            if encoder is not None:
-                encoder.count_custom('Layering', time.time() - t0)
+            timer.count_custom('Layering')
 
         return w, h, npimg, npalpha, npmask
 
