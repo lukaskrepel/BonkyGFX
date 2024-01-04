@@ -321,7 +321,7 @@ def tmpl_road_depot(funcs, z):
 
     def sprite(suffix, func, x, y, h, ox, oy):
         xofs = -31 * z + ox * z
-        yofs = 32 * z - h * z + oy * z - z - 1
+        yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
         return func(
             suffix,
             1 * z + x * z, 1 * z + y * z, 64 * z, h * z - z + 1,
