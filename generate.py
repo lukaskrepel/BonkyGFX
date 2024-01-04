@@ -205,32 +205,6 @@ def tmpl_roadtiles(func, z, x, y):
     ]
 
 
-def compose_sprites(a, b, **kw):
-    compose = lambda a, b: lib.CompositeSprite(
-        (a, b),
-        name=f'{a.name}_{b.name}',
-        **kw,
-    )
-
-    def list_zooms(s):
-        if isinstance(s, grf.AlternativeSprites):
-            return {x.zoom for x in s.sprites}
-        return {s.zoom}
-
-    def get_sprite(s, zoom):
-        if isinstance(s, grf.AlternativeSprites):
-            return s.get_sprite(zoom=zoom)
-        return s
-
-    a_zooms, b_zooms = list_zooms(a), list_zooms(b)
-    common_zooms = a_zooms & b_zooms
-
-    sprites = [compose(get_sprite(a, zoom), get_sprite(b, zoom)) for zoom in common_zooms]
-    if len(sprites) == 1:
-        return sprites[0]
-    return grf.AlternativeSprites(*sprites)
-
-
 road_town = lib.SpriteCollection('road_town') \
     .add(INFRA_DIR / 'road_town_1x.ase',
          tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
