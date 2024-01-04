@@ -3,11 +3,13 @@ import pathlib
 import subprocess
 import time
 import tempfile
+from collections import defaultdict
 
 import numpy as np
 from PIL import Image
 
 import grf
+from grf import ZOOM_NORMAL, ZOOM_2X, ZOOM_4X, TEMPERATE, ARCTIC, TROPICAL, TOYLAND, ALL_CLIMATES
 
 
 # VALUE_TO_BRIGHTNESS = np.array([0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 91, 91, 92, 93, 94, 95, 95, 96, 97, 98, 99, 100, 100, 101, 102, 103, 104, 105, 105, 106, 107, 108, 109, 109, 110, 111, 112, 113, 114, 114, 115, 116, 117, 118, 118, 119, 120, 121, 122, 123, 123, 124, 125, 126, 127, 127, 128, 129, 130, 131, 107, 108, 109, 109, 110, 111, 111, 112, 113, 113, 114, 115, 115, 116, 117, 117, 118, 119, 119, 120, 121, 121, 122, 123, 123, 124, 125, 125, 126, 127, 127, 128, 129, 130, 130, 131, 132, 132, 133, 134, 134, 135, 136, 136, 137, 138, 138, 139, 140, 140, 120, 120, 121, 121, 122, 122, 123, 124, 124, 125, 125, 126, 126, 127, 127, 128, 129, 129, 130, 130, 131, 131, 132, 133, 133, 134, 134, 135, 135, 136, 137, 137, 138, 138, 139, 139, 140, 141, 141, 142, 142, 143, 143, 144, 145, 146, 146, 147, 147, 148, 127, 128, 128, 128, 128, 130, 130, 131, 131, 132, 132, 133, 133, 134, 134, 135, 135, 136, 136, 137, 137, 138, 138, 139, 139, 140, 140, 141, 141, 142, 143, 143, 144, 144, 144, 145, 145, 146, 146, 147, 147, 148, 148, 149, 149, 150, 150, 151, 151, 152, 130, 131, 131, 132, 132, 133, 133, 134, 134, 135, 135, 136, 136, 137, 137, 138, 138, 139, 140, 140, 141, 141, 142, 142, 143, 143, 144, 144, 145, 145, 146, 146, 147, 147, 148, 148, 149, 150, 150, 151, 151, 152, 152, 153, 153, 154, 155, 155, 156, 156, 130, 130, 131, 131, 132, 132, 132, 133, 134, 134, 135, 135, 136, 136, 137, 137, 138, 139, 139, 140, 140, 141, 141, 142, 142, 143, 144, 144, 145, 145, 146, 146, 147, 147, 148, 149, 149, 150, 150, 151, 151, 152, 152, 153, 154, 154, 155, 156, 156, 157, 131, 132, 132, 133, 133, 134, 134, 135, 135, 136, 136, 137, 138, 138, 139, 139, 140, 140, 141, 141, 142, 143, 143, 144, 144, 145, 145, 146, 147, 147, 148, 149, 149, 150, 151, 151, 152, 152, 153, 154, 154, 155, 156, 156, 157, 157, 158, 159, 160, 160, 161, 162, 162, 163, 164, 165, 166, 166, 167, 168, 168, 169, 170, 171, 172, 173, 174, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 191, 192, 193, 194, 195, 197, 198, 199, 201, 203, 204, 206, 208, 210, 211, 214, 216, 218, 218])
@@ -19,13 +21,12 @@ VALUE_TO_INDEX = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
 THIS_FILE = grf.PythonFile(__file__)
 
-
 ASE_IDX = {}
-def aseidx(path, layer=None, ignore_layer=None):
-    key = (path, layer, ignore_layer)
+def aseidx(path, layer=None, ignore_layer=None, colourkey=None):
+    key = (path, layer, ignore_layer, colourkey)
     ase = ASE_IDX.get(key)
     if ase is None:
-        ase = ASE_IDX[key] = AseImageFile(path, layer=layer, ignore_layer=ignore_layer)
+        ase = ASE_IDX[key] = AseImageFile(path, layer=layer, ignore_layer=ignore_layer, colourkey=colourkey)
     return ase
 
 
@@ -53,7 +54,7 @@ def move(sprites, *, xofs, yofs):
 
 def template(sprite_class):
     def decorator(tmpl_func):
-        def wrapper(name, path1x, path2x, *args, layer=None, ignore_layer=None, **kw):
+        def wrapper(name, paths, zoom, *args):
             def make_func_lists(path, zoom):
                 if path is None:
                     return None
@@ -67,7 +68,7 @@ def template(sprite_class):
                     if isinstance(p, (str, pathlib.Path)):
                         p = aseidx(p)
                     def sprite_func(suffix, *args, **kw):
-                        return sprite_class(p, *args, **kw, zoom=zoom, name=name + f'_{suffix}_{z}x')
+                        return sprite_class(p, *args, **kw, zoom=zoom, name=name.format(suffix=suffix))
                     return sprite_func
 
                 res = list(map(make_sprite_func, it))
@@ -75,24 +76,168 @@ def template(sprite_class):
                     return res[0]
                 return res
 
-            func1x = make_func_lists(path1x, grf.ZOOM_NORMAL)
-            func2x = make_func_lists(path2x, grf.ZOOM_2X)
-            if path1x is None:
-                if path2x is None:
-                    raise ValueError('At least one of path1x or path2x should be not None')
-                return tmpl_func(func2x, 2, *args, **kw)
-            else:
-                if path2x is None:
-                    return tmpl_func(func1x, 1, *args, **kw)
-                res = []
-                x1 = tmpl_func(func1x, 1, *args, **kw)
-                x2 = tmpl_func(func2x, 2, *args, **kw)
-                for sprites in zip(x1, x2):
-                    res.append(grf.AlternativeSprites(*sprites))
-                return res
+            funcs = make_func_lists(paths, zoom)
+            return tmpl_func(funcs, zoom_to_factor(zoom), *args)
 
         return wrapper
     return decorator
+
+
+old_sprites = defaultdict(dict)
+new_sprites = defaultdict(lambda: defaultdict(dict))
+old_sprites_collection = defaultdict(lambda: defaultdict(int))
+new_sprites_collection = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+
+
+dict_to_key = lambda d : tuple(sorted(d.items()))
+
+def replace_old(collection, first_id, sprites, **kw):
+    if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
+        sprites = [sprites]
+
+    amount = len(sprites)
+    assert first_id + amount < 4896
+    key = dict_to_key(kw)
+    old_sprites_collection[key][collection] += len(sprites)
+    for i, s in enumerate(sprites):
+        old_sprites[key][first_id + i] = s
+
+
+def replace_new(collection, set_type, offset, sprites, **kw):
+    if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
+        sprites = [sprites]
+    key = dict_to_key(kw)
+    new_sprites_collection[key][set_type][collection] += len(sprites)
+    for i, s in enumerate(sprites):
+        new_sprites[key][set_type][offset + i] = s
+
+
+class SpriteCollection:
+    def __init__(self, name):
+        self.name = name
+        self.sprites = []
+
+    def __getitem__(self, sl):
+        if isinstance(sl, int):
+            sl = slice(sl, sl + 1)
+        res = SpriteCollection(self.name)
+        for zoom, kw, sprites in self.sprites:
+            res.sprites.append((zoom, kw, sprites[sl]))
+        return res
+
+    def add(self, files, template, zoom, *args, **kw):
+        if not isinstance(files, tuple):
+            files = (files,)
+        files = tuple(aseidx(f) if isinstance(f, str) else f for f in files)
+        z = zoom_to_factor(zoom)
+        kwsuffix = ''
+        if 'thin' in kw:
+            kwsuffix = 'thin_' if kw['thin'] else 'thick_'
+        sprites = template(f'{self.name}_{{suffix}}_{kwsuffix}{z}x', files, zoom, *args)
+        assert all(s.zoom  == zoom for s in sprites)
+        self.sprites.append((zoom, kw, sprites))
+        return self
+
+    def compose_on(self, dest, pattern=None):
+        srckeys = set(tuple(p) for _, kw, _ in self.sprites for p in kw.items())
+        dstkeys = set(tuple(p) for _, kw, _ in dest.sprites for p in kw.items())
+
+        compose_keys = set()
+        # print(self.name, dest.name)
+        for srckeys in self.get_keys():
+            for dstkeys in dest.get_keys():
+                srckw = dict(srckeys)
+                dstkw = dict(dstkeys)
+                if any(k in dstkw and dstkw[k] != v for k, v in srckw.items()):
+                    # have same key with different values -> incompatible
+                    continue
+                compose_keys.add(dict_to_key({**dstkw, **srckw}))
+        #         print('    ', srckw, dstkw)
+        # print()
+
+        res = SpriteCollection(f'{dest.name}+{self.name}')
+
+        def patternzip(dstl, srcl):
+            if pattern is None:
+                l = zip(dstl, srcl)
+            else:
+                l = ((None if i is None else dstl[i], srcl[j]) for i, j in pattern)
+            return [s if d is None else CompositeSprite((d, s)) for d, s in l]
+
+        for keys in compose_keys:
+            srcl = self.get_sprites(keys)
+            dstl = dest.get_sprites(keys)
+            # print(keys)
+            # for s in self.sprites:
+            #     print('SRC', s)
+            # for s in dest.sprites:
+            #     print('DST', s)
+            assert srcl is not None and dstl is not None
+            src1x, src2x = srcl
+            dst1x, dst2x = dstl
+            if src1x is not None and dst1x is not None:
+                res.sprites.append((ZOOM_NORMAL, dict(keys), patternzip(dst1x, src1x)))
+            if src2x is not None and dst2x is not None:
+                res.sprites.append((ZOOM_2X, dict(keys), patternzip(dst2x, src2x)))
+        return res
+
+    def get_keys(self):
+        keys1x = set(dict_to_key(kw) for zoom, kw, _ in self.sprites if zoom == ZOOM_NORMAL)
+        keys2x = set(dict_to_key(kw) for zoom, kw, _ in self.sprites if zoom == ZOOM_2X)
+        if len(keys2x) > len(keys1x):
+            return keys2x
+        return keys1x
+
+    def _find_sprites(self, keys, exact):
+        kw = dict(keys)
+        d = {}
+        for zoom, params, sprites in self.sprites:
+            if any(k not in kw for k in params):
+                continue
+            if any(k in params and params[k] != v for k, v in kw.items()):
+                continue
+            matches = sum(k in params for k in kw)
+            if zoom not in d or d[zoom][0] < matches:
+                d[zoom] = (matches, sprites)
+
+        # print(self.name, ', '.join(map(str, d.keys())), kw)
+        # for zoom in (ZOOM_NORMAL, ZOOM_2X):
+        #     if zoom in d:
+        #         print('  ', zoom_to_factor(zoom), ', '.join(x.name for x in d[zoom][1]))
+        # print()
+
+        if exact and all(v[0] != len(kw) for v in d.values()):
+            return None, None
+
+        return d.get(ZOOM_NORMAL, (0, None))[1], d.get(ZOOM_2X, (0, None))[1]
+
+    def get_sprites(self, keys):
+        return self._find_sprites(keys, False)
+
+    def get_exact_sprites(self, keys):
+        x1, x2 = self._find_sprites(keys, True)
+        if x2 is None and x1 is None:
+            return None
+        if x2 is None:
+            return x1
+        if x1 is None:
+            return x2
+        res = []
+        for x1, x2 in zip(x1, x2):
+            res.append(grf.AlternativeSprites(x1, x2))
+        return res
+
+    def replace_old(self, first_id, **kw):
+        for k in self.get_keys():
+            sprites = self.get_exact_sprites(k)
+            replace_old(self, first_id, sprites, **dict(k), **kw)
+        return self
+
+    def replace_new(self, set_type, offset, **kw):
+        for k in self.get_keys():
+            sprites = self.get_exact_sprites(k)
+            replace_new(self, set_type, offset, sprites, **dict(k), **kw)
+        return self
 
 
 class CCReplacingFileSprite(grf.FileSprite):
@@ -295,20 +440,16 @@ class AseImageFile(grf.ImageFile):
 
 
 class CompositeSprite(grf.Sprite):
-    def __init__(self, sprites, colourkey=None, **kw):
+    def __init__(self, sprites, **kw):
         if len(sprites) == 0:
             raise ValueError('CompositeSprite requires a non-empty list of sprites to compose')
         if len(set(s.zoom for s in sprites)) > 1:
             sprite_list = ', '.join(f'{s.name}<zoom={s.zoom}>' for s in sprites)
             raise ValueError(f'CompositeSprite requires a list of sprites of same zoom level: {sprite_list}')
         self.sprites = sprites
-        self.colourkey = colourkey
         super().__init__(sprites[0].w, sprites[0].h, xofs=sprites[0].xofs, yofs=sprites[0].yofs, zoom=sprites[0].zoom, **kw)
 
-    def get_colourkey(self):
-        return self.colourkey
-
-    def get_data_layers(self, encoder=None, crop=None):
+    def get_data_layers(self, encoder=None):
         npimg = None
         npalpha = None
         npmask = None
@@ -365,13 +506,6 @@ class CompositeSprite(grf.Sprite):
             if encoder is not None:
                 encoder.count_custom('Layering', time.time() - t0)
 
-        colourkey = self.get_colourkey()
-        if colourkey is not None:
-            mask = np.all(np.equal(npimg, colourkey), axis=2)
-            if np.any(mask):
-                if npalpha is None:
-                    npalpha = np.full((h, w), 255, dtype=np.uint8)
-                npalpha[mask] = 0
         return w, h, npimg, npalpha, npmask
 
     def get_resource_files(self):
@@ -379,7 +513,6 @@ class CompositeSprite(grf.Sprite):
         for s in self.sprites:
             res.extend(s.get_resource_files())
         return tuple(res)
-
 
     def get_fingerprint(self):
         return {
