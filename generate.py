@@ -285,9 +285,12 @@ def replace_rv_generation(path1x, path2x, generation):
     tmpl('rubber_loaded', 1, 13).replace_old(3468 + o)
 
 
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_firstgeneration_1x.ase', None, 1)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration_1x.ase', VEHICLE_DIR / 'road_lorries_secondgeneration_2x.ase', 2)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration_1x.ase', None, 3)
+gen1_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=0)
+gen2_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=1)
+gen3_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=2)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_firstgeneration_1x.ase', gen1_2x, 1)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration_1x.ase', gen2_2x, 2)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration_1x.ase', gen3_2x, 3)
 
 
 @lib.template(lib.CCReplacingFileSprite)

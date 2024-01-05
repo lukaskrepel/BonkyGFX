@@ -22,11 +22,11 @@ VALUE_TO_INDEX = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 THIS_FILE = grf.PythonFile(__file__)
 
 ASE_IDX = {}
-def aseidx(path, layer=None, ignore_layer=None, colourkey=None):
-    key = (path, layer, ignore_layer, colourkey)
+def aseidx(path, **kw):
+    key = (path, tuple(kw.items()))
     ase = ASE_IDX.get(key)
     if ase is None:
-        ase = ASE_IDX[key] = AseImageFile(path, layer=layer, ignore_layer=ignore_layer, colourkey=colourkey)
+        ase = ASE_IDX[key] = AseImageFile(path, **kw)
     return ase
 
 
@@ -406,10 +406,11 @@ class MagentaAndMask(grf.Sprite):
 
 
 class AseImageFile(grf.ImageFile):
-    def __init__(self, *args, layer=None, ignore_layer=None, **kw):
+    def __init__(self, *args, layer=None, ignore_layer=None, frame=None, **kw):
         super().__init__(*args, **kw)
         self.layer = layer
         self.ignore_layer = ignore_layer
+        self.frame = frame
 
     def load(self):
         if self._image is not None:
@@ -422,6 +423,9 @@ class AseImageFile(grf.ImageFile):
                 args.extend(('--layer', self.layer))
             if self.ignore_layer is not None:
                 args.extend(('--ignore-layer', self.ignore_layer))
+            if self.frame is not None:
+                args.extend(('--frame-range', f'{self.frame},{self.frame}'))
+
             res = subprocess.run(args + ['--save-as', f.name])
             if res.returncode != 0:
                 raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
