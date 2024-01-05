@@ -217,7 +217,7 @@ def tmpl_roadtiles(func, z, x, y):
 road_town = lib.SpriteCollection('road_town') \
     .add(INFRA_DIR / 'road_town_1x.ase',
          tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
-    .add(INFRA_DIR / 'road_town_2x.ase',
+    .add(lib.aseidx(INFRA_DIR / 'road_town_2x.ase', colourkey=(0, 0, 255)),
          tmpl_roadtiles, ZOOM_2X, 0, 0)
 
 road = lib.SpriteCollection('road') \
