@@ -425,7 +425,6 @@ class AseImageFile(grf.ImageFile):
                 args.extend(('--ignore-layer', self.ignore_layer))
             if self.frame is not None:
                 args.extend(('--frame-range', f'{self.frame},{self.frame}'))
-
             res = subprocess.run(args + ['--save-as', f.name])
             if res.returncode != 0:
                 raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
@@ -553,9 +552,10 @@ def adjust_brightness(c, brightness):
 def debug_recolour(sprites, recolours, horizontal=False):
     PADDING = 10
 
+    context = grf.WriteContext()
     slayers = []
     for i, s in enumerate(sprites):
-        slayers.append(s.get_data_layers())
+        slayers.append(s.get_data_layers(context))
 
     pos = []
     if horizontal:
@@ -583,24 +583,22 @@ def debug_recolour(sprites, recolours, horizontal=False):
             y += maxh + PADDING
 
     npres = np.zeros((y, x, 4), dtype=np.uint8)
-    for jj, s, (w, h, xofs, yofs, npimg, npalpha, npmask) in zip(range(len(sprites)), sprites, slayers):
-        if npmask is None:
+    for jj, s, (w, h, rgb, alpha, mask) in zip(range(len(sprites)), sprites, slayers):
+        if mask is None:
             raise ValueError(f'Sprite {s.name} has no mask!')
 
         for ii, recolour in enumerate(recolours):
             x, y = pos[ii][jj]
             for i in range(h):
                 for j in range(w):
-                    rgb = recolour.get(npmask[i, j])
-                    if rgb is None:
-                        npres[y + i, x + j, :3] = npimg[i, j, :3]
+                    mrgb = recolour.get(mask[i, j])
+                    if mrgb is None:
+                        npres[y + i, x + j, :3] = rgb[i, j, :]
                     else:
-                        b = max(npimg[i, j, :3])
-                        npres[y + i, x + j, :3] = adjust_brightness(rgb, b)
-                    if npalpha is not None:
-                        npres[y + i, x + j, 3] = npalpha[i, j]
-                    elif npimg.shape[2] == 4:
-                        npres[y + i, x + j, 3] = npimg[i, j, 3]
+                        b = max(rgb[i, j])
+                        npres[y + i, x + j, :3] = adjust_brightness(mrgb, b)
+                    if alpha is not None:
+                        npres[y + i, x + j, 3] = alpha[i, j]
                     else:
                         npres[y + i, x + j, 3] = 255
 
