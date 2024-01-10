@@ -412,13 +412,21 @@ class AseImageFile(grf.ImageFile):
         self.ignore_layer = ignore_layer
         self.frame = frame
 
+    def get_fingerprint(self):
+        return {
+            **super().get_fingerprint(),
+            'layer': self.layer,
+            'ignore_layer': self.ignore_layer,
+            'frame': self.frame,
+        }
+
     def load(self):
         if self._image is not None:
             return
 
         aseprite_executible = os.environ.get('ASEPRITE_EXECUTABLE', 'aseprite')
         with tempfile.NamedTemporaryFile(suffix='.png') as f:
-            args = [aseprite_executible, '-b', self.path, '--color-mode', 'rgb']
+            args = [aseprite_executible, '-b', str(self.path), '--color-mode', 'rgb']
             if self.layer is not None:
                 args.extend(('--layer', self.layer))
             if self.ignore_layer is not None:
