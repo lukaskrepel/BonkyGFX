@@ -406,7 +406,7 @@ class MagentaAndMask(grf.Sprite):
 
 
 class AseImageFile(grf.ImageFile):
-    def __init__(self, *args, layer=None, ignore_layer=None, frame=None, **kw):
+    def __init__(self, *args, layer=None, ignore_layer=None, frame=0, **kw):
         super().__init__(*args, **kw)
         self.layer = layer
         self.ignore_layer = ignore_layer

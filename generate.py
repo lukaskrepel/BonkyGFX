@@ -52,6 +52,8 @@ for feature in (grf.RV, grf.TRAIN, grf.SHIP, grf.AIRCRAFT):
 g.add(grf.Label(0, b''))
 
 
+# ------------------------------ Ground tiles ------------------------------
+
 @lib.template(grf.FileSprite)
 def tmpl_groundtiles(func, z, y):
     x = 0
@@ -186,61 +188,7 @@ airport_tiles[16].replace_new(0x15, 86)
 airport_tiles[17].replace_new(0x10, 12)
 
 
-@lib.template(grf.FileSprite)
-def tmpl_roadtiles(func, z, x, y):
-    x = y = 0
-    return [
-        func('y', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('x', 66 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('full', 131 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_y_ne', 196 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_x_nw', 261 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_y_sw', 326 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_x_se', 391 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('w', 456 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('n', 521 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('e', 586 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('s', 651 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-
-        func('ne', 846 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('se', 911 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('sw', 716 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('nw', 781 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-
-        func('slope_ne', 976 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('slope_se', 1041 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('slope_sw', 1106 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('slope_nw', 1171 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
-    ]
-
-
-road_town = lib.SpriteCollection('road_town') \
-    .add(INFRA_DIR / 'road_town_1x.ase',
-         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
-    .add(lib.aseidx(INFRA_DIR / 'road_town_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 0, 0)
-
-road = lib.SpriteCollection('road') \
-    .add(INFRA_DIR / 'road_1x.ase',
-         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
-    .add(lib.aseidx(INFRA_DIR / 'road_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=False) \
-    .add(lib.aseidx(INFRA_DIR / 'road_2x_thin.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=True)
-
-ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
-road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
-road.compose_on(temperate_ground, ROAD_COMPOSITION).replace_old(1332, climate=TEMPERATE)
-
-road_noline = lib.SpriteCollection('road_noline') \
-    .add(INFRA_DIR / 'road_noline_1x.ase',
-         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
-    .add(INFRA_DIR / 'road_noline_2x.ase',
-         tmpl_roadtiles, ZOOM_2X, 0, 0)
-
-road_noline.compose_on(temperate_ground, ROAD_COMPOSITION).replace_old(1332, climate=TROPICAL)
-road_noline.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
-
+# ------------------------------ Road Vehicles ------------------------------
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_road_8view(func, z, x, y):
@@ -310,6 +258,122 @@ lib.SpriteCollection('bus_gen2') \
     .replace_old(3284 + 192)
 
 
+# ------------------------------ Rail Vehicles ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_vehicle_rail_4view(func, z, x, y):
+    # Horizontal views have zoom-specific optimisation for perfect depot window alignment
+    return [
+        func( 'n', (1 +   0 + x * 87) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z),
+        func('ne', (2 +   8 + x * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z),
+        func( 'e', (3 +  30 + x * 87) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2, yofs=-9 * z),
+        func('se', (4 +  61 + x * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z),
+    ]
+
+
+@lib.template(grf.FileSprite)
+def tmpl_vehicle_rail_8view(func, z, x, y):
+    # Horizontal views have zoom-specific optimisation for perfect depot window alignment
+    return [
+        func( 'n', (1 +   0 + x * 174) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z),
+        func('ne', (2 +   8 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z),
+        func( 'e', (3 +  30 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2,  yofs=-9 * z),
+        func('se', (4 +  61 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z),
+        func( 's', (5 +  83 + x * 174) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z),
+        func('sw', (6 +  91 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z),
+        func( 'w', (7 + 113 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2,  yofs=-9 * z),
+        func('nw', (8 + 144 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z),
+    ]
+
+
+def wagon(name, sprite_id, x, y):
+    lib.SpriteCollection('wagon_' + name) \
+        .add(VEHICLE_DIR / 'rail_wagons_2x.ase', tmpl_vehicle_rail_4view, ZOOM_2X, x, y) \
+        .replace_old(sprite_id)
+
+wagon('passengers', 2733, 0, 0)  # temperate rail passenger wagon (full + empty)
+wagon('coal_empty', 2737, 0, 1)  # temperate rail coal wagon (empty)
+wagon('mail', 2741, 0, 2)  # temperate rail mail wagon (full + empty)
+wagon('oil', 2745, 0, 3)  # temperate rail oil wagon (full + empty)
+wagon('livestock', 2749, 0, 4)  # temperate rail livestock wagon (full + empty)
+wagon('goods', 2753, 0, 5)  # temperate rail goods wagon (full + empty)
+wagon('food', 2757, 0, 6)  # arctic rail food wagon (full + empty)
+wagon('grain_empty', 2761, 0, 7)  # temperate rail grain wagon (empty)
+wagon('wood_empty', 2765, 0, 8)  # temperate rail wood wagon (empty)
+wagon('steel_paper_empty', 2769, 0, 9)  # temperate rail steel/paper wagon (empty)
+wagon('ore_empty', 2773, 0, 10)  # temperate rail iron/coer ore wagon (empty)
+wagon('valuables', 2777, 0, 11)  # temperate rail valuables wagon (full + empty)
+wagon('coal_full', 2781, 1, 1)  # temperate rail coal wagon (full)
+wagon('grain_full', 2785, 1, 7)  # temperate rail grain wagon (full)
+wagon('wood_full', 2789, 1, 8)  # temperate rail wood wagon (full)
+wagon('steel_full', 2793, 1, 9)  # temperate rail steel wagon (full)
+wagon('iron_ore_full', 2797, 1, 10)  # temperate rail iron ore wagon (full)
+wagon('paper_full', 2801, 2, 9)  # arctic rail paper wagon (full)
+wagon('copper_ore_full', 2805, 1, 10)  # tropical rail copper ore wagon (full)
+wagon('water', 2809, 0, 12)  # tropical rail water wagon (full + empty)
+wagon('fruit_empty', 2813, 0, 13)  # tropical rail fruit wagon (empty)
+wagon('fruit_full', 2817, 1, 13)  # tropical rail fruit wagon (full)
+wagon('rubber_empty', 2821, 0, 14)  # tropical rail rubber wagon (empty)
+wagon('rubber_full', 2825, 1, 14)  # tropical rail rubber wagon (full)
+
+# ------------------------------ Road Infrastructure ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_roadtiles(func, z, x, y):
+    x = y = 0
+    return [
+        func('y', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('x', 66 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('full', 131 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('t_y_ne', 196 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('t_x_nw', 261 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('t_y_sw', 326 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('t_x_se', 391 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('w', 456 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('n', 521 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('e', 586 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('s', 651 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+
+        func('ne', 846 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('se', 911 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('sw', 716 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('nw', 781 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+
+        func('slope_ne', 976 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('slope_se', 1041 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('slope_sw', 1106 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
+        func('slope_nw', 1171 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
+    ]
+
+
+road_town = lib.SpriteCollection('road_town') \
+    .add(INFRA_DIR / 'road_town_1x.ase',
+         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
+    .add(lib.aseidx(INFRA_DIR / 'road_town_2x.ase', colourkey=(0, 0, 255)),
+         tmpl_roadtiles, ZOOM_2X, 0, 0)
+
+road = lib.SpriteCollection('road') \
+    .add(INFRA_DIR / 'road_1x.ase',
+         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
+    .add(lib.aseidx(INFRA_DIR / 'road_2x.ase', colourkey=(0, 0, 255)),
+         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=False) \
+    .add(lib.aseidx(INFRA_DIR / 'road_2x_thin.ase', colourkey=(0, 0, 255)),
+         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=True)
+
+ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
+road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
+road.compose_on(temperate_ground, ROAD_COMPOSITION).replace_old(1332, climate=TEMPERATE)
+
+road_noline = lib.SpriteCollection('road_noline') \
+    .add(INFRA_DIR / 'road_noline_1x.ase',
+         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
+    .add(INFRA_DIR / 'road_noline_2x.ase',
+         tmpl_roadtiles, ZOOM_2X, 0, 0)
+
+road_noline.compose_on(temperate_ground, ROAD_COMPOSITION).replace_old(1332, climate=TROPICAL)
+road_noline.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
+
+
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_road_depot(funcs, z):
     func_front, func_back = funcs
@@ -343,6 +407,8 @@ lib.SpriteCollection('road_depot') \
          tmpl_road_depot, ZOOM_2X, thin=True) \
     .replace_old(1408)
 
+
+# ------------------------------ Water ------------------------------
 
 @lib.template(grf.FileSprite)
 def tmpl_water(funcs, z, suffix, x):
@@ -388,6 +454,8 @@ water[0].replace_old(4061)
 WATER_COMPOSITION = [(x, x) for x in [16, 1, 2, 3, 4, 17, 6, 7, 8, 9, 15, 11, 12, 13, 14, 18]]
 water.compose_on(temperate_ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 
+
+# ------------------------------ Sprite replacement magic ------------------------------
 
 def group_ranges(sprites):
     last_id = cur_range = None
@@ -445,6 +513,8 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     if has_if:
         g.add(grf.Label(0, b''))
 
+
+# ------------------------------ Command line stuff ------------------------------
 
 def cmd_debugcc_add_args(parser):
     parser.add_argument('ase_file', help='Aseprite image file')
