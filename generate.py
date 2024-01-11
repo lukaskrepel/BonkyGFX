@@ -218,6 +218,9 @@ for start, amount in TREE_RANGES:
     for i in range(amount):
         tree('tree1', start + i * 7, TREE_DIR / 'temperate_tree_2x.ase')
 
+tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus_2x.ase')
+tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
+
 
 # ------------------------------ Road Vehicles ------------------------------
 
