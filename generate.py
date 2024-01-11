@@ -214,13 +214,18 @@ TREE_RANGES = [
     (1947, 9),  # toyland
 ]
 
-for start, amount in TREE_RANGES:
-    for i in range(amount):
-        tree('tree1', start + i * 7, TREE_DIR / 'temperate_tree_2x.ase')
+for i in range(19):
+    tree('temperate_tree', 1576 + i * 7, TREE_DIR / 'temperate_tree_2x.ase')
+
+for i in range(8):
+    tree('arctic_tree', 1709 + i * 7, TREE_DIR / 'arctic_tree_2x.ase')
+    tree('arctic_tree_snow', 1765 + i * 7, TREE_DIR / 'arctic_tree_snow_2x.ase')
+
+for i in range(18):
+    tree('tropic_tree', 1821 + i * 7, TREE_DIR / 'tropical_tree_2x.ase')
 
 tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus_2x.ase')
 tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
-
 
 # ------------------------------ Road Vehicles ------------------------------
 
