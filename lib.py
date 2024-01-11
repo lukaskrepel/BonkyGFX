@@ -138,6 +138,11 @@ class SpriteCollection:
         self.sprites.append((zoom, kw, sprites))
         return self
 
+    def add_sprites(self, sprites, **kw):
+        zoom = sprites[0].zoom
+        self.sprites.append((zoom, kw, sprites))
+        return self
+
     def compose_on(self, dest, pattern=None):
         srckeys = set(tuple(p) for _, kw, _ in self.sprites for p in kw.items())
         dstkeys = set(tuple(p) for _, kw, _ in dest.sprites for p in kw.items())

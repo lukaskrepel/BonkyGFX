@@ -15,6 +15,7 @@ TERRAIN_DIR = SPRITE_DIR / 'terrain'
 VEHICLE_DIR = SPRITE_DIR / 'vehicles'
 INFRA_DIR = SPRITE_DIR / 'infrastructure'
 STATION_DIR = SPRITE_DIR / 'stations'
+TREE_DIR = SPRITE_DIR / 'trees'
 THICK = 1 << 4
 THIN = 2 << 4
 MODES = (TEMPERATE, ARCTIC, TOYLAND, TROPICAL)
@@ -52,7 +53,7 @@ for feature in (grf.RV, grf.TRAIN, grf.SHIP, grf.AIRCRAFT):
 g.add(grf.Label(0, b''))
 
 
-# ------------------------------ Ground tiles ------------------------------
+# ------------------------------ Ground Tiles ------------------------------
 
 @lib.template(grf.FileSprite)
 def tmpl_groundtiles(func, z, y):
@@ -143,6 +144,8 @@ general_concrete = lib.SpriteCollection('general_concrete') \
 general_concrete[0].replace_old(1420)
 
 
+# ------------------------------ Airport Tiles ------------------------------
+
 @lib.template(grf.FileSprite)
 def tmpl_airport_tiles(funcs, z):
     func, order = funcs
@@ -186,6 +189,34 @@ airport_tiles = lib.SpriteCollection('airport_modern') \
 airport_tiles[:16].replace_old(2634)
 airport_tiles[16].replace_new(0x15, 86)
 airport_tiles[17].replace_new(0x10, 12)
+
+
+# ------------------------------ Trees ------------------------------
+
+
+def tree(name, sprite_id, path):
+    @lib.template(grf.FileSprite)
+    def tmpl(func, z):
+        # Variation of OpenGFX1 template with 2x zoom and only one tree
+        return [
+            func('', 0 * z, 0, 45 * z, 80 * z, xofs=-24 * z, yofs=-73 * z)
+        ]
+    sprites = []
+    for i in range(7):
+        sprites.extend(tmpl(f'stage{i}', lib.aseidx(path, frame=i), ZOOM_2X))
+    lib.SpriteCollection(name).add_sprites(sprites).replace_old(sprite_id)
+
+TREE_RANGES = [
+    (1576, 19),  # temperate
+    (1709, 8),  # arctic
+    (1765, 8),  # arctic-snow
+    (1821, 18),  # tropic
+    (1947, 9),  # toyland
+]
+
+for start, amount in TREE_RANGES:
+    for i in range(amount):
+        tree('tree1', start + i * 7, TREE_DIR / 'temperate_tree_2x.ase')
 
 
 # ------------------------------ Road Vehicles ------------------------------
