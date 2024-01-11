@@ -299,6 +299,15 @@ gen3_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=2)
 replace_rv_generation(VEHICLE_DIR / 'road_lorries_firstgeneration_1x.ase', gen1_2x, 1)
 replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration_1x.ase', gen2_2x, 2)
 replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration_1x.ase', gen3_2x, 3)
+lib.SpriteCollection('bus_gen1') \
+    .add(lib.aseidx(VEHICLE_DIR / 'road_buses_2x.ase'), tmpl_vehicle_road_8view, ZOOM_2X, 0, 0) \
+    .replace_old(3284)
+lib.SpriteCollection('bus_gen2') \
+    .add(lib.aseidx(VEHICLE_DIR / 'road_buses_2x.ase'), tmpl_vehicle_road_8view, ZOOM_2X, 0, 1) \
+    .replace_old(3284 - 192)
+lib.SpriteCollection('bus_gen2') \
+    .add(lib.aseidx(VEHICLE_DIR / 'road_buses_2x.ase'), tmpl_vehicle_road_8view, ZOOM_2X, 0, 2) \
+    .replace_old(3284 + 192)
 
 
 @lib.template(lib.CCReplacingFileSprite)
