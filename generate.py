@@ -291,7 +291,7 @@ lib.SpriteCollection('bus_gen2') \
 
 # ------------------------------ Rail Vehicles ------------------------------
 
-@lib.template(grf.FileSprite)
+@lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_rail_4view(func, z, x, y):
     # Horizontal views have zoom-specific optimisation for perfect depot window alignment
     return [
@@ -302,7 +302,7 @@ def tmpl_vehicle_rail_4view(func, z, x, y):
     ]
 
 
-@lib.template(grf.FileSprite)
+@lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_rail_8view(func, z, x, y):
     # Horizontal views have zoom-specific optimisation for perfect depot window alignment
     return [
