@@ -618,7 +618,7 @@ def debug_cc_recolour(sprites, horizontal=False):
     recolours = []
     for cl in grf.CC_COLOURS:
         recolours.append({
-            0xC6 + i : grf.PALETTE[m * 3: m * 3 + 3]
+            0xC6 + i : grf.PALETTE[m]
             for i, m in enumerate(cl)
         })
     debug_recolour(sprites, recolours, horizontal=horizontal)
