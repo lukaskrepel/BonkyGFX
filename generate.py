@@ -100,8 +100,6 @@ def tmpl_groundtiles_extra(name, paths, zoom):
 
 # Normal land
 make_ground = lambda name, y: lib.SpriteCollection(name) \
-    .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_1x.ase', colourkey=(0, 0, 255)),
-         tmpl_groundtiles, ZOOM_NORMAL, y) \
     .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x.ase', colourkey=(0, 0, 255)),
          tmpl_groundtiles, ZOOM_2X, y, thin=False) \
     .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x_thin.ase', colourkey=(0, 0, 255)),
@@ -118,15 +116,11 @@ lib.SpriteCollection('temperate_rough') \
     .replace_old(4000)
 
 lib.SpriteCollection('temperate_rocks') \
-    .add(TERRAIN_DIR / 'temperate_groundtiles_rocks_1x.ase',
-         tmpl_groundtiles, ZOOM_NORMAL, 0) \
     .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase', colourkey=(0, 0, 255)),
          tmpl_groundtiles, ZOOM_2X, 0) \
     .replace_old(4023)
 
 tropical_desert = lib.SpriteCollection('tropical_desert') \
-    .add(TERRAIN_DIR / 'tropical_groundtiles_desert_1x.ase',
-         tmpl_groundtiles, ZOOM_NORMAL, 0) \
     .add(TERRAIN_DIR / 'tropical_groundtiles_desert_2x.ase',
          tmpl_groundtiles, ZOOM_2X, 0) \
     .replace_old(4550, climate=TROPICAL)
@@ -137,8 +131,6 @@ lib.SpriteCollection('tropical_transitions') \
     .replace_old(4512, climate=TROPICAL)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
-    .add(lib.aseidx(TERRAIN_DIR / 'general_concretetiles_1x.ase', colourkey=(0, 0, 255)),
-        tmpl_groundtiles, ZOOM_NORMAL, 0) \
     .add(lib.aseidx(TERRAIN_DIR / 'general_concretetiles_2x.ase', colourkey=(0, 0, 255)),
         tmpl_groundtiles, ZOOM_2X, 0)
 general_concrete[0].replace_old(1420)
@@ -179,9 +171,6 @@ def tmpl_flat_tile(func, z, suffix, x):
 
 AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
 airport_tiles = lib.SpriteCollection('airport_modern') \
-    .add((lib.aseidx(INFRA_DIR / 'airport_modern_1x.ase', ignore_layer='Light order'),
-          lib.aseidx(INFRA_DIR / 'airport_modern_1x.ase', layer='Light order')),
-        tmpl_airport_tiles, ZOOM_NORMAL) \
     .add((lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', ignore_layer='Light order'),
           lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', layer='Light order')),
         tmpl_airport_tiles, ZOOM_2X) \
@@ -244,14 +233,10 @@ def tmpl_vehicle_road_8view(func, z, x, y):
     return res
 
 
-def replace_rv_generation(path1x, path2x, generation):
+def replace_rv_generation(path2x, generation):
     def tmpl(suffix, x, y):
-        res = lib.SpriteCollection(f'rv_gen{generation}_{suffix}')
-        if path1x is not None:
-            res.add(path1x, tmpl_vehicle_road_8view, ZOOM_NORMAL, x, y)
-        if path2x is not None:
-            res.add(path2x, tmpl_vehicle_road_8view, ZOOM_2X, x, y)
-        return res
+        return lib.SpriteCollection(f'rv_gen{generation}_{suffix}') \
+            .add(path2x, tmpl_vehicle_road_8view, ZOOM_2X, x, y)
 
     # base_graphics spr3284(3284, "../graphics/vehicles/64/road_buses_8bpp.png") { template_vehicle_road_8view(0, 0, 1) } // bus
     o = {1: 0, 2: -192, 3: 192}[generation]
@@ -283,9 +268,9 @@ def replace_rv_generation(path1x, path2x, generation):
 gen1_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=0)
 gen2_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=1)
 gen3_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=2)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_firstgeneration_1x.ase', gen1_2x, 1)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_secondgeneration_1x.ase', gen2_2x, 2)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_thirdgeneration_1x.ase', gen3_2x, 3)
+replace_rv_generation(gen1_2x, 1)
+replace_rv_generation(gen2_2x, 2)
+replace_rv_generation(gen3_2x, 3)
 lib.SpriteCollection('bus_gen1') \
     .add(lib.aseidx(VEHICLE_DIR / 'road_buses_2x.ase'), tmpl_vehicle_road_8view, ZOOM_2X, 0, 0) \
     .replace_old(3284)
@@ -386,14 +371,10 @@ def tmpl_roadtiles(func, z, x, y):
 
 
 road_town = lib.SpriteCollection('road_town') \
-    .add(INFRA_DIR / 'road_town_1x.ase',
-         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
     .add(lib.aseidx(INFRA_DIR / 'road_town_2x.ase', colourkey=(0, 0, 255)),
          tmpl_roadtiles, ZOOM_2X, 0, 0)
 
 road = lib.SpriteCollection('road') \
-    .add(INFRA_DIR / 'road_1x.ase',
-         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
     .add(lib.aseidx(INFRA_DIR / 'road_2x.ase', colourkey=(0, 0, 255)),
          tmpl_roadtiles, ZOOM_2X, 0, 0, thin=False) \
     .add(lib.aseidx(INFRA_DIR / 'road_2x_thin.ase', colourkey=(0, 0, 255)),
@@ -404,8 +385,6 @@ road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
 road.compose_on(temperate_ground, ROAD_COMPOSITION).replace_old(1332, climate=TEMPERATE)
 
 road_noline = lib.SpriteCollection('road_noline') \
-    .add(INFRA_DIR / 'road_noline_1x.ase',
-         tmpl_roadtiles, ZOOM_NORMAL, 0, 0) \
     .add(INFRA_DIR / 'road_noline_2x.ase',
          tmpl_roadtiles, ZOOM_2X, 0, 0)
 
@@ -435,9 +414,6 @@ def tmpl_road_depot(funcs, z):
     ]
 
 lib.SpriteCollection('road_depot') \
-    .add((lib.aseidx(STATION_DIR / 'roaddepots_1x.ase', ignore_layer='Behind'),
-          lib.aseidx(STATION_DIR / 'roaddepots_1x.ase', layer='Behind')),
-         tmpl_road_depot, ZOOM_NORMAL) \
     .add((lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', ignore_layer='Behind'),
           lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')),
          tmpl_road_depot, ZOOM_2X, thin=False) \
