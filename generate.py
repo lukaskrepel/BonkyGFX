@@ -101,22 +101,26 @@ def tmpl_groundtiles_extra(name, paths, zoom):
 # Normal land
 make_ground = lambda name, y: lib.SpriteCollection(name) \
     .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_groundtiles, ZOOM_2X, y, thin=False) \
+         tmpl_groundtiles, ZOOM_2X, y, thin=False, climate=TEMPERATE) \
     .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x_thin.ase', colourkey=(0, 0, 255)),
-         tmpl_groundtiles, ZOOM_2X, y, thin=True)
-temperate_ground = make_ground('temperate_ground', 0)
-make_ground('temperate_ground_bare', 144).replace_old(3924)  # 0% grass
-make_ground('temperate_ground_33', 96).replace_old(3943)   # 33% grass
-make_ground('temperate_ground_66', 48).replace_old(3962)   # 66% grass
-temperate_ground.replace_old(3981)  # 100% grass
+         tmpl_groundtiles, ZOOM_2X, y, thin=True, climate=TEMPERATE) \
+    .add(TERRAIN_DIR / 'tropical_groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, y, climate=TROPICAL) \
+    .add(TERRAIN_DIR / 'arctic_groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, y, climate=ARCTIC)
+ground = make_ground('ground', 0)
+make_ground('ground_bare', 144).replace_old(3924)  # 0% grass
+make_ground('ground_33', 96).replace_old(3943)   # 33% grass
+make_ground('ground_66', 48).replace_old(3962)   # 66% grass
+ground.replace_old(3981)  # 100% grass
 
 lib.SpriteCollection('temperate_rough') \
-    .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_rough_2x.ase', colourkey=(0, 0, 255)),
+    .add(TERRAIN_DIR / 'temperate_groundtiles_rough_2x.ase',
          tmpl_groundtiles_extra, ZOOM_2X) \
     .replace_old(4000)
 
 lib.SpriteCollection('temperate_rocks') \
-    .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase', colourkey=(0, 0, 255)),
+    .add(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase',
          tmpl_groundtiles, ZOOM_2X, 0) \
     .replace_old(4023)
 
@@ -126,8 +130,8 @@ tropical_desert = lib.SpriteCollection('tropical_desert') \
     .replace_old(4550, climate=TROPICAL)
 
 lib.SpriteCollection('tropical_transitions') \
-    .add(TERRAIN_DIR / 'tropical_groundtiles_deserttransition_1x.ase',
-         tmpl_groundtiles, ZOOM_NORMAL, 0) \
+    .add(TERRAIN_DIR / 'tropical_groundtiles_deserttransition_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, 0) \
     .replace_old(4512, climate=TROPICAL)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
@@ -174,7 +178,7 @@ airport_tiles = lib.SpriteCollection('airport_modern') \
     .add((lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', ignore_layer='Light order'),
           lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', layer='Light order')),
         tmpl_airport_tiles, ZOOM_2X) \
-    .compose_on(temperate_ground, AIRPORT_COMPOSITION)
+    .compose_on(ground, AIRPORT_COMPOSITION)
 airport_tiles[:16].replace_old(2634)
 airport_tiles[16].replace_new(0x15, 86)
 airport_tiles[17].replace_new(0x10, 12)
@@ -378,18 +382,16 @@ road = lib.SpriteCollection('road') \
     .add(lib.aseidx(INFRA_DIR / 'road_2x.ase', colourkey=(0, 0, 255)),
          tmpl_roadtiles, ZOOM_2X, 0, 0, thin=False) \
     .add(lib.aseidx(INFRA_DIR / 'road_2x_thin.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=True)
+         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=True) \
+    .add(INFRA_DIR / 'road_noline_2x.ase',
+         tmpl_roadtiles, ZOOM_2X, 0, 0, climate=TROPICAL)
 
 ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
 road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
-road.compose_on(temperate_ground, ROAD_COMPOSITION).replace_old(1332, climate=TEMPERATE)
+road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
 
-road_noline = lib.SpriteCollection('road_noline') \
-    .add(INFRA_DIR / 'road_noline_2x.ase',
-         tmpl_roadtiles, ZOOM_2X, 0, 0)
-
-road_noline.compose_on(temperate_ground, ROAD_COMPOSITION).replace_old(1332, climate=TROPICAL)
-road_noline.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
+# TODO do not replace in non-tropical
+road.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
 
 
 @lib.template(lib.CCReplacingFileSprite)
@@ -460,14 +462,14 @@ def tmpl_water_full(funcs, z):
     ]
 
 water = lib.SpriteCollection('water') \
-    .add((lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase'),
-          lib.aseidx(TERRAIN_DIR / 'shorelines_1x_new.ase', layer='Animated')),
-         tmpl_water_full, ZOOM_NORMAL)
+    .add((lib.aseidx(TERRAIN_DIR / 'shorelines_2x.ase'),
+          lib.aseidx(TERRAIN_DIR / 'shorelines_2x.ase', layer='Animated')),
+         tmpl_water_full, ZOOM_2X)
 water[0].replace_old(4061)
 
 
 WATER_COMPOSITION = [(x, x) for x in [16, 1, 2, 3, 4, 17, 6, 7, 8, 9, 15, 11, 12, 13, 14, 18]]
-water.compose_on(temperate_ground, WATER_COMPOSITION).replace_new(0x0d, 0)
+water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 
 
 # ------------------------------ Sprite replacement magic ------------------------------
@@ -505,11 +507,11 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
         has_if = True
 
     # print(keys)
-    # for c, a in lib.old_sprites_collection.get(mode, {}).items():
-    #     print(f'    OLD {c.name} {a}')
+    # for c, (f, a) in lib.old_sprites_collection.get(mode, {}).items():
+    #     print(f'    OLD {f} {c.name} {a}')
     # for set_type, cd in lib.new_sprites_collection[mode].items():
-    #     for c, a in cd.items():
-    #         print(f'    NEW {set_type} {c.name} {a}')
+    #     for c, (f, a) in cd.items():
+    #         print(f'    NEW [{set_type}]+{f} {c.name} {a}')
 
     if ranges:
         g.add(grf.ReplaceOldSprites([(offset, len(sprites)) for offset, sprites in ranges]))

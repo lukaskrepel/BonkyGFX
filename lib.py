@@ -85,8 +85,8 @@ def template(sprite_class):
 
 old_sprites = defaultdict(dict)
 new_sprites = defaultdict(lambda: defaultdict(dict))
-old_sprites_collection = defaultdict(lambda: defaultdict(int))
-new_sprites_collection = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+old_sprites_collection = defaultdict(lambda: defaultdict(lambda: (10000, 0)))
+new_sprites_collection = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: (10000, 0))))
 
 
 dict_to_key = lambda d : tuple(sorted(d.items()))
@@ -98,7 +98,8 @@ def replace_old(collection, first_id, sprites, **kw):
     amount = len(sprites)
     assert first_id + amount < 4896
     key = dict_to_key(kw)
-    old_sprites_collection[key][collection] += len(sprites)
+    first, amount = old_sprites_collection[key][collection]
+    old_sprites_collection[key][collection] = (min(first, first_id), amount + len(sprites))
     for i, s in enumerate(sprites):
         old_sprites[key][first_id + i] = s
 
@@ -107,7 +108,8 @@ def replace_new(collection, set_type, offset, sprites, **kw):
     if isinstance(sprites, (grf.Resource, grf.ResourceAction)):
         sprites = [sprites]
     key = dict_to_key(kw)
-    new_sprites_collection[key][set_type][collection] += len(sprites)
+    first, amount = new_sprites_collection[key][set_type][collection]
+    new_sprites_collection[key][set_type][collection] = (min(first, offset), amount + len(sprites))
     for i, s in enumerate(sprites):
         new_sprites[key][set_type][offset + i] = s
 
