@@ -344,6 +344,34 @@ wagon('fruit_full', 2817, 1, 13)  # tropical rail fruit wagon (full)
 wagon('rubber_empty', 2821, 0, 14)  # tropical rail rubber wagon (empty)
 wagon('rubber_full', 2825, 1, 14)  # tropical rail rubber wagon (full)
 
+
+def engine(name, sprite_id, tmpl, x, y):
+    lib.SpriteCollection(name) \
+        .add(VEHICLE_DIR / 'rail_engines_temperate_2x.ase', tmpl, ZOOM_2X, x, y) \
+        .replace_old(sprite_id)
+
+
+engine('jubilee_sh8p', 2905, tmpl_vehicle_rail_8view, 0, 0)  # Chaney Jubilee + SH 8P (Steam)
+engine('ginzu', 2913, tmpl_vehicle_rail_8view, 0, 1)  # Ginzu A4 (Steam)
+engine('kirby', 2921, tmpl_vehicle_rail_8view, 0, 2)  # Kirby Paul (Steam)
+engine('sh25_floss47', 2929, tmpl_vehicle_rail_4view, 0, 3)  # SH/Hendry 25 + Floss 47 (Diesel)
+engine('uu37', 2933, tmpl_vehicle_rail_4view, 0, 4)  # UU/37 (Diesel)
+engine('sh30_sh40', 2937, tmpl_vehicle_rail_4view, 0, 5)  # SH/30 + SH/40 (Diesel)
+engine('sh_125', 2941, tmpl_vehicle_rail_8view, 0, 6)  # SH 125 (Diesel)
+engine('manley', 2949, tmpl_vehicle_rail_8view, 0, 7)  # Manley-Morel VT (Diesel)
+engine('dash', 2957, tmpl_vehicle_rail_8view, 0, 8)  # Dash (Diesel)
+engine('asia', 2965, tmpl_vehicle_rail_8view, 0, 9)  # Asia Star (Electric)
+engine('tim', 2973, tmpl_vehicle_rail_8view, 0, 10)  # T.I.M. (Electric)
+
+# engine('', 2981, tmpl_vehicle_rail_4view, 0, 0)  # X2001
+# engine('', 2985, tmpl_vehicle_rail_8view, 0, 1)  # Millenium
+
+# engine('', 2993, tmpl_vehicle_rail_8view, 0, 2)  # Lev3 Pegasus
+# engine('', 3001, tmpl_vehicle_rail_8view, 0, 3)  # Lev4 Chimaera
+# engine('', 3009, tmpl_vehicle_rail_4view, 0, 0)  # Lev1 Leviathan
+# engine('', 3013, tmpl_vehicle_rail_4view, 0, 1)  # Lev2 Cyclops
+
+
 # ------------------------------ Road Infrastructure ------------------------------
 
 @lib.template(grf.FileSprite)
