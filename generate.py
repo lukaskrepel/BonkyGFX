@@ -425,11 +425,13 @@ road.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
 
 def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0):
     z = 2
+    # OpenGFX2 uses h = h * z - z + 1 and
+    # yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
     xofs = -31 * z + ox * z
-    yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
+    yofs = (31 - h) * z + oy * z
     return func(
         suffix,
-        1 * z + x * z, 1 * z + y * z, 64 * z, h * z - z + 1,
+        1 * z + x * z, 1 * z + y * z, 64 * z, h * z + z - 1,
         xofs=xofs, yofs=yofs)
 
 
@@ -505,14 +507,14 @@ water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 # ------------------------------ Industries ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_forest(func, z, x):
+def tmpl_forest(func, z, y):
     return [
-        subtmpl_house_1x1('growth1', func, 0, x, 74),
-        subtmpl_house_1x1('growth2', func, 65, x, 74),
-        subtmpl_house_1x1('growth3', func, 130, x, 74),
-        subtmpl_house_1x1('grown', func, 195, x, 74),
-        subtmpl_house_1x1('logs', func, 260, x, 74),
-        subtmpl_house_1x1('cut', func, 325, x, 74),
+        subtmpl_house_1x1('growth1', func, 0, y, 75),
+        subtmpl_house_1x1('growth2', func, 65, y, 75),
+        subtmpl_house_1x1('growth3', func, 130, y, 75),
+        subtmpl_house_1x1('grown', func, 195, y, 75),
+        subtmpl_house_1x1('logs', func, 260, y, 75),
+        subtmpl_house_1x1('cut', func, 325, y, 75),
     ]
 
 # TODO Why are 128/322 forest sprites too?
