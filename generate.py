@@ -521,7 +521,7 @@ def tmpl_forest(func, z, y):
 # TODO remove climate=TEMPERATE? (but ensure the right order)
 lib.SpriteCollection('forest') \
     .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 0, climate=TEMPERATE) \
-    .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 75, climate=ARCTIC) \
+    .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
     .replace_old(2072)
 
 
