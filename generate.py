@@ -569,6 +569,8 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     if ranges:
         g.add(grf.ReplaceOldSprites([(offset, len(sprites)) for offset, sprites in ranges]))
         for offset, sprites in ranges:
+            for s in sprites:
+                s.yofs -= 1
             g.add(*sprites)
             for i, sa in enumerate(sprites):
                 names = ', '.join(s.name for s in (sa.sprites if isinstance(sa, grf.AlternativeSprites) else (sa,)))
@@ -576,6 +578,8 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     for set_type, sprite_dict in lib.new_sprites[mode].items():
         for offset, sprites in group_ranges(sprite_dict):
             g.add(grf.ReplaceNewSprites(set_type, len(sprites), offset=offset))
+            for s in sprites:
+                s.yofs -= 1
             g.add(*sprites)
             for i, sa in enumerate(sprites):
                 names = ', '.join(s.name for s in (sa.sprites if isinstance(sa, grf.AlternativeSprites) else (sa,)))
