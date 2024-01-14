@@ -14,6 +14,7 @@ SPRITE_DIR = pathlib.Path('sprites')
 TERRAIN_DIR = SPRITE_DIR / 'terrain'
 VEHICLE_DIR = SPRITE_DIR / 'vehicles'
 INFRA_DIR = SPRITE_DIR / 'infrastructure'
+INDUSTRY_DIR = SPRITE_DIR / 'industries'
 STATION_DIR = SPRITE_DIR / 'stations'
 TREE_DIR = SPRITE_DIR / 'trees'
 THICK = 1 << 4
@@ -422,25 +423,26 @@ road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
 road.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
 
 
+def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0):
+    z = 2
+    xofs = -31 * z + ox * z
+    yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
+    return func(
+        suffix,
+        1 * z + x * z, 1 * z + y * z, 64 * z, h * z - z + 1,
+        xofs=xofs, yofs=yofs)
+
+
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_road_depot(funcs, z):
     func_front, func_back = funcs
-
-    def sprite(suffix, func, x, y, h, ox, oy):
-        xofs = -31 * z + ox * z
-        yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
-        return func(
-            suffix,
-            1 * z + x * z, 1 * z + y * z, 64 * z, h * z - z + 1,
-            xofs=xofs, yofs=yofs)
-
     return [
-        sprite('se_back', func_back, 0, 0, 64, 0, 1),
-        sprite('se_front', func_front, 0, 0, 64, 30, -14),
-        sprite('sw_back', func_back, 0, 65, 64, 0, 1),
-        sprite('sw_front', func_front, 0, 65, 64, -30, -14),
-        sprite('ne', func_front, 0, 195, 64, -30, -14),
-        sprite('nw', func_front, 0, 130, 64, 30, -14),
+        subtmpl_house_1x1('se_back', func_back, 0, 0, 64, 0, 1),
+        subtmpl_house_1x1('se_front', func_front, 0, 0, 64, 30, -14),
+        subtmpl_house_1x1('sw_back', func_back, 0, 65, 64, 0, 1),
+        subtmpl_house_1x1('sw_front', func_front, 0, 65, 64, -30, -14),
+        subtmpl_house_1x1('ne', func_front, 0, 195, 64, -30, -14),
+        subtmpl_house_1x1('nw', func_front, 0, 130, 64, 30, -14),
     ]
 
 lib.SpriteCollection('road_depot') \
@@ -498,6 +500,27 @@ water[0].replace_old(4061)
 
 WATER_COMPOSITION = [(x, x) for x in [16, 1, 2, 3, 4, 17, 6, 7, 8, 9, 15, 11, 12, 13, 14, 18]]
 water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
+
+
+# ------------------------------ Industries ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_forest(func, z, x):
+    return [
+        subtmpl_house_1x1('growth1', func, 0, x, 74),
+        subtmpl_house_1x1('growth2', func, 65, x, 74),
+        subtmpl_house_1x1('growth3', func, 130, x, 74),
+        subtmpl_house_1x1('grown', func, 195, x, 74),
+        subtmpl_house_1x1('logs', func, 260, x, 74),
+        subtmpl_house_1x1('cut', func, 325, x, 74),
+    ]
+
+# TODO Why are 128/322 forest sprites too?
+# TODO remove climate=TEMPERATE? (but ensure the right order)
+lib.SpriteCollection('forest') \
+    .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 0, climate=TEMPERATE) \
+    .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 75, climate=ARCTIC) \
+    .replace_old(2072)
 
 
 # ------------------------------ Sprite replacement magic ------------------------------
