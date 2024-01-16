@@ -144,28 +144,29 @@ general_concrete[0].replace_old(1420)
 # ------------------------------ Airport Tiles ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_airport_tiles(funcs, z):
-    func, order = funcs
-    with_light = lambda *args, **kw: lib.MagentaToLight(func(*args, **kw), order(*args, **kw))
+def tmpl_airport_tiles(func, z):
+    kw_default = {'ignore_layers': 'Light order'}
+    kw_light = {'layers': 'Light order'}
+    with_light = lambda *args, **kw: lib.MagentaToLight(func(*args, **kw, **kw_default), func(*args, **kw, **kw_light))
     return [
-        func('apron', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('stand', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_ns_west', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_ew_south', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_xing_south', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_xing_west', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_ns_ctr', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_xing_east', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_ns_east', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_ew_north', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        func('taxi_ew_ctr', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('apron', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('stand', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_ns_west', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_ew_south', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_xing_south', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_xing_west', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_ns_ctr', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_xing_east', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_ns_east', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_ew_north', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+        func('taxi_ew_ctr', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
         with_light('runway_a', z * (1 + 130), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
         with_light('runway_b', z * (1 + 195), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
         with_light('runway_c', z * (1 + 260), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
         with_light('runway_d', z * (1 + 325), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
         with_light('runway_end', z * (1 + 390), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
         with_light('helipad', z * (1 + 1365), z, 64 * z, 32 * z - 1, xofs=-22 * z, yofs=-15 * z),
-        func('new_helipad', z * (1 + 1430), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
+        func('new_helipad', z * (1 + 1430), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
     ]
 
 
@@ -176,8 +177,7 @@ def tmpl_flat_tile(func, z, suffix, x):
 
 AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
 airport_tiles = lib.SpriteCollection('airport_modern') \
-    .add((lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', ignore_layer='Light order'),
-          lib.aseidx(INFRA_DIR / 'airport_modern_2x.ase', layer='Light order')),
+    .add(INFRA_DIR / 'airport_modern_2x.ase',
         tmpl_airport_tiles, ZOOM_2X) \
     .compose_on(ground, AIRPORT_COMPOSITION)
 airport_tiles[:16].replace_old(2634)
@@ -190,14 +190,14 @@ airport_tiles[17].replace_new(0x10, 12)
 
 def tree(name, sprite_id, path):
     @lib.template(grf.FileSprite)
-    def tmpl(func, z):
+    def tmpl(func, z, frame):
         # Variation of OpenGFX1 template with 2x zoom and only one tree
         return [
-            func('', 0 * z, 0, 45 * z, 80 * z, xofs=-24 * z, yofs=-73 * z)
+            func('', 0 * z, 0, 45 * z, 80 * z, xofs=-24 * z, yofs=-73 * z, frame=frame)
         ]
     sprites = []
     for i in range(7):
-        sprites.extend(tmpl(f'stage{i}', lib.aseidx(path, frames=i), ZOOM_2X))
+        sprites.extend(tmpl(f'stage{i}', lib.aseidx(path), ZOOM_2X, i))
     lib.SpriteCollection(name).add_sprites(sprites).replace_old(sprite_id)
 
 TREE_RANGES = [
@@ -224,16 +224,16 @@ tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
 # ------------------------------ Road Vehicles ------------------------------
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_vehicle_road_8view(func, z, x, y):
+def tmpl_vehicle_road_8view(func, z, x, y, frame):
     res = [
-        func('n', (1 + 0 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z),
-        func('ne', (2 + 8 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-10 * z),
-        func('e', (3 + 30 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-15 * z, yofs=-9 * z),
-        func('se', (4 + 61 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-10 * z),
-        func('s', (5 + 83 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z),
-        func('sw', (6 + 91 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-10 * z),
-        func('w', (7 + 113 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-15 * z, yofs=-9 * z),
-        func('nw', (8 + 144 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-10 * z),
+        func('n', (1 + 0 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z, frame=frame),
+        func('ne', (2 + 8 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-10 * z, frame=frame),
+        func('e', (3 + 30 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-15 * z, yofs=-9 * z, frame=frame),
+        func('se', (4 + 61 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-10 * z, frame=frame),
+        func('s', (5 + 83 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z, frame=frame),
+        func('sw', (6 + 91 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-10 * z, frame=frame),
+        func('w', (7 + 113 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-15 * z, yofs=-9 * z, frame=frame),
+        func('nw', (8 + 144 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-10 * z, frame=frame),
     ]
     return res
 
@@ -241,7 +241,7 @@ def tmpl_vehicle_road_8view(func, z, x, y):
 def replace_rv_generation(path2x, generation):
     def tmpl(suffix, x, y):
         return lib.SpriteCollection(f'rv_gen{generation}_{suffix}') \
-            .add(path2x, tmpl_vehicle_road_8view, ZOOM_2X, x, y)
+            .add(path2x, tmpl_vehicle_road_8view, ZOOM_2X, x, y, generation - 1)
 
     # base_graphics spr3284(3284, "../graphics/vehicles/64/road_buses_8bpp.png") { template_vehicle_road_8view(0, 0, 1) } // bus
     o = {1: 0, 2: -192, 3: 192}[generation]
@@ -270,20 +270,17 @@ def replace_rv_generation(path2x, generation):
     tmpl('rubber_loaded', 1, 13).replace_old(3468 + o)
 
 
-gen1_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frames=0)
-gen2_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frames=1)
-gen3_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frames=2)
-replace_rv_generation(gen1_2x, 1)
-replace_rv_generation(gen2_2x, 2)
-replace_rv_generation(gen3_2x, 3)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_2x.ase', 1)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_2x.ase', 2)
+replace_rv_generation(VEHICLE_DIR / 'road_lorries_2x.ase', 3)
 lib.SpriteCollection('bus_gen1') \
-    .add(lib.aseidx(VEHICLE_DIR / 'road_buses_2x.ase'), tmpl_vehicle_road_8view, ZOOM_2X, 0, 0) \
+    .add(VEHICLE_DIR / 'road_buses_2x.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 0, 0) \
     .replace_old(3284)
 lib.SpriteCollection('bus_gen2') \
-    .add(lib.aseidx(VEHICLE_DIR / 'road_buses_2x.ase'), tmpl_vehicle_road_8view, ZOOM_2X, 0, 1) \
+    .add(VEHICLE_DIR / 'road_buses_2x.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 1, 0) \
     .replace_old(3284 - 192)
 lib.SpriteCollection('bus_gen2') \
-    .add(lib.aseidx(VEHICLE_DIR / 'road_buses_2x.ase'), tmpl_vehicle_road_8view, ZOOM_2X, 0, 2) \
+    .add(VEHICLE_DIR / 'road_buses_2x.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 2, 0) \
     .replace_old(3284 + 192)
 
 
@@ -423,7 +420,7 @@ road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
 road.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
 
 
-def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0):
+def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0, **kw):
     z = 2
     # OpenGFX2 uses h = h * z - z + 1 and
     # yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
@@ -432,27 +429,28 @@ def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0):
     return func(
         suffix,
         1 * z + x * z, 1 * z + y * z, 64 * z, h * z + z - 1,
-        xofs=xofs, yofs=yofs)
+        xofs=xofs, yofs=yofs,
+        **kw
+    )
 
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_road_depot(funcs, z):
-    func_front, func_back = funcs
+def tmpl_road_depot(func, z):
+    kw_front = {'ignore_layers': 'Behind'}
+    kw_back = {'layers': 'Behind'}
     return [
-        subtmpl_house_1x1('se_back', func_back, 0, 0, 64, 0, 1),
-        subtmpl_house_1x1('se_front', func_front, 0, 0, 64, 30, -14),
-        subtmpl_house_1x1('sw_back', func_back, 0, 65, 64, 0, 1),
-        subtmpl_house_1x1('sw_front', func_front, 0, 65, 64, -30, -14),
-        subtmpl_house_1x1('ne', func_front, 0, 195, 64, -30, -14),
-        subtmpl_house_1x1('nw', func_front, 0, 130, 64, 30, -14),
+        subtmpl_house_1x1('se_back', func, 0, 0, 64, 0, 1, **kw_back),
+        subtmpl_house_1x1('se_front', func, 0, 0, 64, 30, -14, **kw_front),
+        subtmpl_house_1x1('sw_back', func, 0, 65, 64, 0, 1, **kw_back),
+        subtmpl_house_1x1('sw_front', func, 0, 65, 64, -30, -14, **kw_front),
+        subtmpl_house_1x1('ne', func, 0, 195, 64, -30, -14, **kw_front),
+        subtmpl_house_1x1('nw', func, 0, 130, 64, 30, -14, **kw_front),
     ]
 
 lib.SpriteCollection('road_depot') \
-    .add((lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', ignore_layer='Behind'),
-          lib.aseidx(STATION_DIR / 'roaddepots_2x.ase', layer='Behind')),
+    .add(STATION_DIR / 'roaddepots_2x.ase',
          tmpl_road_depot, ZOOM_2X, thin=False) \
-    .add((lib.aseidx(STATION_DIR / 'roaddepots_2x_thin.ase', ignore_layer='Behind'),
-          lib.aseidx(STATION_DIR / 'roaddepots_2x_thin.ase', layer='Behind')),
+    .add(STATION_DIR / 'roaddepots_2x_thin.ase',
          tmpl_road_depot, ZOOM_2X, thin=True) \
     .replace_old(1408)
 
@@ -467,10 +465,9 @@ def tmpl_water(funcs, z, suffix, x):
 
 
 @lib.template(grf.FileSprite)
-def tmpl_water_full(funcs, z):
+def tmpl_water_full(sprite_func, z):
     x = y = 0
-    magenta, mask = funcs
-    func = lambda *args, **kw: lib.MagentaAndMask(magenta(*args, **kw), mask(*args, **kw))
+    func = lambda *args, **kw: lib.MagentaAndMask(sprite_func(*args, **kw), sprite_func(*args, **kw, layers='Animated'))
     return [
         func('full', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
         func('1', 81 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
@@ -494,8 +491,7 @@ def tmpl_water_full(funcs, z):
     ]
 
 water = lib.SpriteCollection('water') \
-    .add((lib.aseidx(TERRAIN_DIR / 'shorelines_2x.ase'),
-          lib.aseidx(TERRAIN_DIR / 'shorelines_2x.ase', layer='Animated')),
+    .add(TERRAIN_DIR / 'shorelines_2x.ase',
          tmpl_water_full, ZOOM_2X)
 water[0].replace_old(4061)
 
@@ -544,7 +540,7 @@ def tmpl_sawmill(func, z):
 
 
 lib.SpriteCollection('sawmill') \
-    .add(lib.aseidx(INDUSTRY_DIR / 'sawmill.ase', frames=(0, 2)), tmpl_sawmill, ZOOM_2X) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'sawmill.ase'), tmpl_sawmill, ZOOM_2X) \
     .replace_old(2061)
 
 # ------------------------------ Sprite replacement magic ------------------------------
@@ -619,8 +615,8 @@ def cmd_debugcc_add_args(parser):
 
 
 def cmd_debugcc_handler(g, grf_file, args):
-    ase = lib.AseImageFile(args.ase_file, layer=args.layer)
-    sprite = lib.CCReplacingFileSprite(ase, 0, 0, None, None, name=args.ase_file)
+    ase = lib.AseImageFile(args.ase_file)
+    sprite = lib.CCReplacingFileSprite(ase, 0, 0, None, None, name=args.ase_file, layers=args.layer)
     lib.debug_cc_recolour([sprite], horizontal=args.horizontal)
 
 
@@ -631,10 +627,10 @@ def cmd_debuglight_add_args(parser):
 
 def cmd_debuglight_handler(g, grf_file, args):
     in_file = args.ase_file
-    ase = lib.AseImageFile(in_file, ignore_layer='Light order')
-    aseo = lib.AseImageFile(in_file, layer='Light order')
-    sprite = grf.FileSprite(ase, 0, 0, None, None, name=f'{in_file}_image')
-    order = grf.FileSprite(aseo, 0, 0, None, None, name=f'{in_file}_order')
+    ase = lib.AseImageFile(in_file)
+    aseo = lib.AseImageFile(in_file)
+    sprite = grf.FileSprite(ase, 0, 0, None, None, name=f'{in_file}_image', ignore_layers='Light order')
+    order = grf.FileSprite(aseo, 0, 0, None, None, name=f'{in_file}_order', layers='Light order')
     lib.debug_light_cycle([lib.MagentaToLight(sprite, order)], horizontal=args.horizontal)
 
 

@@ -87,7 +87,6 @@ def house_grid(*, func, height, width=64, padding=1, z=2):
     zheight = height * z + z - 1
     zpadding = padding * z
     zwidth = width * z
-
     def sprite_func(name, grid_pos, bb=(0, 0), **kw):
         x, y = grid_pos
         fx = x * zwidth + zpadding * (x + 1)
@@ -316,6 +315,10 @@ class MagentaToLight(grf.Sprite):
         self.order = order
         super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
 
+    def prepare_files(self):
+        self.sprite.prepare_files()
+        self.order.prepare_files()
+
     def get_data_layers(self, context):
         w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(context)
 
@@ -375,6 +378,10 @@ class MagentaAndMask(grf.Sprite):
         super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
         self.mask = mask  # TODO sprite mask has a special meaning
 
+    def prepare_files(self):
+        self.sprite.prepare_files()
+        self.mask.prepare_files()
+
     def get_data_layers(self, context):
         w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(context)
         assert npmask is None
@@ -431,25 +438,21 @@ class MagentaAndMask(grf.Sprite):
 
 
 class AseImageFile(grf.ImageFile):
-    def __init__(self, *args, layer=None, ignore_layer=None, frames=0, **kw):
+    def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
-        self.layer = layer
-        self.ignore_layer = ignore_layer
         self._images = None
-        if frames is None:
-            self.frames = (0, 0)
-        elif isinstance(frames, int):
-            self.frames = (frames, frames)
-        else:
-            self.frames = frames
+        self._kw_requested = set()
 
-    def get_fingerprint(self):
-        return {
-            **super().get_fingerprint(),
-            'layer': self.layer,
-            'ignore_layer': self.ignore_layer,
-            'frames': self.frames,
-        }
+    @staticmethod
+    def _make_kw_key(frame=0, layers=None, ignore_layers=None):
+        if isinstance(layers, str):
+            layers = (layers,)
+        if isinstance(ignore_layers, str):
+            ignore_layers = (ignore_layers,)
+        return (frame, tuple(layers or ()), tuple(ignore_layers or ()))
+
+    def prepare(self, **kw):
+        self._kw_requested.add(self._make_kw_key(**kw))
 
     def _load_frame(self, fname):
         img = Image.open(fname)
@@ -467,26 +470,24 @@ class AseImageFile(grf.ImageFile):
 
         aseprite_executible = os.environ.get('ASEPRITE_EXECUTABLE', 'aseprite')
         self._images = {}
-        for frame in range(self.frames[0], self.frames[1] + 1):
+        for kw in self._kw_requested:
+            frame, layers, ignore_layers = kw
             with tempfile.NamedTemporaryFile(suffix='.png') as f:
                 args = [aseprite_executible, '-b', str(self.path), '--color-mode', 'rgb']
-                if self.layer is not None:
-                    args.extend(('--layer', self.layer))
-                if self.ignore_layer is not None:
-                    args.extend(('--ignore-layer', self.ignore_layer))
-                if self.frames is not None:
-                    args.extend(('--frame-range', f'{frame},{frame}'))
+                for l in layers:
+                    args.extend(('--layer', l))
+                for l in ignore_layers:
+                    args.extend(('--ignore-layer', l))
+                args.extend(('--frame-range', f'{frame},{frame}'))
                 res = subprocess.run(args + ['--save-as', f.name])
                 if res.returncode != 0:
                     raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
-                self._images[frame] = self._load_frame(f.name)
+                self._images[kw] = self._load_frame(f.name)
 
-    def get_image(self, frame=None):
+    def get_image(self, **kw):
         self.load()
-        if frame is None:
-            assert self.frames[0] == self.frames[1]
-            return self._images[self.frames[0]]
-        return self._images[frame]
+        key = self._make_kw_key(**kw)
+        return self._images[key]
 
 
 class CompositeSprite(grf.Sprite):
@@ -498,6 +499,10 @@ class CompositeSprite(grf.Sprite):
             raise ValueError(f'CompositeSprite requires a list of sprites of same zoom level: {sprite_list}')
         self.sprites = sprites
         super().__init__(sprites[0].w, sprites[0].h, xofs=sprites[0].xofs, yofs=sprites[0].yofs, zoom=sprites[0].zoom, **kw)
+
+    def prepare_files(self):
+        for s in self.sprites:
+            s.prepare_files()
 
     def get_data_layers(self, context):
         npimg = None
