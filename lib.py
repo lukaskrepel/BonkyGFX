@@ -88,14 +88,15 @@ def house_grid(*, func, height, width=64, padding=1, z=2):
     zpadding = padding * z
     zwidth = width * z
 
-    ox = oy = 0
-    xofs = -31 * z + ox * z
-    yofs = (31 - height) * z + oy * z
-
-    def sprite_func(*args, x, y, **kw):
+    def sprite_func(name, grid_pos, bb=(0, 0), **kw):
+        x, y = grid_pos
         fx = x * zwidth + zpadding * (x + 1)
         fy = y * zheight + zpadding * (y + 1)
-        return func(*args, fx, fy, zwidth, zheight, xofs=xofs, yofs=yofs, **kw)
+        zxofs = -31 * z
+        zyofs = (31 - height) * z  # - z // 2
+        zxofs -= z * (bb[1] - bb[0]) * 2
+        zyofs -= z * (bb[0] + bb[1])
+        return func(name, fx, fy, zwidth, zheight, xofs=zxofs, yofs=zyofs, **kw)
 
     return sprite_func
 

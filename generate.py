@@ -529,17 +529,17 @@ lib.SpriteCollection('forest') \
 def tmpl_sawmill(func, z):
     grid = lib.house_grid(func=func, height=74, z=z)
     return [
-        grid('building1_stage1', x=0, y=0, frame=0),
-        grid('building1_stage2', x=0, y=0, frame=1),
-        grid('building1_stage3', x=0, y=0, frame=2),
-        grid('building2_stage1', x=1, y=0, frame=0),
-        grid('building2_stage2', x=1, y=0, frame=1),
-        grid('building2_stage3', x=1, y=0, frame=2),
-        grid('building3_stage1', x=2, y=0, frame=0),
-        grid('building3_stage2', x=2, y=0, frame=1),
-        grid('building3_stage3', x=2, y=0, frame=2),
-        grid('logs1', x=3, y=0, frame=2),
-        grid('logs2', x=4, y=0, frame=2)
+        grid('building1_stage1', (0, 0), bb=(1, 0), frame=0),
+        grid('building1_stage2', (0, 0), bb=(1, 0), frame=1),
+        grid('building1_stage3', (0, 0), bb=(1, 0), frame=2),
+        grid('building2_stage1', (1, 0), bb=(0, 1), frame=0),
+        grid('building2_stage2', (1, 0), bb=(0, 1), frame=1),
+        grid('building2_stage3', (1, 0), bb=(0, 1), frame=2),
+        grid('building3_stage1', (2, 0), bb=(1, 1), frame=0),
+        grid('building3_stage2', (2, 0), bb=(1, 1), frame=1),
+        grid('building3_stage3', (2, 0), bb=(1, 1), frame=2),
+        grid('logs1', (3, 0), frame=2),
+        grid('logs2', (4, 0), bb=(0, 1), frame=2)
     ]
 
 
