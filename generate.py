@@ -197,7 +197,7 @@ def tree(name, sprite_id, path):
         ]
     sprites = []
     for i in range(7):
-        sprites.extend(tmpl(f'stage{i}', lib.aseidx(path, frame=i), ZOOM_2X))
+        sprites.extend(tmpl(f'stage{i}', lib.aseidx(path, frames=i), ZOOM_2X))
     lib.SpriteCollection(name).add_sprites(sprites).replace_old(sprite_id)
 
 TREE_RANGES = [
@@ -270,9 +270,9 @@ def replace_rv_generation(path2x, generation):
     tmpl('rubber_loaded', 1, 13).replace_old(3468 + o)
 
 
-gen1_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=0)
-gen2_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=1)
-gen3_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frame=2)
+gen1_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frames=0)
+gen2_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frames=1)
+gen3_2x = lib.aseidx(VEHICLE_DIR / 'road_lorries_2x.ase', frames=2)
 replace_rv_generation(gen1_2x, 1)
 replace_rv_generation(gen2_2x, 2)
 replace_rv_generation(gen3_2x, 3)
@@ -524,6 +524,28 @@ lib.SpriteCollection('forest') \
     .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
     .replace_old(2072)
 
+
+@lib.template(grf.FileSprite)
+def tmpl_sawmill(func, z):
+    grid = lib.house_grid(func=func, height=74, z=z)
+    return [
+        grid('building1_stage1', x=0, y=0, frame=0),
+        grid('building1_stage2', x=0, y=0, frame=1),
+        grid('building1_stage3', x=0, y=0, frame=2),
+        grid('building2_stage1', x=1, y=0, frame=0),
+        grid('building2_stage2', x=1, y=0, frame=1),
+        grid('building2_stage3', x=1, y=0, frame=2),
+        grid('building3_stage1', x=2, y=0, frame=0),
+        grid('building3_stage2', x=2, y=0, frame=1),
+        grid('building3_stage3', x=2, y=0, frame=2),
+        grid('logs1', x=3, y=0, frame=2),
+        grid('logs2', x=4, y=0, frame=2)
+    ]
+
+
+lib.SpriteCollection('sawmill') \
+    .add(lib.aseidx(INDUSTRY_DIR / 'sawmill.ase', frames=(0, 2)), tmpl_sawmill, ZOOM_2X) \
+    .replace_old(2061)
 
 # ------------------------------ Sprite replacement magic ------------------------------
 

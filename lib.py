@@ -83,6 +83,23 @@ def template(sprite_class):
     return decorator
 
 
+def house_grid(*, func, height, width=64, padding=1, z=2):
+    zheight = height * z + z - 1
+    zpadding = padding * z
+    zwidth = width * z
+
+    ox = oy = 0
+    xofs = -31 * z + ox * z
+    yofs = (31 - height) * z + oy * z
+
+    def sprite_func(*args, x, y, **kw):
+        fx = x * zwidth + zpadding * (x + 1)
+        fy = y * zheight + zpadding * (y + 1)
+        return func(*args, fx, fy, zwidth, zheight, xofs=xofs, yofs=yofs, **kw)
+
+    return sprite_func
+
+
 old_sprites = defaultdict(dict)
 new_sprites = defaultdict(lambda: defaultdict(dict))
 old_sprites_collection = defaultdict(lambda: defaultdict(lambda: (10000, 0)))
@@ -413,45 +430,62 @@ class MagentaAndMask(grf.Sprite):
 
 
 class AseImageFile(grf.ImageFile):
-    def __init__(self, *args, layer=None, ignore_layer=None, frame=0, **kw):
+    def __init__(self, *args, layer=None, ignore_layer=None, frames=0, **kw):
         super().__init__(*args, **kw)
         self.layer = layer
         self.ignore_layer = ignore_layer
-        self.frame = frame
+        self._images = None
+        if frames is None:
+            self.frames = (0, 0)
+        elif isinstance(frames, int):
+            self.frames = (frames, frames)
+        else:
+            self.frames = frames
 
     def get_fingerprint(self):
         return {
             **super().get_fingerprint(),
             'layer': self.layer,
             'ignore_layer': self.ignore_layer,
-            'frame': self.frame,
+            'frames': self.frames,
         }
 
+    def _load_frame(self, fname):
+        img = Image.open(fname)
+        if img.mode == 'P':
+            return (img, grf.BPP_8)
+        elif img.mode == 'RGB':
+            return (img, grf.BPP_24)
+        if img.mode != 'RGBA':
+            img = img.convert('RGBA')
+        return (img, grf.BPP_32)
+
     def load(self):
-        if self._image is not None:
+        if self._images is not None:
             return
 
         aseprite_executible = os.environ.get('ASEPRITE_EXECUTABLE', 'aseprite')
-        with tempfile.NamedTemporaryFile(suffix='.png') as f:
-            args = [aseprite_executible, '-b', str(self.path), '--color-mode', 'rgb']
-            if self.layer is not None:
-                args.extend(('--layer', self.layer))
-            if self.ignore_layer is not None:
-                args.extend(('--ignore-layer', self.ignore_layer))
-            if self.frame is not None:
-                args.extend(('--frame-range', f'{self.frame},{self.frame}'))
-            res = subprocess.run(args + ['--save-as', f.name])
-            if res.returncode != 0:
-                raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
-            img = Image.open(f.name)
-        if img.mode == 'P':
-            self._image = (img, grf.BPP_8)
-        elif img.mode == 'RGB':
-            self._image = (img, grf.BPP_24)
-        else:
-            if img.mode != 'RGBA':
-                img = img.convert('RGBA')
-            self._image = (img, grf.BPP_32)
+        self._images = {}
+        for frame in range(self.frames[0], self.frames[1] + 1):
+            with tempfile.NamedTemporaryFile(suffix='.png') as f:
+                args = [aseprite_executible, '-b', str(self.path), '--color-mode', 'rgb']
+                if self.layer is not None:
+                    args.extend(('--layer', self.layer))
+                if self.ignore_layer is not None:
+                    args.extend(('--ignore-layer', self.ignore_layer))
+                if self.frames is not None:
+                    args.extend(('--frame-range', f'{frame},{frame}'))
+                res = subprocess.run(args + ['--save-as', f.name])
+                if res.returncode != 0:
+                    raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
+                self._images[frame] = self._load_frame(f.name)
+
+    def get_image(self, frame=None):
+        self.load()
+        if frame is None:
+            assert self.frames[0] == self.frames[1]
+            return self._images[self.frames[0]]
+        return self._images[frame]
 
 
 class CompositeSprite(grf.Sprite):
