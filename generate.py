@@ -503,22 +503,25 @@ water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 # ------------------------------ Industries ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_forest(func, z, y):
+def tmpl_forest(func, z):
+    grid = lib.house_grid(func=func, height=75, z=z)
+    tile_layers = ('Tile Shadow 64', 'Tile Grid', 'Tile Solid Green')
+    kw = {'ignore_layers': tile_layers}
     return [
-        subtmpl_house_1x1('growth1', func, 0, y, 75),
-        subtmpl_house_1x1('growth2', func, 65, y, 75),
-        subtmpl_house_1x1('growth3', func, 130, y, 75),
-        subtmpl_house_1x1('grown', func, 195, y, 75),
-        subtmpl_house_1x1('logs', func, 260, y, 75),
-        subtmpl_house_1x1('cut', func, 325, y, 75),
+        grid('growth1', (0, 0), frame=0, **kw),
+        grid('growth2', (0, 0), frame=1, **kw),
+        grid('growth3', (0, 0), frame=2, **kw),
+        grid('grown', (0, 0), frame=3, **kw),
+        grid('logs', (0, 0), frame=4, **kw),
+        grid('cut', (0, 0), layers=tile_layers + ('Spriteborder',)),
     ]
 
 # TODO Why are 128/322 forest sprites too?
 # TODO remove climate=TEMPERATE? (but ensure the right order)
 lib.SpriteCollection('forest') \
-    .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 0, climate=TEMPERATE) \
-    .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
+    .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
     .replace_old(2072)
+    # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 
 @lib.template(grf.FileSprite)
