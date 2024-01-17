@@ -450,7 +450,7 @@ def tmpl_road_depot_old(func, z):
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_road_depot(func, z):
-    # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/road_land.h#
+    # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/road_land.h
     grid = lib.house_grid(func=func, height=75, z=z)
     back_layer = 'Behind'
     return [
@@ -469,6 +469,42 @@ lib.SpriteCollection('road_depot') \
     .add(STATION_DIR / 'roaddepots_2x_thin.ase',
          tmpl_road_depot_old, ZOOM_2X, thin=True) \
     .replace_old(1408)
+
+
+@lib.template(lib.CCReplacingFileSprite)
+def tmpl_truck_stop(func, z):
+    # TODO cut front wals out of the back sprites for better transparency
+    # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/station_land.h
+    grid = lib.house_grid(func=func, height=75, z=z)
+    ne_pos, se_pos, sw_pos, nw_pos = (2, 0), (0, 0), (1, 0), (3, 0)
+    return [
+        grid('ne_ground', ne_pos, layers='Tile/*'),
+        grid('se_ground', se_pos, layers='Tile/*'),
+        grid('sw_ground', sw_pos, layers='Tile/*'),
+        grid('nw_ground', nw_pos, layers='Tile/*'),
+        grid('ne_wall_se', ne_pos, bb=(0, 15), layers='FacingNE/SE/*'),
+        grid('se_wall_sw', se_pos, bb=(15, 3), layers='FacingSE/SW/*'),
+        grid('sw_wall_nw', sw_pos, bb=(3, 0), layers='FacingSW/NW/*'),
+        grid('nw_wall_ne', nw_pos, bb=(0, 0), layers='FacingNW/NE/*'),
+        grid('ne_wall_sw', ne_pos, bb=(13, 0), layers='FacingNE/SW/*'),
+        grid('se_wall_nw', se_pos, bb=(0, 0), layers='FacingSE/NW/*'),
+        grid('sw_wall_ne', sw_pos, bb=(0, 0), layers='FacingSW/NE/*'),
+        grid('nw_wall_se', nw_pos, bb=(0, 13), layers='FacingNW/SE/*'),
+        grid('ne_wall_nw', ne_pos, bb=(2, 0), layers='FacingNE/NW/*'),
+        grid('se_wall_ne', se_pos, bb=(0, 3), layers='FacingSE/NE/*'),
+        grid('sw_wall_se', sw_pos, bb=(3, 15), layers='FacingSW/SE/*'),
+        grid('nw_wall_sw', nw_pos, bb=(15, 2), layers='FacingNW/SW/*'),
+
+        grid('dt_y_wall_s', (4, 0), bb=(13, 0), layers='\\/S/*'),
+        grid('dt_y_wall_n', (4, 0), bb=(0, 0), layers='\\/N/*'),
+        grid('dt_x_wall_n', (5, 0), bb=(0, 0), layers='//N/*'),
+        grid('dt_x_wall_s', (5, 0), bb=(0, 13), layers='//S/*'),
+    ]
+
+truck_stops = lib.SpriteCollection('truck_stop') \
+    .add(STATION_DIR / 'road_stops_cargo_2x.ase', tmpl_truck_stop, ZOOM_2X)
+truck_stops[:16].replace_old(2708)
+truck_stops[16:].replace_new(0x11, 4)
 
 
 # ------------------------------ Water ------------------------------
