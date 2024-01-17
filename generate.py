@@ -450,6 +450,7 @@ def tmpl_road_depot_old(func, z):
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_road_depot(func, z):
+    # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/road_land.h#
     grid = lib.house_grid(func=func, height=75, z=z)
     back_layer = 'Behind'
     return [
@@ -540,6 +541,7 @@ lib.SpriteCollection('forest') \
 
 @lib.template(grf.FileSprite)
 def tmpl_sawmill(func, z):
+    # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
     grid = lib.house_grid(func=func, height=75, z=z)
     return [
         grid('building1_stage1', (0, 0), bb=(1, 0), frame=0),
@@ -578,6 +580,7 @@ def group_ranges(sprites):
         yield (last_id - len(cur_range) + 1, cur_range)
 
 
+offset_sprites = set()
 for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     ranges = list(group_ranges(lib.old_sprites[mode]))
     if not ranges and mode not in lib.new_sprites:
@@ -601,11 +604,18 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     #     for c, (f, a) in cd.items():
     #         print(f'    NEW [{set_type}]+{f} {c.name} {a}')
 
+    def add_global_offset(sprites):
+        global offset_sprites
+        for s in sprites:
+            if id(s) in offset_sprites:
+                continue
+            s.yofs -= 1
+            offset_sprites.add(id(s))
+
     if ranges:
         g.add(grf.ReplaceOldSprites([(offset, len(sprites)) for offset, sprites in ranges]))
         for offset, sprites in ranges:
-            for s in sprites:
-                s.yofs -= 1
+            add_global_offset(sprites)
             g.add(*sprites)
             for i, sa in enumerate(sprites):
                 names = ', '.join(s.name for s in (sa.sprites if isinstance(sa, grf.AlternativeSprites) else (sa,)))
@@ -613,8 +623,7 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     for set_type, sprite_dict in lib.new_sprites[mode].items():
         for offset, sprites in group_ranges(sprite_dict):
             g.add(grf.ReplaceNewSprites(set_type, len(sprites), offset=offset))
-            for s in sprites:
-                s.yofs -= 1
+            add_global_offset(sprites)
             g.add(*sprites)
             for i, sa in enumerate(sprites):
                 names = ', '.join(s.name for s in (sa.sprites if isinstance(sa, grf.AlternativeSprites) else (sa,)))
