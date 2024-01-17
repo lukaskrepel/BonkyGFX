@@ -457,9 +457,10 @@ def tmpl_road_depot(func, z):
         grid('se_front', (0, 0), bb=(15, 0), ignore_layers=back_layer),
         grid('sw_back', (1, 0), bb=(0, 0), layers=back_layer),
         grid('sw_front', (1, 0), bb=(0, 15), ignore_layers=back_layer),
-        grid('nw', (3, 0), bb=(0, 15), ignore_layers=back_layer),
-        grid('ne', (2, 0), bb=(15, 0), ignore_layers=back_layer),
+        grid('ne', (2, 0), bb=(0, 15), ignore_layers=back_layer),
+        grid('nw', (3, 0), bb=(15, 0), ignore_layers=back_layer),
     ]
+
 
 lib.SpriteCollection('road_depot') \
     .add(STATION_DIR / 'roaddepots_2x_newlayout.ase',
