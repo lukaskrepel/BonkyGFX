@@ -525,7 +525,7 @@ lib.SpriteCollection('forest') \
 
 @lib.template(grf.FileSprite)
 def tmpl_sawmill(func, z):
-    grid = lib.house_grid(func=func, height=74, z=z)
+    grid = lib.house_grid(func=func, height=75, z=z)
     return [
         grid('building1_stage1', (0, 0), bb=(1, 0), frame=0),
         grid('building1_stage2', (0, 0), bb=(1, 0), frame=1),
