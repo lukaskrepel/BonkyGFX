@@ -550,6 +550,7 @@ bus_stops = lib.SpriteCollection('bus_stop') \
 bus_stops[:16].replace_old(2692)
 bus_stops[16:].replace_new(0x11, 0)
 
+
 # ------------------------------ Water ------------------------------
 
 @lib.template(grf.FileSprite)
@@ -641,7 +642,7 @@ lib.SpriteCollection('sawmill') \
     .add(lib.aseidx(INDUSTRY_DIR / 'sawmill.ase'), tmpl_sawmill, ZOOM_2X) \
     .replace_old(2061)
 
-# ------------------------------ Sprite replacement magic ------------------------------
+# ------------------------------ Sprite Replacement Magic ------------------------------
 
 def group_ranges(sprites):
     last_id = cur_range = None
@@ -711,7 +712,7 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
         g.add(grf.Label(0, b''))
 
 
-# ------------------------------ Command line stuff ------------------------------
+# ------------------------------ Command Line Interface ------------------------------
 
 def cmd_debugcc_add_args(parser):
     parser.add_argument('ase_file', help='Aseprite image file')
