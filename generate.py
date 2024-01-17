@@ -435,7 +435,7 @@ def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0, **kw):
 
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_road_depot(func, z):
+def tmpl_road_depot_old(func, z):
     kw_front = {'ignore_layers': 'Behind'}
     kw_back = {'layers': 'Behind'}
     return [
@@ -447,11 +447,25 @@ def tmpl_road_depot(func, z):
         subtmpl_house_1x1('nw', func, 0, 130, 64, 30, -14, **kw_front),
     ]
 
+
+@lib.template(lib.CCReplacingFileSprite)
+def tmpl_road_depot(func, z):
+    grid = lib.house_grid(func=func, height=75, z=z)
+    back_layer = 'Behind'
+    return [
+        grid('se_back', (0, 0), bb=(0, 0), layers=back_layer),
+        grid('se_front', (0, 0), bb=(15, 0), ignore_layers=back_layer),
+        grid('sw_back', (1, 0), bb=(0, 0), layers=back_layer),
+        grid('sw_front', (1, 0), bb=(0, 15), ignore_layers=back_layer),
+        grid('nw', (3, 0), bb=(0, 15), ignore_layers=back_layer),
+        grid('ne', (2, 0), bb=(15, 0), ignore_layers=back_layer),
+    ]
+
 lib.SpriteCollection('road_depot') \
-    .add(STATION_DIR / 'roaddepots_2x.ase',
+    .add(STATION_DIR / 'roaddepots_2x_newlayout.ase',
          tmpl_road_depot, ZOOM_2X, thin=False) \
     .add(STATION_DIR / 'roaddepots_2x_thin.ase',
-         tmpl_road_depot, ZOOM_2X, thin=True) \
+         tmpl_road_depot_old, ZOOM_2X, thin=True) \
     .replace_old(1408)
 
 
