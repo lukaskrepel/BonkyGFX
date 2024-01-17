@@ -505,15 +505,14 @@ water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 @lib.template(grf.FileSprite)
 def tmpl_forest(func, z):
     grid = lib.house_grid(func=func, height=75, z=z)
-    tile_layers = ('Tile Shadow 64', 'Tile Grid', 'Tile Solid Green')
-    kw = {'ignore_layers': tile_layers}
+    ground_layers = ('Tile Shadow 64', 'Tile Grid', 'Tile Solid Green')
     return [
-        grid('growth1', (0, 0), frame=0, **kw),
-        grid('growth2', (0, 0), frame=1, **kw),
-        grid('growth3', (0, 0), frame=2, **kw),
-        grid('grown', (0, 0), frame=3, **kw),
-        grid('logs', (0, 0), frame=4, **kw),
-        grid('cut', (0, 0), layers=tile_layers + ('Spriteborder',)),
+        grid('growth1', (0, 0), frame=0, ignore_layers=ground_layers),
+        grid('growth2', (0, 0), frame=1, ignore_layers=ground_layers),
+        grid('growth3', (0, 0), frame=2, ignore_layers=ground_layers),
+        grid('grown', (0, 0), frame=3, ignore_layers=ground_layers),
+        grid('logs', (0, 0), frame=4, ignore_layers=ground_layers),
+        grid('ground', (0, 0), layers=ground_layers + ('Spriteborder',)),
     ]
 
 # TODO Why are 128/322 forest sprites too?
