@@ -482,14 +482,17 @@ def tmpl_truck_stop(func, z):
         grid('se_ground', se_pos, layers='Tile/*'),
         grid('sw_ground', sw_pos, layers='Tile/*'),
         grid('nw_ground', nw_pos, layers='Tile/*'),
+
         grid('ne_wall_se', ne_pos, bb=(0, 15), layers='FacingNE/SE/*'),
         grid('se_wall_sw', se_pos, bb=(15, 3), layers='FacingSE/SW/*'),
         grid('sw_wall_nw', sw_pos, bb=(3, 0), layers='FacingSW/NW/*'),
         grid('nw_wall_ne', nw_pos, bb=(0, 0), layers='FacingNW/NE/*'),
+
         grid('ne_wall_sw', ne_pos, bb=(13, 0), layers='FacingNE/SW/*'),
         grid('se_wall_nw', se_pos, bb=(0, 0), layers='FacingSE/NW/*'),
         grid('sw_wall_ne', sw_pos, bb=(0, 0), layers='FacingSW/NE/*'),
         grid('nw_wall_se', nw_pos, bb=(0, 13), layers='FacingNW/SE/*'),
+
         grid('ne_wall_nw', ne_pos, bb=(2, 0), layers='FacingNE/NW/*'),
         grid('se_wall_ne', se_pos, bb=(0, 3), layers='FacingSE/NE/*'),
         grid('sw_wall_se', sw_pos, bb=(3, 15), layers='FacingSW/SE/*'),
@@ -506,6 +509,46 @@ truck_stops = lib.SpriteCollection('truck_stop') \
 truck_stops[:16].replace_old(2708)
 truck_stops[16:].replace_new(0x11, 4)
 
+
+@lib.template(lib.CCReplacingFileSprite)
+def tmpl_bus_stop(func, z):
+    # TODO cut front wals out of the back sprites for better transparency
+    # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/station_land.h
+    # NOTE only diffence from truck template is bb and layer names same bb for x/y views though
+    grid = lib.house_grid(func=func, height=75, z=z)
+    ne_pos, se_pos, sw_pos, nw_pos = (2, 0), (0, 0), (1, 0), (3, 0)
+    return [
+        grid('ne_ground', ne_pos, layers='Road?'),
+        grid('se_ground', se_pos, layers='Road?'),
+        grid('sw_ground', sw_pos, layers='Road?'),
+        grid('nw_ground', nw_pos, layers='Road?'),
+
+        grid('ne_wall_se', ne_pos, bb=(2, 0), layers='SE Orange'),
+        grid('se_wall_sw', se_pos, bb=(0, 3), layers='SW Red'),
+        grid('sw_wall_nw', sw_pos, bb=(3, 15), layers='NW Yellow'),
+        grid('nw_wall_ne', nw_pos, bb=(15, 2), layers='NE Green'),
+
+        grid('ne_wall_sw', ne_pos, bb=(13, 0), layers='SW Red'),
+        grid('se_wall_nw', se_pos, bb=(0, 0), layers='NW Yellow'),
+        grid('sw_wall_ne', sw_pos, bb=(0, 0), layers='NE Green'),
+        grid('nw_wall_se', nw_pos, bb=(0, 13), layers='SE Orange'),
+
+        grid('ne_wall_nw', ne_pos, bb=(0, 13), layers='NW Yellow'),
+        grid('se_wall_ne', se_pos, bb=(13, 3), layers='NE Green'),
+        grid('sw_wall_se', sw_pos, bb=(3, 0), layers='SE Orange'),
+        grid('nw_wall_sw', nw_pos, bb=(0, 0), layers='SW Red'),
+
+        grid('dt_y_wall_s', (4, 0), bb=(13, 0), layers='SW Red'),
+        grid('dt_y_wall_n', (4, 0), bb=(0, 0), layers='NE Green'),
+        grid('dt_x_wall_n', (5, 0), bb=(0, 0), layers='NW Yellow'),
+        grid('dt_x_wall_s', (5, 0), bb=(0, 13), layers='SE Orange'),
+    ]
+
+
+bus_stops = lib.SpriteCollection('bus_stop') \
+    .add(STATION_DIR / 'road_stops_pax_2x.ase', tmpl_bus_stop, ZOOM_2X)
+bus_stops[:16].replace_old(2692)
+bus_stops[16:].replace_new(0x11, 0)
 
 # ------------------------------ Water ------------------------------
 
