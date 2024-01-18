@@ -498,14 +498,14 @@ def tmpl_truck_stop(func, z):
         grid('sw_wall_se', sw_pos, bb=(3, 15), layers='FacingSW/SE/*'),
         grid('nw_wall_sw', nw_pos, bb=(15, 2), layers='FacingNW/SW/*'),
 
-        grid('dt_y_wall_s', (4, 0), bb=(13, 0), layers='\\/S/*'),
-        grid('dt_y_wall_n', (4, 0), bb=(0, 0), layers='\\/N/*'),
-        grid('dt_x_wall_n', (5, 0), bb=(0, 0), layers='//N/*'),
-        grid('dt_x_wall_s', (5, 0), bb=(0, 13), layers='//S/*'),
+        grid('dt_y_wall_s', (4, 0), bb=(13, 0), layers='DriveTroughY NW-SE/S/*'),
+        grid('dt_y_wall_n', (4, 0), bb=(0, 0), layers='DriveTroughY NW-SE/N/*'),
+        grid('dt_x_wall_n', (5, 0), bb=(0, 0), layers='DriveTroughX SW-NE/N/*'),
+        grid('dt_x_wall_s', (5, 0), bb=(0, 13), layers='DriveTroughX SW-NE/S/*'),
     ]
 
 truck_stops = lib.SpriteCollection('truck_stop') \
-    .add(STATION_DIR / 'road_stops_cargo_2x.ase', tmpl_truck_stop, ZOOM_2X)
+    .add(STATION_DIR / 'truckstop_2x.ase', tmpl_truck_stop, ZOOM_2X)
 truck_stops[:16].replace_old(2708)
 truck_stops[16:].replace_new(0x11, 4)
 
@@ -546,7 +546,7 @@ def tmpl_bus_stop(func, z):
 
 
 bus_stops = lib.SpriteCollection('bus_stop') \
-    .add(STATION_DIR / 'road_stops_pax_2x.ase', tmpl_bus_stop, ZOOM_2X)
+    .add(STATION_DIR / 'busstop_2x.ase', tmpl_bus_stop, ZOOM_2X)
 bus_stops[:16].replace_old(2692)
 bus_stops[16:].replace_new(0x11, 0)
 
