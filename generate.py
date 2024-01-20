@@ -599,24 +599,26 @@ water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 # ------------------------------ Industries ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_forest(func, z):
+def tmpl_powerplant(func, z):
+    # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
     grid = lib.house_grid(func=func, height=75, z=z)
-    ground_layers = ('Tile Shadow 64', 'Tile Grid', 'Tile Solid Green')
     return [
-        grid('growth1', (0, 0), frame=0, ignore_layers=ground_layers),
-        grid('growth2', (0, 0), frame=1, ignore_layers=ground_layers),
-        grid('growth3', (0, 0), frame=2, ignore_layers=ground_layers),
-        grid('grown', (0, 0), frame=3, ignore_layers=ground_layers),
-        grid('logs', (0, 0), frame=4, ignore_layers=ground_layers),
-        grid('ground', (0, 0), layers=ground_layers + ('Spriteborder',)),
+        grid('building1_stage1', (0, 0), bb=(1, 1), frame=0),
+        grid('building1_stage2', (0, 0), bb=(1, 1), frame=1),
+        grid('building1_stage3', (0, 0), bb=(1, 1), frame=2),
+        grid('building2_stage1', (1, 0), bb=(0, 2), frame=0),
+        grid('building2_stage2', (1, 0), bb=(0, 2), frame=1),
+        grid('building2_stage3', (1, 0), bb=(0, 2), frame=2),
+        grid('building3_stage1', (2, 0), bb=(1, 0), frame=0),
+        grid('building3_stage2', (2, 0), bb=(1, 0), frame=1),
+        grid('building3_stage3', (2, 0), bb=(1, 0), frame=2),
+        grid('transformer', (3, 0), bb=(1, 2), frame=2)
     ]
 
-# TODO Why are 128/322 forest sprites too?
-# TODO remove climate=TEMPERATE? (but ensure the right order)
-lib.SpriteCollection('forest') \
-    .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
-    .replace_old(2072)
-    # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
+
+lib.SpriteCollection('power_plant') \
+    .add(lib.aseidx(INDUSTRY_DIR / 'powerplant_2x.ase'), tmpl_powerplant, ZOOM_2X) \
+    .replace_old(2045)
 
 
 @lib.template(grf.FileSprite)
@@ -641,6 +643,28 @@ def tmpl_sawmill(func, z):
 lib.SpriteCollection('sawmill') \
     .add(lib.aseidx(INDUSTRY_DIR / 'sawmill.ase'), tmpl_sawmill, ZOOM_2X) \
     .replace_old(2061)
+
+
+@lib.template(grf.FileSprite)
+def tmpl_forest(func, z):
+    grid = lib.house_grid(func=func, height=75, z=z)
+    ground_layers = ('Tile Shadow 64', 'Tile Grid', 'Tile Solid Green')
+    return [
+        grid('growth1', (0, 0), frame=0, ignore_layers=ground_layers),
+        grid('growth2', (0, 0), frame=1, ignore_layers=ground_layers),
+        grid('growth3', (0, 0), frame=2, ignore_layers=ground_layers),
+        grid('grown', (0, 0), frame=3, ignore_layers=ground_layers),
+        grid('logs', (0, 0), frame=4, ignore_layers=ground_layers),
+        grid('ground', (0, 0), layers=ground_layers + ('Spriteborder',)),
+    ]
+
+
+# TODO Why are 128/322 forest sprites too?
+# TODO remove climate=TEMPERATE? (but ensure the right order)
+lib.SpriteCollection('forest') \
+    .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
+    .replace_old(2072)
+    # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 # ------------------------------ Sprite Replacement Magic ------------------------------
 
