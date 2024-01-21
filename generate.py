@@ -634,7 +634,7 @@ def tmpl_chimney_smoke(func, z):
     ]
 
 lib.SpriteCollection('chimney_smoke') \
-    .add(lib.aseidx(EFFECT_DIR / 'powerstation_smoke_2x.ase'), tmpl_chimney_smoke, ZOOM_2X) \
+    .add(lib.aseidx(EFFECT_DIR / 'chimney_smoke_2x.ase'), tmpl_chimney_smoke, ZOOM_2X) \
     .replace_old(3701)
 
 
