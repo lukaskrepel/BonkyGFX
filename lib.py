@@ -87,14 +87,20 @@ def house_grid(*, func, height, width=64, padding=1, z=2):
     zheight = height * z + z - 1
     zpadding = padding * z
     zwidth = width * z
-    def sprite_func(name, grid_pos, bb=(0, 0), **kw):
+    def sprite_func(name, grid_pos, bb=None, rel=None, **kw):
+        assert bb is None or rel is None
         x, y = grid_pos
         fx = x * zwidth + zpadding * (x + 1)
         fy = y * zheight + zpadding * (y + 1)
-        zxofs = -31 * z
-        zyofs = (31 - height) * z  # - z // 2
-        zxofs -= z * (bb[1] - bb[0]) * 2
-        zyofs -= z * (bb[0] + bb[1])
+        if rel is not None:
+            zxofs = -rel[0] * z
+            zyofs = -rel[1] * z + 1
+        else:
+            zxofs = -31 * z
+            zyofs = (31 - height) * z # - z // 2
+            if bb is not None:
+                zxofs -= z * (bb[1] - bb[0]) * 2
+                zyofs -= z * (bb[0] + bb[1])
         return func(name, fx, fy, zwidth, zheight, xofs=zxofs, yofs=zyofs, **kw)
 
     return sprite_func

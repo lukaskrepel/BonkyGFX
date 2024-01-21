@@ -612,7 +612,13 @@ def tmpl_powerplant(func, z):
         grid('building3_stage1', (2, 0), bb=(1, 0), frame=0),
         grid('building3_stage2', (2, 0), bb=(1, 0), frame=1),
         grid('building3_stage3', (2, 0), bb=(1, 0), frame=2),
-        grid('transformer', (3, 0), bb=(1, 2), frame=2)
+        grid('transformer', (3, 0), bb=(1, 2), frame=2, crop=False),  # TODO find a better solution to child sprite positioning than crop=False
+        grid('spark1', (3, 0), rel=(11, 23), frame=3, layers='Animated Zap'),
+        grid('spark2', (3, 0), rel=(11, 11), frame=4, layers='Animated Zap'),
+        grid('spark3', (3, 0), rel=(14, 6), frame=5, layers='Animated Zap'),
+        grid('spark4', (3, 0), rel=(13, 3), frame=6, layers='Animated Zap'),
+        grid('spark5', (3, 0), rel=(18, 1), frame=7, layers='Animated Zap'),
+        grid('spark6', (3, 0), rel=(15, 0), frame=8, layers='Animated Zap'),
     ]
 
 
