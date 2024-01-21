@@ -629,7 +629,7 @@ lib.SpriteCollection('power_plant') \
 @lib.template(grf.FileSprite)
 def tmpl_chimney_smoke(func, z):
     return [
-        func(f'{i}', x=0, y=0, w=128, h=128, xofs=0, yofs=-128, frame=i)
+        func(f'{i}', x=2, y=2, w=128, h=128, xofs=0, yofs=-128, frame=i)
         for i in range(8)
     ]
 
