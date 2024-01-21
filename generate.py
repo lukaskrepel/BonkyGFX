@@ -17,9 +17,8 @@ INFRA_DIR = SPRITE_DIR / 'infrastructure'
 INDUSTRY_DIR = SPRITE_DIR / 'industries'
 STATION_DIR = SPRITE_DIR / 'stations'
 TREE_DIR = SPRITE_DIR / 'trees'
-THICK = 1 << 4
-THIN = 2 << 4
-MODES = (TEMPERATE, ARCTIC, TOYLAND, TROPICAL)
+EFFECT_DIR = SPRITE_DIR / 'effects'
+
 
 g = grf.NewGRF(
     grfid=b'TODO',
@@ -625,6 +624,18 @@ def tmpl_powerplant(func, z):
 lib.SpriteCollection('power_plant') \
     .add(lib.aseidx(INDUSTRY_DIR / 'powerplant_2x.ase'), tmpl_powerplant, ZOOM_2X) \
     .replace_old(2045)
+
+
+@lib.template(grf.FileSprite)
+def tmpl_chimney_smoke(func, z):
+    return [
+        func(f'{i}', x=0, y=0, w=128, h=128, xofs=0, yofs=-128, frame=i)
+        for i in range(8)
+    ]
+
+lib.SpriteCollection('chimney_smoke') \
+    .add(lib.aseidx(EFFECT_DIR / 'powerstation_smoke_2x.ase'), tmpl_chimney_smoke, ZOOM_2X) \
+    .replace_old(3701)
 
 
 @lib.template(grf.FileSprite)
