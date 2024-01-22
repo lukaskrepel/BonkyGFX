@@ -613,10 +613,10 @@ def tmpl_coal_mine(func, z):
         grid('building3_stage1', (2, 0), bb=(4, 4), frame=0),
         grid('building3_stage2', (2, 0), bb=(4, 4), frame=1),
         grid('building3_stage3', (2, 0), bb=(4, 4), frame=2),
-        grid('ground1', (5, 0), frame=0),
-        grid('coal1', (3, 0), frame=0),
-        grid('coal2', (4, 0), frame=0),
-        grid('coal3', (5, 0), frame=0),
+        grid('ground1', (3, 0), frame=0),
+        grid('coal1', (4, 0), frame=0),
+        grid('coal2', (5, 0), frame=0),
+        grid('coal3', (6, 0), frame=0),
     ]
 
 
