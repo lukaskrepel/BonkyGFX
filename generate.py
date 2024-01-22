@@ -598,6 +598,34 @@ water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 # ------------------------------ Industries ------------------------------
 
 @lib.template(grf.FileSprite)
+def tmpl_coal_mine(func, z):
+    # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
+    grid = lib.house_grid(func=func, height=75, z=z)
+    return [
+        grid('building1_stage1', (0, 0), bb=(7, 0), frame=0),
+        grid('building1_stage2', (0, 0), bb=(7, 0), frame=1),
+        grid('building1_stage3_frame1', (0, 0), bb=(7, 0), frame=2),
+        grid('building1_stage3_frame2', (0, 0), bb=(7, 0), frame=3),
+        grid('building1_stage3_frame3', (0, 0), bb=(7, 0), frame=4),
+        grid('building2_stage1', (1, 0), bb=(1, 2), frame=0),
+        grid('building2_stage2', (1, 0), bb=(1, 2), frame=1),
+        grid('building2_stage3', (1, 0), bb=(1, 2), frame=2),
+        grid('building3_stage1', (2, 0), bb=(4, 4), frame=0),
+        grid('building3_stage2', (2, 0), bb=(4, 4), frame=1),
+        grid('building3_stage3', (2, 0), bb=(4, 4), frame=2),
+        grid('ground1', (5, 0), frame=0),
+        grid('coal1', (3, 0), frame=0),
+        grid('coal2', (4, 0), frame=0),
+        grid('coal3', (5, 0), frame=0),
+    ]
+
+
+lib.SpriteCollection('coal_mine') \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine_2x.ase'), tmpl_coal_mine, ZOOM_2X) \
+    .replace_old(2011)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_powerplant(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
     grid = lib.house_grid(func=func, height=75, z=z)
