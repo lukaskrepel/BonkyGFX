@@ -286,13 +286,13 @@ lib.SpriteCollection('bus_gen2') \
 # ------------------------------ Rail Vehicles ------------------------------
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_vehicle_rail_4view(func, z, x, y):
+def tmpl_vehicle_rail_4view(func, z, x, y, **kw):
     # Horizontal views have zoom-specific optimisation for perfect depot window alignment
     return [
-        func( 'n', (1 +   0 + x * 87) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z),
-        func('ne', (2 +   8 + x * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z),
-        func( 'e', (3 +  30 + x * 87) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2, yofs=-9 * z),
-        func('se', (4 +  61 + x * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z),
+        func( 'n', (1 +   0 + 0 * 87) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z, frame=x),
+        func('ne', (2 +   8 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z, frame=x),
+        func( 'e', (3 +  30 + 0 * 87) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2, yofs=-9 * z, frame=x),
+        func('se', (4 +  61 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z, frame=x),
     ]
 
 
