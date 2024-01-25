@@ -463,7 +463,7 @@ def tmpl_road_depot(func, z):
 
 
 lib.SpriteCollection('road_depot') \
-    .add(STATION_DIR / 'roaddepots_2x_newlayout.ase',
+    .add(STATION_DIR / 'roaddepots_2x.ase',
          tmpl_road_depot, ZOOM_2X, thin=False) \
     .add(STATION_DIR / 'roaddepots_2x_thin.ase',
          tmpl_road_depot_old, ZOOM_2X, thin=True) \
