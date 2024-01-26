@@ -713,6 +713,34 @@ lib.SpriteCollection('forest') \
 
 
 @lib.template(grf.FileSprite)
+def tmpl_factory(func, z):
+    assert z == 2
+    ground = func('ground', 2, 2, 256, 201, xofs=-126, yofs=-138, layers=('TILE/*', 'Spriteborder'), frame=2)
+    return [
+        lib.CutGround(ground, (1, 1), name='ground1_stage3'),
+        lib.CutGround(ground, (1, 0), name='ground2_stage3'),
+        lib.CutGround(ground, (0, 1), name='ground3_stage3'),
+        lib.CutGround(ground, (0, 0), name='ground4_stage3'),
+        grf.EMPTY_SPRITE, # Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
+        func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
+        grf.EMPTY_SPRITE, # Furthest building is covered by the closest one,
+        func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=0),
+        func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=0),
+        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=0),
+        grf.EMPTY_SPRITE, # Furthest building is covered by the closest one,
+        func('building2_stage2', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building3_stage2', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
+    ]
+
+
+lib.SpriteCollection('factory') \
+    .add(INDUSTRY_DIR / 'factory_2x.ase', tmpl_factory, ZOOM_2X) \
+    .replace_old(2146)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_bank(func, z):
     assert z == 2
     ground = func('ground', 2, 2, 192, 160, xofs=-62, yofs=-97, layers=('TILE/*', 'Spriteborder'))

@@ -159,7 +159,7 @@ class SpriteCollection:
         if 'thin' in kw:
             kwsuffix = 'thin_' if kw['thin'] else 'thick_'
         sprites = template(f'{self.name}_{{suffix}}_{kwsuffix}{z}x', files, zoom, *args)
-        assert all(s.zoom  == zoom for s in sprites)
+        assert all(s.zoom  == zoom or s == grf.EMPTY_SPRITE for s in sprites)
         self.sprites.append((zoom, kw, sprites))
         return self
 
@@ -465,6 +465,9 @@ class CutGround(grf.Sprite):
             n = i if i <= 31 else 62 - i
             n = (n + 1) * 2
             ground_mask[i, 64 - n: 64 + n] = False
+
+        if x < 0 or y < 0 or y + self.h > h or x + self.w > w:
+            raise ValueError(f'Ground sprite region({x}..{x + self.w}, {y}..{y + self.h}) is outside sprite boundaries (0..{w}, 0..{h})')
 
         if rgb is not None:
             rgb = rgb[y:y + self.h, x:x + self.w].copy()
