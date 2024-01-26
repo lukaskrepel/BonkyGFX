@@ -443,6 +443,58 @@ class MagentaAndMask(grf.Sprite):
         }
 
 
+class CutGround(grf.Sprite):
+    def __init__(self, sprite, position, name=None):
+        assert sprite.zoom == ZOOM_2X
+        z = 2
+        self.sprite = sprite
+        self.position = position
+        super().__init__(w=64 * z, h=32 * z - 1, xofs=-31 * z, yofs=0, zoom=sprite.zoom, bpp=sprite.bpp, name=name)
+
+    def prepare_files(self):
+        self.sprite.prepare_files()
+
+    def get_data_layers(self, context):
+        gx, gy = self.position
+        x = -self.sprite.xofs - 62 + (gx - gy) * 64
+        y = -self.sprite.yofs - (gx + gy) * 32
+
+        w, h, rgb, alpha, mask = self.sprite.get_data_layers(context)
+        ground_mask = np.full((self.h, self.w), True)
+        for i in range(self.h):
+            n = i if i <= 31 else 62 - i
+            n = (n + 1) * 2
+            ground_mask[i, 64 - n: 64 + n] = False
+
+        if rgb is not None:
+            rgb = rgb[y:y + self.h, x:x + self.w].copy()
+            rgb[ground_mask, :] = 0
+        if alpha is not None:
+            alpha = alpha[y:y + self.h, x:x + self.w].copy()
+            alpha[ground_mask] = 0
+        if mask is not None:
+            mask = mask[y:y + self.h, x:x + self.w].copy()
+            mask[ground_mask] = 0
+
+        return self.w, self.h, rgb, alpha, mask
+
+
+    def get_image_files(self):
+        return ()
+
+    def get_resource_files(self):
+        return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files()
+
+    def get_fingerprint(self):
+        return {
+            'class': self.__class__.__name__,
+            'position': self.position,
+            'xofs': self.xofs,
+            'yofs': self.yofs,
+            'sprite': self.sprite.get_fingerprint(),
+        }
+
+
 class AseImageFile(grf.ImageFile):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)

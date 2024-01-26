@@ -711,6 +711,23 @@ lib.SpriteCollection('forest') \
     .replace_old(2072)
     # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
+
+@lib.template(grf.FileSprite)
+def tmpl_bank(func, z):
+    assert z == 2
+    ground = func('ground', 2, 2, 192, 160, xofs=-62, yofs=-97, layers=('TILE/*', 'Spriteborder'))
+    return [
+        func('building1', 130, 2, 64, 160, xofs=2, yofs=-65, layers=('Building/*', 'Spriteborder')),
+        func('building2', 2, 2, 128, 160, xofs=-62, yofs=-97, layers=('Building/*', 'Spriteborder')),
+        lib.CutGround(ground, (1, 0), name='ground1'),
+        lib.CutGround(ground, (0, 0), name='ground2'),
+    ]
+
+
+lib.SpriteCollection('bank') \
+    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X) \
+    .replace_old(2180)
+
 # ------------------------------ Sprite Replacement Magic ------------------------------
 
 def group_ranges(sprites):
