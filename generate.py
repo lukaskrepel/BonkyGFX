@@ -15,6 +15,7 @@ TERRAIN_DIR = SPRITE_DIR / 'terrain'
 VEHICLE_DIR = SPRITE_DIR / 'vehicles'
 INFRA_DIR = SPRITE_DIR / 'infrastructure'
 INDUSTRY_DIR = SPRITE_DIR / 'industries'
+TOWN_DIR = SPRITE_DIR / 'towns'
 STATION_DIR = SPRITE_DIR / 'stations'
 TREE_DIR = SPRITE_DIR / 'trees'
 EFFECT_DIR = SPRITE_DIR / 'effects'
@@ -593,6 +594,31 @@ water[0].replace_old(4061)
 
 WATER_COMPOSITION = [(x, x) for x in [16, 1, 2, 3, 4, 17, 6, 7, 8, 9, 15, 11, 12, 13, 14, 18]]
 water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
+
+
+# ------------------------------ Towns ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_shops_and_offices(func, z):
+    grid = lib.house_grid(func=func, height=100, z=z)
+    return [
+        grid('1', (0, 0), bb=(0, 0)),
+        grid('2', (1, 0), bb=(0, 0)),
+        grid('3', (2, 0), bb=(2, 0)),
+        grid('4', (3, 0), bb=(1, 3)),
+        grid('5', (4, 0), bb=(3, 1)),
+        grid('6', (5, 0), bb=(0, 0)),
+    ]
+
+houses = lib.SpriteCollection('house') \
+    .add(lib.aseidx(TOWN_DIR / 'shopsandoffices_2x.ase'), tmpl_shops_and_offices, ZOOM_2X) \
+
+houses[0].replace_old(1537)
+houses[1].replace_old(1539)
+houses[2].replace_old(1469)
+houses[3].replace_old(1463)
+houses[4].replace_old(1466)
+houses[5].replace_old(1545)
 
 
 # ------------------------------ Industries ------------------------------
