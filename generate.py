@@ -891,12 +891,28 @@ def cmd_debugcc_add_args(parser):
     parser.add_argument('ase_file', help='Aseprite image file')
     parser.add_argument('--horizontal', action='store_true', help='Stack resulting images horizontally')
     parser.add_argument('--layer', help='Name of the layer in aseprite file to export')
+    parser.add_argument('--frame', help='Frame number to export', type=int, default=1)
 
 
 def cmd_debugcc_handler(g, grf_file, args):
     ase = lib.AseImageFile(args.ase_file)
-    sprite = lib.CCReplacingFileSprite(ase, 0, 0, None, None, name=args.ase_file, layers=args.layer)
+    sprite = grf.FileSprite(ase, 0, 0, None, None, name=args.ase_file, layers=args.layer, frame=args.frame)
+    sprite = lib.MagentaToCC(sprite)
     lib.debug_cc_recolour([sprite], horizontal=args.horizontal)
+
+
+def cmd_debugstruct_add_args(parser):
+    parser.add_argument('ase_file', help='Aseprite image file')
+    parser.add_argument('--horizontal', action='store_true', help='Stack resulting images horizontally')
+    parser.add_argument('--layer', help='Name of the layer in aseprite file to export')
+    parser.add_argument('--frame', help='Frame number to export', type=int, default=1)
+
+
+def cmd_debugstruct_handler(g, grf_file, args):
+    ase = lib.AseImageFile(args.ase_file)
+    sprite = grf.FileSprite(ase, 0, 0, None, None, name=args.ase_file, layers=args.layer, frame=args.frame)
+    sprite = lib.MagentaToStruct(sprite)
+    lib.debug_struct_recolour([sprite], horizontal=args.horizontal)
 
 
 def cmd_debuglight_add_args(parser):
@@ -921,6 +937,11 @@ grf.main(
         'help': 'Takes an image and produces another image with all variants of CC recolour',
         'add_args': cmd_debugcc_add_args,
         'handler': cmd_debugcc_handler,
+    }, {
+        'name': 'debugstruct',
+        'help': 'Takes an image and produces another image with all variants of structure recolour',
+        'add_args': cmd_debugstruct_add_args,
+        'handler': cmd_debugstruct_handler,
     }, {
         'name': 'debuglight',
         'help': 'Takes an image and produces animated gif with light cycle',
