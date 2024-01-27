@@ -738,7 +738,7 @@ lib.SpriteCollection('forest') \
     # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 
-@lib.template(grf.FileSprite)
+@lib.template(lib.CCReplacingFileSprite)
 def tmpl_factory(func, z):
     assert z == 2
     ground = func('ground', 2, 2, 256, 201, xofs=-126, yofs=-138, layers=('TILE/*', 'Spriteborder'), frame=2)
