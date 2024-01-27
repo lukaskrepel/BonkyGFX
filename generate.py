@@ -613,12 +613,12 @@ def tmpl_shops_and_offices(func, z):
 houses = lib.SpriteCollection('house') \
     .add(lib.aseidx(TOWN_DIR / 'shopsandoffices_2x.ase'), tmpl_shops_and_offices, ZOOM_2X) \
 
-houses[0].replace_old(1537)
-houses[1].replace_old(1539)
-houses[2].replace_old(1469)
-houses[3].replace_old(1463)
-houses[4].replace_old(1466)
-houses[5].replace_old(1545)
+houses[0].replace_old(1537)  # 29
+houses[1].replace_old(1539)  # 29
+houses[2].replace_old(1469)  # 16
+houses[3].replace_old(1463)  # 14
+houses[4].replace_old(1466)  # 15
+houses[5].replace_old(1545)  # 30
 
 
 # ------------------------------ Industries ------------------------------
