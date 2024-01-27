@@ -315,6 +315,98 @@ class CCReplacingFileSprite(grf.FileSprite):
         return super().get_resource_files() + (THIS_FILE,)
 
 
+class SpriteWrapper(grf.Sprite):
+    def __init__(self, sprites, *, name=None):
+        self.sprites = sprites
+        try:
+            f = next(iter(self._iter_sprites()))
+        except StopIteration:
+            raise ValueError('SpriteWrapper sprites to wrap')
+        super().__init__(w=f.w, h=f.h, xofs=f.xofs, yofs=f.yofs, zoom=f.zoom, bpp=f.bpp, crop=f.crop)
+
+    def _iter_sprites(self):
+        if isinstance(self.sprites, dict):
+            i = self.sprites.values()
+        else:
+            i = self.sprites
+        for s in i:
+            if s is not None:
+                yield s
+
+    def get_image_files(self):
+        return ()
+
+    def get_resource_files(self):
+        # TODO add wrapped class __file__, possibly traversing mro (do that globally?)
+        res = super().get_resource_files() + (THIS_FILE,)
+        for s in self._iter_sprites():
+            res += s.get_resource_files()
+        return res
+
+    def get_fingerprint(self):
+        res = {'class': self.__class__.__name__}
+        if isinstance(self.sprites, dict):
+            sf = {}
+            for k, s in self.sprites.items():
+                if s is None:
+                    sf[k] = None
+                else:
+                    f = s.get_fingerprint()
+                    if f is None:
+                        return None
+                    sf[k] = f
+        else:
+            sf = []
+            for s in self.sprites:
+                if s is None:
+                    sf.append(None)
+                    continue
+                f = s.get_fingerprint()
+                if f is None:
+                    return None
+                sf.append(f)
+        res['sprites'] = sf
+        return res
+
+    def prepare_files(self):
+        for s in self._iter_sprites():
+            s.prepare_files()
+
+
+class MagentaToCC(SpriteWrapper):
+    def __init__(self, sprite):
+        super().__init__((sprite, ))
+
+    def get_data_layers(self, context):
+        w, h, rgb, alpha, mask = self.sprites[0].get_data_layers(context)
+
+        timer = context.start_timer()
+
+        if mask is not None:
+            raise RuntimeError('Only 32-bit RGB sprites are currently supported for CC replacement')
+
+        rgb = grf.np_make_writable(rgb)
+        magenta_mask = (
+            (rgb[:, :, 0] == rgb[:, :, 2]) &
+            (
+                ((rgb[:, :, 0] == 255) & (rgb[:, :, 1] != 255)) |
+                ((rgb[:, :, 1] == 0) & (rgb[:, :, 0] != 0))
+            )
+        )
+
+        value = rgb[magenta_mask][:, 0].astype(np.uint16) + rgb[magenta_mask][:, 1]
+        rgb[magenta_mask, 0] = VALUE_TO_BRIGHTNESS[value]
+        rgb[magenta_mask, 1] = 0
+        rgb[magenta_mask, 2] = 0
+
+        mask = np.zeros((h, w), dtype=np.uint8)
+        mask[magenta_mask] = VALUE_TO_INDEX[value] + 0xC6
+
+        timer.count_custom('Magenta and mask processing')
+
+        return w, h, rgb, alpha, mask
+
+
 class MagentaToLight(grf.Sprite):
     def __init__(self, sprite, order):
         self.sprite = sprite
