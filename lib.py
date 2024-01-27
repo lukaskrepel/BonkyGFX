@@ -621,7 +621,7 @@ class AseImageFile(grf.ImageFile):
         self._kw_requested = set()
 
     @staticmethod
-    def _make_kw_key(frame=0, layers=None, ignore_layers=None):
+    def _make_kw_key(frame=1, layers=None, ignore_layers=None):
         if isinstance(layers, str):
             layers = (layers,)
         if isinstance(ignore_layers, str):
@@ -655,7 +655,7 @@ class AseImageFile(grf.ImageFile):
                     args.extend(('--layer', l))
                 for l in ignore_layers:
                     args.extend(('--ignore-layer', l))
-                args.extend(('--frame-range', f'{frame},{frame}'))
+                args.extend(('--frame-range', f'{frame - 1},{frame - 1}'))
                 res = subprocess.run(args + ['--save-as', f.name])
                 if res.returncode != 0:
                     raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')

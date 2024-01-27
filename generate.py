@@ -197,7 +197,7 @@ def tree(name, sprite_id, path):
         ]
     sprites = []
     for i in range(7):
-        sprites.extend(tmpl(f'stage{i}', lib.aseidx(path), ZOOM_2X, i))
+        sprites.extend(tmpl(f'stage{i}', lib.aseidx(path), ZOOM_2X, i + 1))
     lib.SpriteCollection(name).add_sprites(sprites).replace_old(sprite_id)
 
 TREE_RANGES = [
@@ -241,7 +241,7 @@ def tmpl_vehicle_road_8view(func, z, x, y, frame):
 def replace_rv_generation(path2x, generation):
     def tmpl(suffix, x, y):
         return lib.SpriteCollection(f'rv_gen{generation}_{suffix}') \
-            .add(path2x, tmpl_vehicle_road_8view, ZOOM_2X, x, y, generation - 1)
+            .add(path2x, tmpl_vehicle_road_8view, ZOOM_2X, x, y, generation)
 
     # base_graphics spr3284(3284, "../graphics/vehicles/64/road_buses_8bpp.png") { template_vehicle_road_8view(0, 0, 1) } // bus
     o = {1: 0, 2: -192, 3: 192}[generation]
@@ -287,19 +287,20 @@ lib.SpriteCollection('bus_gen2') \
 # ------------------------------ Rail Vehicles ------------------------------
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_vehicle_rail_4view(func, z, x, y, **kw):
+def tmpl_vehicle_rail_4view(func, z, y, frame, **kw):
     # Horizontal views have zoom-specific optimisation for perfect depot window alignment
     return [
-        func( 'n', (1 +   0 + 0 * 87) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z, frame=x),
-        func('ne', (2 +   8 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z, frame=x),
-        func( 'e', (3 +  30 + 0 * 87) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2, yofs=-9 * z, frame=x),
-        func('se', (4 +  61 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z, frame=x),
+        func( 'n', (1 +   0 + 0 * 87) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z, frame=frame),
+        func('ne', (2 +   8 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z, frame=frame),
+        func( 'e', (3 +  30 + 0 * 87) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2, yofs=-9 * z, frame=frame),
+        func('se', (4 +  61 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z, frame=frame),
     ]
 
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_vehicle_rail_8view(func, z, x, y):
+def tmpl_vehicle_rail_8view(func, z, y, _x):
     # Horizontal views have zoom-specific optimisation for perfect depot window alignment
+    x = 0
     return [
         func( 'n', (1 +   0 + x * 174) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z),
         func('ne', (2 +   8 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z),
@@ -312,55 +313,55 @@ def tmpl_vehicle_rail_8view(func, z, x, y):
     ]
 
 
-def wagon(name, sprite_id, x, y):
+def wagon(name, sprite_id, y, *, frame):
     lib.SpriteCollection('wagon_' + name) \
-        .add(VEHICLE_DIR / 'rail_wagons_2x.ase', tmpl_vehicle_rail_4view, ZOOM_2X, x, y) \
+        .add(VEHICLE_DIR / 'rail_wagons_2x.ase', tmpl_vehicle_rail_4view, ZOOM_2X, y, frame) \
         .replace_old(sprite_id)
 
 
-wagon('passengers', 2733, 0, 0)  # temperate rail passenger wagon (full + empty)
-wagon('coal_empty', 2737, 0, 1)  # temperate rail coal wagon (empty)
-wagon('mail', 2741, 0, 2)  # temperate rail mail wagon (full + empty)
-wagon('oil', 2745, 0, 3)  # temperate rail oil wagon (full + empty)
-wagon('livestock', 2749, 0, 4)  # temperate rail livestock wagon (full + empty)
-wagon('goods', 2753, 0, 5)  # temperate rail goods wagon (full + empty)
-wagon('food', 2757, 0, 6)  # arctic rail food wagon (full + empty)
-wagon('grain_empty', 2761, 0, 7)  # temperate rail grain wagon (empty)
-wagon('wood_empty', 2765, 0, 8)  # temperate rail wood wagon (empty)
-wagon('steel_paper_empty', 2769, 0, 9)  # temperate rail steel/paper wagon (empty)
-wagon('ore_empty', 2773, 0, 10)  # temperate rail iron/coer ore wagon (empty)
-wagon('valuables', 2777, 0, 11)  # temperate rail valuables wagon (full + empty)
-wagon('coal_full', 2781, 1, 1)  # temperate rail coal wagon (full)
-wagon('grain_full', 2785, 1, 7)  # temperate rail grain wagon (full)
-wagon('wood_full', 2789, 1, 8)  # temperate rail wood wagon (full)
-wagon('steel_full', 2793, 1, 9)  # temperate rail steel wagon (full)
-wagon('iron_ore_full', 2797, 1, 10)  # temperate rail iron ore wagon (full)
-wagon('paper_full', 2801, 2, 9)  # arctic rail paper wagon (full)
-wagon('copper_ore_full', 2805, 1, 10)  # tropical rail copper ore wagon (full)
-wagon('water', 2809, 0, 12)  # tropical rail water wagon (full + empty)
-wagon('fruit_empty', 2813, 0, 13)  # tropical rail fruit wagon (empty)
-wagon('fruit_full', 2817, 1, 13)  # tropical rail fruit wagon (full)
-wagon('rubber_empty', 2821, 0, 14)  # tropical rail rubber wagon (empty)
-wagon('rubber_full', 2825, 1, 14)  # tropical rail rubber wagon (full)
+wagon('passengers', 2733, 0, frame=1)  # temperate rail passenger wagon (full + empty)
+wagon('coal_empty', 2737, 1, frame=1 )  # temperate rail coal wagon (empty)
+wagon('mail', 2741, 2, frame=1)  # temperate rail mail wagon (full + empty)
+wagon('oil', 2745, 3, frame=1)  # temperate rail oil wagon (full + empty)
+wagon('livestock', 2749, 4, frame=1)  # temperate rail livestock wagon (full + empty)
+wagon('goods', 2753, 5, frame=1)  # temperate rail goods wagon (full + empty)
+wagon('food', 2757, 6, frame=1)  # arctic rail food wagon (full + empty)
+wagon('grain_empty', 2761, 7, frame=1)  # temperate rail grain wagon (empty)
+wagon('wood_empty', 2765, 8, frame=1)  # temperate rail wood wagon (empty)
+wagon('steel_paper_empty', 2769, 9, frame=1)  # temperate rail steel/paper wagon (empty)
+wagon('ore_empty', 2773, 10, frame=1)  # temperate rail iron/coer ore wagon (empty)
+wagon('valuables', 2777, 11, frame=1)  # temperate rail valuables wagon (full + empty)
+wagon('coal_full', 2781, 1, frame=2)  # temperate rail coal wagon (full)
+wagon('grain_full', 2785, 7, frame=2)  # temperate rail grain wagon (full)
+wagon('wood_full', 2789, 8, frame=2)  # temperate rail wood wagon (full)
+wagon('steel_full', 2793, 9, frame=2)  # temperate rail steel wagon (full)
+wagon('iron_ore_full', 2797, 10, frame=2)  # temperate rail iron ore wagon (full)
+wagon('paper_full', 2801, 9, frame=3)  # arctic rail paper wagon (full)
+wagon('copper_ore_full', 2805, 10, frame=2)  # tropical rail copper ore wagon (full)
+wagon('water', 2809, 12, frame=1)  # tropical rail water wagon (full + empty)
+wagon('fruit_empty', 2813, 13, frame=1)  # tropical rail fruit wagon (empty)
+wagon('fruit_full', 2817, 13, frame=2)  # tropical rail fruit wagon (full)
+wagon('rubber_empty', 2821, 14, frame=1)  # tropical rail rubber wagon (empty)
+wagon('rubber_full', 2825, 14, frame=2)  # tropical rail rubber wagon (full)
 
 
-def engine(name, sprite_id, tmpl, x, y):
+def engine(name, sprite_id, tmpl, y):
     lib.SpriteCollection(name) \
-        .add(VEHICLE_DIR / 'rail_engines_temperate_2x.ase', tmpl, ZOOM_2X, x, y) \
+        .add(VEHICLE_DIR / 'rail_engines_temperate_2x.ase', tmpl, ZOOM_2X, y, 0) \
         .replace_old(sprite_id)
 
 
-engine('jubilee_sh8p', 2905, tmpl_vehicle_rail_8view, 0, 0)  # Chaney Jubilee + SH 8P (Steam)
-engine('ginzu', 2913, tmpl_vehicle_rail_8view, 0, 1)  # Ginzu A4 (Steam)
-engine('kirby', 2921, tmpl_vehicle_rail_8view, 0, 2)  # Kirby Paul (Steam)
-engine('sh25_floss47', 2929, tmpl_vehicle_rail_4view, 0, 3)  # SH/Hendry 25 + Floss 47 (Diesel)
-engine('uu37', 2933, tmpl_vehicle_rail_4view, 0, 4)  # UU/37 (Diesel)
-engine('sh30_sh40', 2937, tmpl_vehicle_rail_4view, 0, 5)  # SH/30 + SH/40 (Diesel)
-engine('sh_125', 2941, tmpl_vehicle_rail_8view, 0, 6)  # SH 125 (Diesel)
-engine('manley', 2949, tmpl_vehicle_rail_8view, 0, 7)  # Manley-Morel VT (Diesel)
-engine('dash', 2957, tmpl_vehicle_rail_8view, 0, 8)  # Dash (Diesel)
-engine('asia', 2965, tmpl_vehicle_rail_8view, 0, 9)  # Asia Star (Electric)
-engine('tim', 2973, tmpl_vehicle_rail_8view, 0, 10)  # T.I.M. (Electric)
+engine('jubilee_sh8p', 2905, tmpl_vehicle_rail_8view, 0)  # Chaney Jubilee + SH 8P (Steam)
+engine('ginzu', 2913, tmpl_vehicle_rail_8view, 1)  # Ginzu A4 (Steam)
+engine('kirby', 2921, tmpl_vehicle_rail_8view, 2)  # Kirby Paul (Steam)
+engine('sh25_floss47', 2929, tmpl_vehicle_rail_4view, 3)  # SH/Hendry 25 + Floss 47 (Diesel)
+engine('uu37', 2933, tmpl_vehicle_rail_4view, 4)  # UU/37 (Diesel)
+engine('sh30_sh40', 2937, tmpl_vehicle_rail_4view, 5)  # SH/30 + SH/40 (Diesel)
+engine('sh_125', 2941, tmpl_vehicle_rail_8view, 6)  # SH 125 (Diesel)
+engine('manley', 2949, tmpl_vehicle_rail_8view, 7)  # Manley-Morel VT (Diesel)
+engine('dash', 2957, tmpl_vehicle_rail_8view, 8)  # Dash (Diesel)
+engine('asia', 2965, tmpl_vehicle_rail_8view, 9)  # Asia Star (Electric)
+engine('tim', 2973, tmpl_vehicle_rail_8view, 10)  # T.I.M. (Electric)
 
 # engine('', 2981, tmpl_vehicle_rail_4view, 0, 0)  # X2001
 # engine('', 2985, tmpl_vehicle_rail_8view, 0, 1)  # Millenium
@@ -618,29 +619,29 @@ statues[2].replace_old(2632)
 def tmpl_shops_and_offices(func, z):
     grid = lib.house_grid(func=func, height=100, z=z)
     return [
-        lib.MagentaToStruct(grid('29a_ground', (0, 0), bb=(0, 0), frame=2, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
-        lib.MagentaToStruct(grid('29a', (0, 0), bb=(0, 0), frame=2, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
-        lib.MagentaToStruct(grid('29b_ground', (1, 0), bb=(0, 0), frame=2, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
-        lib.MagentaToStruct(grid('29b', (1, 0), bb=(0, 0), frame=2, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
+        lib.MagentaToStruct(grid('29a_ground', (0, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
+        lib.MagentaToStruct(grid('29a', (0, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
+        lib.MagentaToStruct(grid('29b_ground', (1, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
+        lib.MagentaToStruct(grid('29b', (1, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
 
-        lib.MagentaToStruct(grid('16_stage1', (2, 0), bb=(2, 0), frame=0, ignore_layers='TILE/*')),
-        lib.MagentaToStruct(grid('16_stage2', (2, 0), bb=(2, 0), frame=1, ignore_layers='TILE/*')),
-        lib.MagentaToStruct(grid('16_stage3', (2, 0), bb=(2, 0), frame=2, ignore_layers='TILE/*')),
+        lib.MagentaToStruct(grid('16_stage1', (2, 0), bb=(2, 0), frame=1, ignore_layers='TILE/*')),
+        lib.MagentaToStruct(grid('16_stage2', (2, 0), bb=(2, 0), frame=2, ignore_layers='TILE/*')),
+        lib.MagentaToStruct(grid('16_stage3', (2, 0), bb=(2, 0), frame=3, ignore_layers='TILE/*')),
 
-        grid('14_stage1', (3, 0), bb=(1, 3), frame=0, ignore_layers='TILE/*'),
-        grid('14_stage2', (3, 0), bb=(1, 3), frame=1, ignore_layers='TILE/*'),
-        grid('14_stage3', (3, 0), bb=(1, 3), frame=2, ignore_layers='TILE/*'),
+        grid('14_stage1', (3, 0), bb=(1, 3), frame=1, ignore_layers='TILE/*'),
+        grid('14_stage2', (3, 0), bb=(1, 3), frame=2, ignore_layers='TILE/*'),
+        grid('14_stage3', (3, 0), bb=(1, 3), frame=3, ignore_layers='TILE/*'),
 
-        grid('15_stage1', (4, 0), bb=(3, 1), frame=0, ignore_layers='TILE/*'),
-        grid('15_stage2', (4, 0), bb=(3, 1), frame=1, ignore_layers='TILE/*'),
-        grid('15_stage3', (4, 0), bb=(3, 1), frame=2, ignore_layers='TILE/*'),
+        grid('15_stage1', (4, 0), bb=(3, 1), frame=1, ignore_layers='TILE/*'),
+        grid('15_stage2', (4, 0), bb=(3, 1), frame=2, ignore_layers='TILE/*'),
+        grid('15_stage3', (4, 0), bb=(3, 1), frame=3, ignore_layers='TILE/*'),
 
-        grid('30_ground1', (5, 0), bb=(0, 0), frame=0, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
-        grid('30_stage1', (5, 0), bb=(0, 0), frame=0, ignore_layers=('TILE/*', 'FOUNDATION/*')),
-        grid('30_ground2', (5, 0), bb=(0, 0), frame=1, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
-        grid('30_stage2', (5, 0), bb=(0, 0), frame=1, ignore_layers=('TILE/*', 'FOUNDATION/*')),
-        grid('30_ground3', (5, 0), bb=(0, 0), frame=2, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
-        grid('30_stage3', (5, 0), bb=(0, 0), frame=2, ignore_layers=('TILE/*', 'FOUNDATION/*')),
+        grid('30_ground1', (5, 0), bb=(0, 0), frame=1, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
+        grid('30_stage1', (5, 0), bb=(0, 0), frame=1, ignore_layers=('TILE/*', 'FOUNDATION/*')),
+        grid('30_ground2', (5, 0), bb=(0, 0), frame=2, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
+        grid('30_stage2', (5, 0), bb=(0, 0), frame=2, ignore_layers=('TILE/*', 'FOUNDATION/*')),
+        grid('30_ground3', (5, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
+        grid('30_stage3', (5, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*')),
     ]
 
 houses = lib.SpriteCollection('house') \
@@ -660,21 +661,21 @@ def tmpl_coal_mine(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
     grid = lib.house_grid(func=func, height=75, z=z)
     return [
-        grid('building1_stage1', (0, 0), bb=(7, 0), frame=0),
-        grid('building1_stage2', (0, 0), bb=(7, 0), frame=1),
-        grid('building1_stage3_frame1', (0, 0), bb=(7, 0), frame=2),
-        grid('building1_stage3_frame2', (0, 0), bb=(7, 0), frame=3),
-        grid('building1_stage3_frame3', (0, 0), bb=(7, 0), frame=4),
-        grid('building2_stage1', (1, 0), bb=(1, 2), frame=0),
-        grid('building2_stage2', (1, 0), bb=(1, 2), frame=1),
-        grid('building2_stage3', (1, 0), bb=(1, 2), frame=2),
-        grid('building3_stage1', (2, 0), bb=(4, 4), frame=0),
-        grid('building3_stage2', (2, 0), bb=(4, 4), frame=1),
-        grid('building3_stage3', (2, 0), bb=(4, 4), frame=2),
-        grid('ground1', (3, 0), frame=0),
-        grid('coal1', (4, 0), frame=0),
-        grid('coal2', (5, 0), frame=0),
-        grid('coal3', (6, 0), frame=0),
+        grid('building1_stage1', (0, 0), bb=(7, 0), frame=1),
+        grid('building1_stage2', (0, 0), bb=(7, 0), frame=2),
+        grid('building1_stage3_frame1', (0, 0), bb=(7, 0), frame=3),
+        grid('building1_stage3_frame2', (0, 0), bb=(7, 0), frame=4),
+        grid('building1_stage3_frame3', (0, 0), bb=(7, 0), frame=5),
+        grid('building2_stage1', (1, 0), bb=(1, 2), frame=1),
+        grid('building2_stage2', (1, 0), bb=(1, 2), frame=2),
+        grid('building2_stage3', (1, 0), bb=(1, 2), frame=3),
+        grid('building3_stage1', (2, 0), bb=(4, 4), frame=1),
+        grid('building3_stage2', (2, 0), bb=(4, 4), frame=2),
+        grid('building3_stage3', (2, 0), bb=(4, 4), frame=3),
+        grid('ground1', (3, 0), frame=1),
+        grid('coal1', (4, 0), frame=1),
+        grid('coal2', (5, 0), frame=1),
+        grid('coal3', (6, 0), frame=1),
     ]
 
 
@@ -688,22 +689,22 @@ def tmpl_powerplant(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
     grid = lib.house_grid(func=func, height=75, z=z)
     return [
-        grid('building1_stage1', (0, 0), bb=(1, 1), frame=0),
-        grid('building1_stage2', (0, 0), bb=(1, 1), frame=1),
-        grid('building1_stage3', (0, 0), bb=(1, 1), frame=2),
-        grid('building2_stage1', (1, 0), bb=(0, 2), frame=0),
-        grid('building2_stage2', (1, 0), bb=(0, 2), frame=1),
-        grid('building2_stage3', (1, 0), bb=(0, 2), frame=2),
-        grid('building3_stage1', (2, 0), bb=(1, 0), frame=0),
-        grid('building3_stage2', (2, 0), bb=(1, 0), frame=1),
-        grid('building3_stage3', (2, 0), bb=(1, 0), frame=2),
-        grid('transformer', (3, 0), bb=(1, 2), frame=2, crop=False),  # TODO find a better solution to child sprite positioning than crop=False
-        grid('spark1', (3, 0), rel=(11, 23), frame=3, layers='Animated Zap'),
-        grid('spark2', (3, 0), rel=(11, 11), frame=4, layers='Animated Zap'),
-        grid('spark3', (3, 0), rel=(14, 6), frame=5, layers='Animated Zap'),
-        grid('spark4', (3, 0), rel=(13, 3), frame=6, layers='Animated Zap'),
-        grid('spark5', (3, 0), rel=(18, 1), frame=7, layers='Animated Zap'),
-        grid('spark6', (3, 0), rel=(15, 0), frame=8, layers='Animated Zap'),
+        grid('building1_stage1', (0, 0), bb=(1, 1), frame=1),
+        grid('building1_stage2', (0, 0), bb=(1, 1), frame=2),
+        grid('building1_stage3', (0, 0), bb=(1, 1), frame=3),
+        grid('building2_stage1', (1, 0), bb=(0, 2), frame=1),
+        grid('building2_stage2', (1, 0), bb=(0, 2), frame=2),
+        grid('building2_stage3', (1, 0), bb=(0, 2), frame=3),
+        grid('building3_stage1', (2, 0), bb=(1, 0), frame=1),
+        grid('building3_stage2', (2, 0), bb=(1, 0), frame=2),
+        grid('building3_stage3', (2, 0), bb=(1, 0), frame=3),
+        grid('transformer', (3, 0), bb=(1, 2), frame=3, crop=False),  # TODO find a better solution to child sprite positioning than crop=False
+        grid('spark1', (3, 0), rel=(11, 23), frame=4, layers='Animated Zap'),
+        grid('spark2', (3, 0), rel=(11, 11), frame=5, layers='Animated Zap'),
+        grid('spark3', (3, 0), rel=(14, 6), frame=6, layers='Animated Zap'),
+        grid('spark4', (3, 0), rel=(13, 3), frame=7, layers='Animated Zap'),
+        grid('spark5', (3, 0), rel=(18, 1), frame=8, layers='Animated Zap'),
+        grid('spark6', (3, 0), rel=(15, 0), frame=9, layers='Animated Zap'),
     ]
 
 
@@ -715,7 +716,7 @@ lib.SpriteCollection('power_plant') \
 @lib.template(grf.FileSprite)
 def tmpl_chimney_smoke(func, z):
     return [
-        func(f'{i}', x=2, y=2, w=128, h=128, xofs=0, yofs=-128, frame=i)
+        func(f'{i}', x=2, y=2, w=128, h=128, xofs=0, yofs=-128, frame=i + 1)
         for i in range(8)
     ]
 
@@ -729,17 +730,17 @@ def tmpl_sawmill(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
     grid = lib.house_grid(func=func, height=75, z=z)
     return [
-        grid('building1_stage1', (0, 0), bb=(1, 0), frame=0),
-        grid('building1_stage2', (0, 0), bb=(1, 0), frame=1),
-        grid('building1_stage3', (0, 0), bb=(1, 0), frame=2),
-        grid('building2_stage1', (1, 0), bb=(0, 1), frame=0),
-        grid('building2_stage2', (1, 0), bb=(0, 1), frame=1),
-        grid('building2_stage3', (1, 0), bb=(0, 1), frame=2),
-        grid('building3_stage1', (2, 0), bb=(1, 1), frame=0),
-        grid('building3_stage2', (2, 0), bb=(1, 1), frame=1),
-        grid('building3_stage3', (2, 0), bb=(1, 1), frame=2),
-        grid('logs1', (3, 0), frame=2),
-        grid('logs2', (4, 0), bb=(0, 1), frame=2)
+        grid('building1_stage1', (0, 0), bb=(1, 0), frame=1),
+        grid('building1_stage2', (0, 0), bb=(1, 0), frame=2),
+        grid('building1_stage3', (0, 0), bb=(1, 0), frame=3),
+        grid('building2_stage1', (1, 0), bb=(0, 1), frame=1),
+        grid('building2_stage2', (1, 0), bb=(0, 1), frame=2),
+        grid('building2_stage3', (1, 0), bb=(0, 1), frame=3),
+        grid('building3_stage1', (2, 0), bb=(1, 1), frame=1),
+        grid('building3_stage2', (2, 0), bb=(1, 1), frame=2),
+        grid('building3_stage3', (2, 0), bb=(1, 1), frame=3),
+        grid('logs1', (3, 0), frame=3),
+        grid('logs2', (4, 0), bb=(0, 1), frame=3)
     ]
 
 
@@ -753,11 +754,11 @@ def tmpl_forest(func, z):
     grid = lib.house_grid(func=func, height=75, z=z)
     ground_layers = ('Tile Shadow 64', 'Tile Grid', 'Tile Solid Green')
     return [
-        grid('growth1', (0, 0), frame=0, ignore_layers=ground_layers),
-        grid('growth2', (0, 0), frame=1, ignore_layers=ground_layers),
-        grid('growth3', (0, 0), frame=2, ignore_layers=ground_layers),
-        grid('grown', (0, 0), frame=3, ignore_layers=ground_layers),
-        grid('logs', (0, 0), frame=4, ignore_layers=ground_layers),
+        grid('growth1', (0, 0), frame=1, ignore_layers=ground_layers),
+        grid('growth2', (0, 0), frame=2, ignore_layers=ground_layers),
+        grid('growth3', (0, 0), frame=3, ignore_layers=ground_layers),
+        grid('grown', (0, 0), frame=4, ignore_layers=ground_layers),
+        grid('logs', (0, 0), frame=5, ignore_layers=ground_layers),
         grid('ground', (0, 0), layers=ground_layers + ('Spriteborder',)),
     ]
 
@@ -773,22 +774,22 @@ lib.SpriteCollection('forest') \
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_factory(func, z):
     assert z == 2
-    ground = func('ground', 2, 2, 256, 201, xofs=-126, yofs=-138, layers=('TILE/*', 'Spriteborder'), frame=2)
+    ground = func('ground', 2, 2, 256, 201, xofs=-126, yofs=-138, layers=('TILE/*', 'Spriteborder'), frame=3)
     return [
         lib.CutGround(ground, (1, 1), name='ground1_stage3'),
         lib.CutGround(ground, (1, 0), name='ground2_stage3'),
         lib.CutGround(ground, (0, 1), name='ground3_stage3'),
         lib.CutGround(ground, (0, 0), name='ground4_stage3'),
         grf.EMPTY_SPRITE, # Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
-        func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
-        func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3),
+        func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3),
         grf.EMPTY_SPRITE, # Furthest building is covered by the closest one,
-        func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=0),
-        func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=0),
-        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=0),
+        func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
         grf.EMPTY_SPRITE, # Furthest building is covered by the closest one,
-        func('building2_stage2', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
-        func('building3_stage2', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building2_stage2', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building3_stage2', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
         func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
     ]
 
