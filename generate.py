@@ -804,14 +804,15 @@ lib.SpriteCollection('farm') \
 
 @lib.template(grf.FileSprite)
 def tmpl_fences(func, z, frame):
-    x_xofs, x_yofs = -59 - 4, 17 + 2
+    x_xofs, x_yofs = -59, 21
+    y_xofs, y_yofs = -3, 21
     return [
-        func('flat_x', 2 + 68 * 1, 2, 66, 44, xofs=x_xofs, yofs=17 + 2, frame=frame),
-        func('flat_y', 2 + 68 * 0, 2, 66, 44, xofs=-3 + 4, yofs=17 + 2, frame=frame),
-        func('high_x', 2 + 68 * 5, 2, 66, 60, xofs=-59 - 4, yofs=17 + 2 - 16, frame=frame),
-        func('high_y', 2 + 68 * 4, 2, 66, 60, xofs=-3 + 4, yofs=17 + 2 - 16, frame=frame),
-        func('low_x', 2 + 68 * 3, 2, 66, 28, xofs=-59 - 4, yofs=17 + 2 + 16, frame=frame),
-        func('low_y', 2 + 68 * 2, 2, 66, 28, xofs=-3 + 4, yofs=17 + 2 + 16, frame=frame),
+        func('flat_x', 2 + 68 * 1, 2, 66, 44, xofs=x_xofs, yofs=x_yofs, frame=frame),
+        func('flat_y', 2 + 68 * 0, 2, 66, 44, xofs=y_xofs, yofs=y_yofs, frame=frame),
+        func('high_x', 2 + 68 * 5, 2, 66, 60, xofs=x_xofs, yofs=x_yofs - 16, frame=frame),
+        func('high_y', 2 + 68 * 4, 2, 66, 60, xofs=y_xofs, yofs=y_yofs - 16, frame=frame),
+        func('low_x', 2 + 68 * 3, 2, 66, 28, xofs=x_xofs, yofs=x_yofs + 16, frame=frame),
+        func('low_y', 2 + 68 * 2, 2, 66, 28, xofs=y_xofs, yofs=y_yofs + 16, frame=frame),
     ]
 
 
