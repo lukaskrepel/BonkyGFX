@@ -776,8 +776,7 @@ lib.SpriteCollection('forest') \
     # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 
-# @lib.template(lambda *args, **kw: lib.MagentaToCC(grf.FileSprite(*args, **kw)))
-@lib.template(grf.FileSprite)
+@lib.template(lambda *args, **kw: lib.MagentaToCC(grf.FileSprite(*args, **kw)))
 def tmpl_farm(func, z):
     ground = func('ground1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, layers=('TILE/*', 'Spriteborder'))
     building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))
@@ -801,6 +800,25 @@ def tmpl_farm(func, z):
 lib.SpriteCollection('farm') \
     .add(INDUSTRY_DIR / 'farm_2x.ase', tmpl_farm, ZOOM_2X) \
     .replace_old(2106)
+
+
+@lib.template(grf.FileSprite)
+def tmpl_fences(func, z, frame):
+    x_xofs, x_yofs = -59 - 4, 17 + 2
+    return [
+        func('flat_x', 2 + 68 * 1, 2, 66, 44, xofs=x_xofs, yofs=17 + 2, frame=frame),
+        func('flat_y', 2 + 68 * 0, 2, 66, 44, xofs=-3 + 4, yofs=17 + 2, frame=frame),
+        func('high_x', 2 + 68 * 5, 2, 66, 60, xofs=-59 - 4, yofs=17 + 2 - 16, frame=frame),
+        func('high_y', 2 + 68 * 4, 2, 66, 60, xofs=-3 + 4, yofs=17 + 2 - 16, frame=frame),
+        func('low_x', 2 + 68 * 3, 2, 66, 28, xofs=-59 - 4, yofs=17 + 2 + 16, frame=frame),
+        func('low_y', 2 + 68 * 2, 2, 66, 28, xofs=-3 + 4, yofs=17 + 2 + 16, frame=frame),
+    ]
+
+
+for i in range(6):
+    lib.SpriteCollection('fence1') \
+        .add(TERRAIN_DIR / 'farmfences_2x.ase', tmpl_fences, ZOOM_2X, i + 1) \
+        .replace_old(4090 + i * 6)
 
 
 @lib.template(lib.CCReplacingFileSprite)
