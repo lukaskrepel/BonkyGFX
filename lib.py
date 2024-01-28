@@ -105,15 +105,15 @@ def template(sprite_class):
     return decorator
 
 
-def house_grid(*, func, height, width=64, padding=1, z=2):
+def house_grid(*, func, height, width=64, padding=1, z=2, offset=(0, 0)):
     zheight = height * z + z - 1
     zpadding = padding * z
     zwidth = width * z
     def sprite_func(name, grid_pos, bb=None, rel=None, **kw):
         assert bb is None or rel is None
         x, y = grid_pos
-        fx = x * zwidth + zpadding * (x + 1)
-        fy = y * zheight + zpadding * (y + 1)
+        fx = x * zwidth + zpadding * (x + 1) + offset[0]
+        fy = y * zheight + zpadding * (y + 1) + offset[1]
         if rel is not None:
             zxofs = -rel[0] * z
             zyofs = -rel[1] * z + 1
@@ -631,6 +631,65 @@ class CutGround(grf.Sprite):
             'yofs': self.yofs,
             'sprite': self.sprite.get_fingerprint(),
         }
+
+
+class CutBuilding(SpriteWrapper):
+    def __init__(self, sprite, position, name=None):
+        assert sprite.zoom == ZOOM_2X
+        z = 2
+        self.sprite = sprite
+        self.position = position
+        super().__init__((sprite,), name=name)
+
+        # Ground reference point
+        gx, gy = self.position
+        x = -self.sprite.xofs + 2 + (gx - gy) * 64
+        y = -self.sprite.yofs - (gx + gy) * 32
+
+        if position[0] == position[1]:
+            # Middle strip
+            self.x = x - 64
+            self.w = 64 * z
+            self.xofs = -31 * z
+        elif position[0] < position[1]:
+            # Left side
+            self.x = x - 64
+            self.w = 32 * z
+            self.xofs = -31 * z
+        else:
+            # Right side
+            self.x = x
+            self.w = 32 * z
+            self.xofs = z
+        self.y = 0
+        self.h = y + 63
+        assert self.h <= 231
+        self.yofs = -y
+        # print('XY', self.sprite.xofs, self.sprite.yofs, self.position, x, y, self.x, self.y, self.w, self.h)
+
+    def get_data_layers(self, context):
+        x = self.x
+        y = self.y
+
+        w, h, rgb, alpha, mask = self.sprite.get_data_layers(context)
+
+        if x < 0 or y < 0 or y + self.h > h or x + self.w > w:
+            raise ValueError(f'Building sprite region({x}..{x + self.w}, {y}..{y + self.h}) is outside sprite boundaries (0..{w}, 0..{h})')
+
+        if rgb is not None:
+            rgb = rgb[y:y + self.h, x:x + self.w].copy()
+        if alpha is not None:
+            alpha = alpha[y:y + self.h, x:x + self.w].copy()
+        if mask is not None:
+            mask = mask[y:y + self.h, x:x + self.w].copy()
+
+        return self.w, self.h, rgb, alpha, mask
+
+    def get_fingerprint(self):
+        return grf.combine_fingerprint(
+            super().get_fingerprint(),
+            position=self.position,
+        )
 
 
 class AseImageFile(grf.ImageFile):

@@ -776,6 +776,33 @@ lib.SpriteCollection('forest') \
     # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 
+# @lib.template(lambda *args, **kw: lib.MagentaToCC(grf.FileSprite(*args, **kw)))
+@lib.template(grf.FileSprite)
+def tmpl_farm(func, z):
+    ground = func('ground1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, layers=('TILE/*', 'Spriteborder'))
+    building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))
+    grid = lib.house_grid(func=func, height=75, z=z, offset=(194, 0))
+    return [
+        lib.CutGround(ground, (0, 1), name='ground1a'),
+        lib.CutGround(ground, (0, 0), name='ground1b'),
+        lib.CutBuilding(building, (0, 1), name='building1a'),
+        lib.CutBuilding(building, (0, 0), name='building1b'),
+        grid('ground2', (0, 0), layers=('TILE/*', 'Spriteborder')),
+        grid('building2', (0, 0), ignore_layers=('TILE/*',)),
+        grid('ground3', (1, 0), layers=('TILE/*', 'Spriteborder')),
+        grid('building3', (1, 0), ignore_layers=('TILE/*',)),
+        grid('ground4', (2, 0), layers=('TILE/*', 'Spriteborder')),
+        grid('building4', (2, 0), ignore_layers=('TILE/*',)),
+        grid('ground5', (3, 0), layers=('TILE/*', 'Spriteborder')),
+        grid('building5', (3, 0), ignore_layers=('TILE/*',)),
+    ]
+
+
+lib.SpriteCollection('farm') \
+    .add(INDUSTRY_DIR / 'farm_2x.ase', tmpl_farm, ZOOM_2X) \
+    .replace_old(2106)
+
+
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_factory(func, z):
     assert z == 2
