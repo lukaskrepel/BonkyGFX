@@ -127,7 +127,7 @@ lib.SpriteCollection('temperate_rocks') \
 
 for i in range(9):
     lib.SpriteCollection(f'farmland{i}') \
-        .add(TERRAIN_DIR / 'farmtiles_2x_newlayout.ase', tmpl_groundtiles, ZOOM_2X, 0, i + 1) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, 0, i + 1) \
         .replace_old(4126 + 19 * i)
 
 tropical_desert = lib.SpriteCollection('tropical_desert') \
