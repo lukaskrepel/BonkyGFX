@@ -757,7 +757,7 @@ lib.SpriteCollection('sawmill') \
 @lib.template(grf.FileSprite)
 def tmpl_forest(func, z):
     grid = lib.house_grid(func=func, height=75, z=z)
-    ground_layers = ('Tile Shadow 64', 'Tile Grid', 'Tile Solid Green')
+    ground_layers = ('TILE/*', 'Spriteborder')
     return [
         grid('growth1', (0, 0), frame=1, ignore_layers=ground_layers),
         grid('growth2', (0, 0), frame=2, ignore_layers=ground_layers),
