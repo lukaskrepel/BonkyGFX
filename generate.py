@@ -804,8 +804,9 @@ lib.SpriteCollection('farm') \
 
 @lib.template(grf.FileSprite)
 def tmpl_fences(func, z, frame):
-    x_xofs, x_yofs = -59, 21
-    y_xofs, y_yofs = -3, 21
+    relative = 0
+    x_xofs, x_yofs = -59 - relative, 21 - relative // 2
+    y_xofs, y_yofs = -3 + relative, 21 - relative // 2
     return [
         func('flat_x', 2 + 68 * 1, 2, 66, 44, xofs=x_xofs, yofs=x_yofs, frame=frame),
         func('flat_y', 2 + 68 * 0, 2, 66, 44, xofs=y_xofs, yofs=y_yofs, frame=frame),
