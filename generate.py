@@ -9,7 +9,6 @@ from grf import ZOOM_NORMAL, ZOOM_2X, ZOOM_4X, TEMPERATE, ARCTIC, TROPICAL, TOYL
 
 import lib
 
-
 SPRITE_DIR = pathlib.Path('sprites')
 TERRAIN_DIR = SPRITE_DIR / 'terrain'
 VEHICLE_DIR = SPRITE_DIR / 'vehicles'
@@ -20,6 +19,7 @@ STATION_DIR = SPRITE_DIR / 'stations'
 TREE_DIR = SPRITE_DIR / 'trees'
 EFFECT_DIR = SPRITE_DIR / 'effects'
 
+cc = lib.MagentaToCC
 
 g = grf.NewGRF(
     grfid=b'TODO',
@@ -776,7 +776,7 @@ lib.SpriteCollection('forest') \
     # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 
-@lib.template(lambda *args, **kw: lib.MagentaToCC(grf.FileSprite(*args, **kw)))
+@lib.template(grf.FileSprite)
 def tmpl_farm(func, z):
     ground = func('ground1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, layers=('TILE/*', 'Spriteborder'))
     building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))
@@ -784,10 +784,10 @@ def tmpl_farm(func, z):
     return [
         lib.CutGround(ground, (0, 1), name='ground1a'),
         lib.CutGround(ground, (0, 0), name='ground1b'),
-        lib.CutBuilding(building, (0, 1), name='building1a'),
-        lib.CutBuilding(building, (0, 0), name='building1b'),
+        cc(lib.CutBuilding(building, (0, 1), name='building1a')),
+        cc(lib.CutBuilding(building, (0, 0), name='building1b')),
         grid('ground2', (0, 0), layers=('TILE/*', 'Spriteborder')),
-        grid('building2', (0, 0), ignore_layers=('TILE/*',)),
+        cc(grid('building2', (0, 0), ignore_layers=('TILE/*',))),
         grid('ground3', (1, 0), layers=('TILE/*', 'Spriteborder')),
         grid('building3', (1, 0), ignore_layers=('TILE/*',)),
         grid('ground4', (2, 0), layers=('TILE/*', 'Spriteborder')),
