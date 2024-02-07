@@ -823,18 +823,18 @@ for i in range(6):
         .replace_old(4090 + i * 6)
 
 
-@lib.template(lib.CCReplacingFileSprite)
+@lib.template(grf.FileSprite)
 def tmpl_factory(func, z):
     assert z == 2
     ground = func('ground', 2, 2, 256, 201, xofs=-126, yofs=-138, layers=('TILE/*', 'Spriteborder'), frame=3)
     return [
-        lib.CutGround(ground, (1, 1), name='ground1_stage3'),
-        lib.CutGround(ground, (1, 0), name='ground2_stage3'),
-        lib.CutGround(ground, (0, 1), name='ground3_stage3'),
-        lib.CutGround(ground, (0, 0), name='ground4_stage3'),
+        cc(lib.CutGround(ground, (1, 1), name='ground1_stage3')),
+        cc(lib.CutGround(ground, (1, 0), name='ground2_stage3')),
+        cc(lib.CutGround(ground, (0, 1), name='ground3_stage3')),
+        cc(lib.CutGround(ground, (0, 0), name='ground4_stage3')),
         grf.EMPTY_SPRITE, # Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
-        func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3),
-        func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3),
+        cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        cc(func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
         grf.EMPTY_SPRITE, # Furthest building is covered by the closest one,
         func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
         func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
