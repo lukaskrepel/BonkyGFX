@@ -9,6 +9,8 @@ from grf import ZOOM_NORMAL, ZOOM_2X, ZOOM_4X, TEMPERATE, ARCTIC, TROPICAL, TOYL
 
 import lib
 
+cc = lib.MagentaToCC
+
 SPRITE_DIR = pathlib.Path('sprites')
 TERRAIN_DIR = SPRITE_DIR / 'terrain'
 VEHICLE_DIR = SPRITE_DIR / 'vehicles'
@@ -18,8 +20,8 @@ TOWN_DIR = SPRITE_DIR / 'towns'
 STATION_DIR = SPRITE_DIR / 'stations'
 TREE_DIR = SPRITE_DIR / 'trees'
 EFFECT_DIR = SPRITE_DIR / 'effects'
+ICON_DIR = SPRITE_DIR / 'icons'
 
-cc = lib.MagentaToCC
 
 g = grf.NewGRF(
     grfid=b'TODO',
@@ -866,6 +868,18 @@ def tmpl_bank(func, z):
 lib.SpriteCollection('bank') \
     .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X) \
     .replace_old(2180)
+
+
+# ------------------------------ User Interface ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_cargo_icons(func, z):
+    grid = lib.grid(func=func, width=11, height=11)
+    return [grid(str(i), (i, 0)) for i in range(27)]
+
+lib.SpriteCollection('cargo_icon') \
+    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X) \
+    .replace_old(4297)
 
 # ------------------------------ Sprite Replacement Magic ------------------------------
 
