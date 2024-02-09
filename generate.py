@@ -559,6 +559,31 @@ bus_stops = lib.SpriteCollection('bus_stop') \
 bus_stops[:16].replace_old(2692)
 bus_stops[16:].replace_new(0x11, 0)
 
+# ------------------------------ Rail infrastructure ------------------------------
+
+
+@lib.template(grf.FileSprite)
+def tmpl_rail_fences(func, z):
+    relative = 2
+    x_xofs, x_yofs = -59 - relative, -12 - relative // 2
+    y_xofs, y_yofs = -3 + relative, -12 - relative // 2
+    grid = lib.flexgrid(func=func)
+    return [
+        cc(grid('flat_x', 33, 22, xofs=x_xofs, yofs=x_yofs)),
+        cc(grid('flat_y', 33, 22, xofs=y_xofs, yofs=y_yofs)),
+        cc(grid('vert', 3, 38, xofs=0, yofs=-40)),
+        cc(grid('hor', 65, 6, xofs=-61, yofs=-8)),
+        cc(grid('low_x', 33, 28, xofs=x_xofs, yofs=x_yofs + 16)),
+        cc(grid('low_y', 33, 28, xofs=y_xofs, yofs=y_yofs + 16)),
+        cc(grid('high_x', 33, 30, xofs=x_xofs, yofs=x_yofs - 16)),
+        cc(grid('high_y', 33, 30, xofs=y_xofs, yofs=y_yofs - 16)),
+    ]
+
+
+lib.SpriteCollection('rail_fence') \
+    .add(INFRA_DIR / 'rail_fences_2x.ase', tmpl_rail_fences, ZOOM_2X) \
+    .replace_old(1301)
+
 
 # ------------------------------ Water ------------------------------
 
@@ -805,7 +830,7 @@ lib.SpriteCollection('farm') \
 
 
 @lib.template(grf.FileSprite)
-def tmpl_fences(func, z, frame):
+def tmpl_farm_fences(func, z, frame):
     relative = 0
     x_xofs, x_yofs = -59 - relative, 21 - relative // 2
     y_xofs, y_yofs = -3 + relative, 21 - relative // 2
@@ -820,8 +845,8 @@ def tmpl_fences(func, z, frame):
 
 
 for i in range(6):
-    lib.SpriteCollection('fence1') \
-        .add(TERRAIN_DIR / 'farmfences_2x.ase', tmpl_fences, ZOOM_2X, i + 1) \
+    lib.SpriteCollection(f'farm_fence{i}') \
+        .add(TERRAIN_DIR / 'farmfences_2x.ase', tmpl_farm_fences, ZOOM_2X, i + 1) \
         .replace_old(4090 + i * 6)
 
 

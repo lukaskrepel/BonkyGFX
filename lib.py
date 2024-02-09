@@ -118,6 +118,19 @@ def grid(*, func, width, height, padding=1, z=2):
     return sprite_func
 
 
+def flexgrid(*, func, padding=1, z=2):
+    zpadding = padding * z
+    def sprite_func(name, width, height, **kw):
+        x, y = sprite_func.x, sprite_func.y
+        sprite_func.x += width * z + zpadding
+        return func(name, x, y, width * z, height * z, **kw)
+
+    sprite_func.x = zpadding
+    sprite_func.y = zpadding
+
+    return sprite_func
+
+
 def house_grid(*, func, height, width=64, padding=1, z=2, offset=(0, 0)):
     zheight = height * z + z - 1
     zpadding = padding * z
