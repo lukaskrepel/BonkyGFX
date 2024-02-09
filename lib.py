@@ -592,6 +592,61 @@ class MagentaAndMask(grf.Sprite):
         }
 
 
+class AlphaAndMask(grf.Sprite):
+    def __init__(self, sprite, mask):
+        self.sprite = sprite
+        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
+        self.mask = mask  # TODO sprite mask has a special meaning
+
+    def prepare_files(self):
+        self.sprite.prepare_files()
+        self.mask.prepare_files()
+
+    def get_data_layers(self, context):
+        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(context)
+        assert npmask is None
+        ow, oh, ni, na, nm = self.mask.get_data_layers(context)
+        assert nm is None
+        assert w == ow and h == oh
+
+        timer = context.start_timer()
+
+        mask = (na > 0)
+
+        masked = ni[mask]
+        colours = set(map(tuple, masked))
+        npmask = np.zeros((h, w), dtype=np.uint8)
+        new_masked = np.zeros(masked.shape[0], dtype=np.uint8)
+
+        for c in colours:
+            m = grf.PALETTE_IDX.get(c)
+            if m is None:
+                raise ValueError(f'Color {c} is not in the palette in sprite {self.mask.name}')
+            new_masked[(masked == c).all(axis=1)] = m
+
+        npmask[mask] = new_masked
+
+        timer.count_custom('Alpha and mask processing')
+
+        return w, h, npimg, npalpha, npmask
+
+
+    def get_image_files(self):
+        return ()
+
+
+    def get_resource_files(self):
+        return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files() + self.mask.get_resource_files()
+
+
+    def get_fingerprint(self):
+        return {
+            'class': self.__class__.__name__,
+            'sprite': self.sprite.get_fingerprint(),
+            'mask': self.mask.get_fingerprint(),
+        }
+
+
 class CutGround(grf.Sprite):
     def __init__(self, sprite, position, name=None, above=0):
         assert sprite.zoom == ZOOM_2X
