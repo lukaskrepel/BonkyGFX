@@ -780,12 +780,12 @@ lib.SpriteCollection('forest') \
 
 @lib.template(grf.FileSprite)
 def tmpl_farm(func, z):
-    ground = func('ground1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, layers=('TILE/*', 'Spriteborder'))
+    ground = func('ground1_whole', 2, 2, 192, 151, xofs=-62, yofs=-56, layers=('TILE/*', 'Spriteborder'))
     building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))
     grid = lib.house_grid(func=func, height=75, z=z, offset=(194, 0))
     return [
-        lib.CutGround(ground, (0, 1), name='ground1a'),
-        lib.CutGround(ground, (0, 0), name='ground1b'),
+        lib.CutGround(ground, (0, 0), name='ground1a'),
+        lib.CutGround(ground, (0, 1), name='ground1b'),
         cc(lib.CutBuilding(building, (0, 1), name='building1a')),
         cc(lib.CutBuilding(building, (0, 0), name='building1b')),
         grid('ground2', (0, 0), layers=('TILE/*', 'Spriteborder')),
@@ -826,9 +826,25 @@ for i in range(6):
 
 
 @lib.template(grf.FileSprite)
+def tmpl_iron_mine(func, z, frame):
+    ground = func('ground', 2, 2, 512, 294, xofs=-254, yofs=-39, frame=frame)
+    return [
+        lib.CutGround(ground, (x, y), name=f'{x}_{y}', above=((0, 10)[y == 0], (0, 10)[x == 0]))
+        for x in range(4)
+        for y in range(4)
+    ]
+
+
+for i in range(0, 3):
+    lib.SpriteCollection('iron_mine') \
+        .add(INDUSTRY_DIR / 'ironoremine_2x.ase', tmpl_iron_mine, ZOOM_2X, i + 1, name=f'stage{i + 1}') \
+        .replace_old(2293 + 16 * i)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_factory(func, z):
     assert z == 2
-    ground = func('ground', 2, 2, 256, 201, xofs=-126, yofs=-138, layers=('TILE/*', 'Spriteborder'), frame=3)
+    ground = func('ground', 2, 2, 256, 201, xofs=-126, yofs=-74, layers=('TILE/*', 'Spriteborder'), frame=3)
     return [
         cc(lib.CutGround(ground, (1, 1), name='ground1_stage3')),
         cc(lib.CutGround(ground, (1, 0), name='ground2_stage3')),
@@ -856,7 +872,7 @@ lib.SpriteCollection('factory') \
 @lib.template(grf.FileSprite)
 def tmpl_bank(func, z):
     assert z == 2
-    ground = func('ground', 2, 2, 192, 160, xofs=-62, yofs=-97, layers=('TILE/*', 'Spriteborder'))
+    ground = func('ground', 2, 2, 192, 160, xofs=-126, yofs=-65, layers=('TILE/*', 'Spriteborder'))
     return [
         func('building1', 130, 2, 64, 160, xofs=2, yofs=-65, layers=('BUILDING/*', 'Spriteborder')),
         func('building2', 2, 2, 128, 160, xofs=-62, yofs=-97, layers=('BUILDING/*', 'Spriteborder')),

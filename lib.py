@@ -185,15 +185,16 @@ class SpriteCollection:
             res.sprites.append((zoom, kw, sprites[sl]))
         return res
 
-    def add(self, files, template, zoom, *args, **kw):
+    def add(self, files, template, zoom,  *args, name=None, **kw):
         if not isinstance(files, tuple):
             files = (files,)
         files = tuple(aseidx(f) if isinstance(f, str) else f for f in files)
         z = zoom_to_factor(zoom)
         kwsuffix = ''
+        name_str = '' if name is None else f'_{name}';
         if 'thin' in kw:
             kwsuffix = 'thin_' if kw['thin'] else 'thick_'
-        sprites = template(f'{self.name}_{{suffix}}_{kwsuffix}{z}x', files, zoom, *args)
+        sprites = template(f'{self.name}{name_str}_{{suffix}}_{kwsuffix}{z}x', files, zoom, *args)
         assert all(s.zoom  == zoom or s == grf.EMPTY_SPRITE for s in sprites)
         self.sprites.append((zoom, kw, sprites))
         return self
@@ -592,30 +593,46 @@ class MagentaAndMask(grf.Sprite):
 
 
 class CutGround(grf.Sprite):
-    def __init__(self, sprite, position, name=None):
+    def __init__(self, sprite, position, name=None, above=0):
         assert sprite.zoom == ZOOM_2X
         z = 2
         self.sprite = sprite
         self.position = position
-        super().__init__(w=64 * z, h=32 * z - 1, xofs=-31 * z, yofs=0, zoom=sprite.zoom, bpp=sprite.bpp, name=name)
+        if isinstance(above, (tuple, list)):
+            self.above_l, self.above_r = above
+        else:
+            self.above_l = self.above_r = above
+        self.ground_h = 32 * z - 1
+        self.above_h = max(self.above_l, self.above_r) * z
+        super().__init__(w=64 * z, h=self.ground_h + self.above_h, xofs=-31 * z, yofs=-self.above_h, zoom=sprite.zoom, bpp=sprite.bpp, name=name)
 
     def prepare_files(self):
         self.sprite.prepare_files()
 
     def get_data_layers(self, context):
         gx, gy = self.position
-        x = -self.sprite.xofs - 62 + (gx - gy) * 64
-        y = -self.sprite.yofs - (gx + gy) * 32
+        z = 2  # NOTE untested for other z
+        tile_ws = 32 * z
+        tile_hs = 16 * z
+        x = -self.sprite.xofs - 31 * z + (gy - gx) * tile_ws
+        y = -self.sprite.yofs + (gx + gy) * tile_hs - self.above_h
+
 
         w, h, rgb, alpha, mask = self.sprite.get_data_layers(context)
         ground_mask = np.full((self.h, self.w), True)
+
+        def get_n (i, above):
+            i -= self.above_h - above
+            n = i if i < tile_hs + above else 31 * z - i + above
+            return max(0, min((n + 1) * 2, tile_ws))
+
         for i in range(self.h):
-            n = i if i <= 31 else 62 - i
-            n = (n + 1) * 2
-            ground_mask[i, 64 - n: 64 + n] = False
+            nl = get_n(i, self.above_l * z)
+            nr = get_n(i, self.above_r * z)
+            ground_mask[i, tile_ws - nl: tile_ws + nr] = False
 
         if x < 0 or y < 0 or y + self.h > h or x + self.w > w:
-            raise ValueError(f'Ground sprite region({x}..{x + self.w}, {y}..{y + self.h}) is outside sprite boundaries (0..{w}, 0..{h})')
+            raise ValueError(f'Ground sprite region({x}..{x + self.w}, {y}..{y + self.h}) is outside sprite boundaries (0..{w}, 0..{h}) for sprite {self.sprite.name}')
 
         if rgb is not None:
             rgb = rgb[y:y + self.h, x:x + self.w].copy()
@@ -643,6 +660,7 @@ class CutGround(grf.Sprite):
             'xofs': self.xofs,
             'yofs': self.yofs,
             'sprite': self.sprite.get_fingerprint(),
+            'above': (self.above_l, self.above_r),
         }
 
 
