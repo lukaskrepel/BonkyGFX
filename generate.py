@@ -182,14 +182,14 @@ def tmpl_flat_tile(func, z, suffix, x):
     return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
 
 
-# AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
-# airport_tiles = lib.SpriteCollection('airport_modern') \
-#     .add(INFRA_DIR / 'airport_modern_2x.ase',
-#         tmpl_airport_tiles, ZOOM_2X) \
-#     .compose_on(ground, AIRPORT_COMPOSITION)
-# airport_tiles[:16].replace_old(2634)
-# airport_tiles[16].replace_new(0x15, 86)
-# airport_tiles[17].replace_new(0x10, 12)
+AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
+airport_tiles = lib.SpriteCollection('airport_modern') \
+    .add(INFRA_DIR / 'airport_modern_2x.ase',
+        tmpl_airport_tiles, ZOOM_2X) \
+    .compose_on(ground, AIRPORT_COMPOSITION)
+airport_tiles[:16].replace_old(2634)
+airport_tiles[16].replace_new(0x15, 86)
+airport_tiles[17].replace_new(0x10, 12)
 
 
 # ------------------------------ Trees ------------------------------
@@ -882,20 +882,10 @@ for i in range(6):
         .replace_old(4090 + i * 6)
 
 
-@lib.template(grf.FileSprite)
-def tmpl_iron_mine(func, z, frame):
-    ground = func('ground', 2, 2, 512, 294, xofs=-254, yofs=-39, frame=frame)
-    return [
-        lib.CutGround(ground, (x, y), name=f'{x}_{y}', above=((0, 10)[y == 0], (0, 10)[x == 0]))
-        for x in range(4)
-        for y in range(4)
-    ]
-
-
-for i in range(0, 3):
-    lib.SpriteCollection('iron_mine') \
-        .add(INDUSTRY_DIR / 'ironoremine_2x.ase', tmpl_iron_mine, ZOOM_2X, i + 1, name=f'stage{i + 1}') \
-        .replace_old(2293 + 16 * i)
+# @lib.template(grf.FileSprite)
+# def tmpl_steel_mill(func, z):
+#     assert z == 2
+#     ground = func('ground1', 2, 2, 192, 161, )
 
 
 @lib.template(grf.FileSprite)
@@ -941,6 +931,22 @@ def tmpl_bank(func, z):
 lib.SpriteCollection('bank') \
     .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X) \
     .replace_old(2180)
+
+
+@lib.template(grf.FileSprite)
+def tmpl_iron_mine(func, z, frame):
+    ground = func('ground', 2, 2, 512, 294, xofs=-254, yofs=-39, frame=frame)
+    return [
+        lib.CutGround(ground, (x, y), name=f'{x}_{y}', above=((0, 10)[y == 0], (0, 10)[x == 0]))
+        for x in range(4)
+        for y in range(4)
+    ]
+
+
+for i in range(0, 3):
+    lib.SpriteCollection('iron_mine') \
+        .add(INDUSTRY_DIR / 'ironoremine_2x.ase', tmpl_iron_mine, ZOOM_2X, i + 1, name=f'stage{i + 1}') \
+        .replace_old(2293 + 16 * i)
 
 
 # ------------------------------ User Interface ------------------------------
