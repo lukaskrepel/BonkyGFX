@@ -886,8 +886,7 @@ for i in range(6):
 def tmpl_steel_mill(func, z):
     assert z == 2
     ground_layers = ('REF/*', 'Spriteborder')
-    # building_layers = ('BUILDING/*', 'Spriteborder')
-    building_layers = ('BUILDING/*', 'REF/*', 'Spriteborder')
+    building_layers = ('BUILDING/*', 'Spriteborder')
 
     def building(name, *args, **kw):
         return lib.AlphaAndMask(
