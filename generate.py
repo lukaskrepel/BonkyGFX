@@ -961,6 +961,18 @@ lib.SpriteCollection('factory') \
 
 
 @lib.template(grf.FileSprite)
+def tmpl_oil_wells(func, z):
+    grid = lib.house_grid(func=func, height=75, z=z)
+    f = lambda frame: grid('frame{i}', (0, 0), ignore_layers='REF/*', frame=frame)
+    return [f(i + 1) for i in range(6)]
+
+
+lib.SpriteCollection('oild_wells') \
+    .add(INDUSTRY_DIR / 'oilwells_2x.ase', tmpl_oil_wells, ZOOM_2X) \
+    .replace_old(2174)  # 2173 ground is missing
+
+
+@lib.template(grf.FileSprite)
 def tmpl_bank(func, z):
     assert z == 2
     ground = func('ground', 2, 2, 192, 160, xofs=-126, yofs=-65, layers=('TILE/*', 'Spriteborder'))
