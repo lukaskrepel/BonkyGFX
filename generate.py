@@ -804,6 +804,33 @@ lib.SpriteCollection('forest') \
 
 
 @lib.template(grf.FileSprite)
+def tmpl_oil_refinery(func, z):
+    grid = lib.house_grid(func=func, height=128, z=z)
+    return [
+        cc(grid('building1', (0, 0), frame=1)),
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+        cc(grid('building2', (1, 0), frame=1)),
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+        lib.AlphaAndMask(
+            cc(grid('building3', (2, 0), frame=1, ignore_layers=('ANIMATED',))),
+            grid('building3_fire', (2, 0), frame=1, layers=('ANIMATED',)),
+        ),
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+        cc(grid('building4', (3, 0), frame=1)),
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+        grid('building5', (4, 0), frame=1),
+    ]
+
+lib.SpriteCollection('oil_refinery') \
+    .add(INDUSTRY_DIR / 'oilrefinery_2x.ase', tmpl_oil_refinery, ZOOM_2X) \
+    .replace_old(2080)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_farm(func, z):
     ground = func('ground1_whole', 2, 2, 192, 151, xofs=-62, yofs=-56, layers=('TILE/*', 'Spriteborder'))
     building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))

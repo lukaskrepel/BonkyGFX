@@ -617,7 +617,6 @@ class AlphaAndMask(grf.Sprite):
 
     def get_data_layers(self, context):
         w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(context)
-        assert npmask is None
         ow, oh, ni, na, nm = self.mask.get_data_layers(context)
         assert nm is None
         assert w == ow and h == oh
@@ -628,7 +627,6 @@ class AlphaAndMask(grf.Sprite):
 
         masked = ni[mask]
         colours = set(map(tuple, masked))
-        npmask = np.zeros((h, w), dtype=np.uint8)
         new_masked = np.zeros(masked.shape[0], dtype=np.uint8)
 
         for c in colours:
@@ -637,7 +635,13 @@ class AlphaAndMask(grf.Sprite):
                 raise ValueError(f'Color {c} is not in the palette in sprite {self.mask.name}')
             new_masked[(masked == c).all(axis=1)] = m
 
+        if npmask is None:
+            npmask = np.zeros((h, w), dtype=np.uint8)
+        else:
+            npmask = grf.np_make_writable(npmask)
         npmask[mask] = new_masked
+        npalpha = grf.np_make_writable(npalpha)
+        npalpha[mask] = 255
 
         timer.count_custom('Alpha and mask processing')
 
