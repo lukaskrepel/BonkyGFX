@@ -704,7 +704,7 @@ class CutGround(grf.Sprite):
             ground_mask[i, tile_ws - nl: tile_ws + nr] = False
 
         if x < 0 or y < 0 or y + self.h > h or x + self.w > w:
-            raise ValueError(f'Ground sprite region({x}..{x + self.w}, {y}..{y + self.h}) is outside sprite boundaries (0..{w}, 0..{h}) for sprite {self.sprite.name}')
+            raise ValueError(f'Ground sprite region({x}..{x + self.w}, {y}..{y + self.h}) is outside sprite boundaries (0..{w}, 0..{h}) for sprite {self.sprite.name}/{self.name}')
 
         if rgb is not None:
             rgb = rgb[y:y + self.h, x:x + self.w].copy()

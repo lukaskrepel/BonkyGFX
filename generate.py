@@ -882,10 +882,55 @@ for i in range(6):
         .replace_old(4090 + i * 6)
 
 
-# @lib.template(grf.FileSprite)
-# def tmpl_steel_mill(func, z):
-#     assert z == 2
-#     ground = func('ground1', 2, 2, 192, 161, )
+@lib.template(grf.FileSprite)
+def tmpl_steel_mill(func, z):
+    assert z == 2
+    ground_layers = ('REF/*', 'Spriteborder')
+    # building_layers = ('BUILDING/*', 'Spriteborder')
+    building_layers = ('BUILDING/*', 'REF/*', 'Spriteborder')
+
+    def building(name, *args, **kw):
+        return lib.AlphaAndMask(
+            cc(func(name, *args, **kw, layers=building_layers)),
+            func(name + '_anim', *args, **kw, layers=('ANIMATED/*',)),
+        )
+
+    def full_stage(frame):
+        ground1 = func('ground1', 2, 2, 192, 161, xofs=-126, yofs=-34-32, layers=ground_layers, frame=frame)
+        ground2 = func('ground2', 196, 2, 256, 161, xofs=-126, yofs=-34, layers=ground_layers, frame=frame)
+        return [
+            cc(lib.CutGround(ground2, (0, 0), name='ground2a')),
+            grf.EMPTY_SPRITE, # Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
+            cc(lib.CutGround(ground2, (0, 1), name='ground2b')),
+            building(f'building2_stage{frame}', 196 + 128, 2, 128, 129 + 32, xofs=-62, yofs=-66, frame=frame),
+            cc(lib.CutGround(ground2, (1, 0), name='ground2c')),
+            building(f'building2_stage{frame}', 196, 2, 128, 129 + 32, xofs=-62, yofs=-66, frame=frame),
+            cc(lib.CutGround(ground2, (1, 1), name='ground2d')),
+            cc(lib.CutGround(ground1, (0, 0), name='ground1a')),
+            building(f'building1_stage{frame}', 130, 2, 64, 129, xofs=2, yofs=-66, frame=frame),
+            cc(lib.CutGround(ground1, (1, 0), name='ground1b')),
+            building(f'building1_stage{frame}', 2, 2, 128, 129 + 32, xofs=-62, yofs=-98, frame=frame),
+        ]
+
+    return (
+        full_stage(3) +
+        full_stage(2) +
+        [
+            # Stage 1 has no ground sprites (uses 2022), also don't bother animating it
+            # What it has though is southernmost sprite
+            grf.EMPTY_SPRITE, # Furthest building is covered by the closest one,
+            func('building2_stage1', 196 + 128 + 64, 2, 64, 129, xofs=2, yofs=-66, layers=building_layers, frame=1),
+            func('building3_stage1', 196 + 2, 2, 64, 129, xofs=-62, yofs=-66, layers=building_layers, frame=1),
+            func('building4_stage1', 196 + 64, 2, 128, 129 + 32, xofs=-62, yofs=-66 - 32, layers=building_layers, frame=1),
+            func('building1_stage1', 130, 2, 64, 129, xofs=2, yofs=-66, layers=building_layers, frame=1),
+            func('building1_stage1', 2, 2, 128, 129 + 32, xofs=-62, yofs=-98, layers=building_layers, frame=1),
+        ]
+    )
+
+
+lib.SpriteCollection('steel_mill') \
+    .add(INDUSTRY_DIR / 'steelmill_2x.ase', tmpl_steel_mill, ZOOM_2X) \
+    .replace_old(2118)
 
 
 @lib.template(grf.FileSprite)
