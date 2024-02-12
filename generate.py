@@ -152,9 +152,9 @@ general_concrete[0].replace_old(1420)
 
 @lib.template(grf.FileSprite)
 def tmpl_airport_tiles(func, z):
-    kw_default = {'ignore_layers': 'Light order'}
-    kw_light = {'layers': 'Light order'}
-    with_light = lambda *args, **kw: lib.MagentaToLight(func(*args, **kw, **kw_default), func(*args, **kw, **kw_light))
+    kw_default = {'ignore_layers': 'ANIMATED/*'}
+    kw_light = {'layers': 'ANIMATED/*'}
+    with_light = lambda *args, **kw: lib.AlphaAndMask(func(*args, **kw, **kw_default), func(*args, **kw, **kw_light))
     return [
         func('apron', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
         func('stand', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
@@ -182,14 +182,14 @@ def tmpl_flat_tile(func, z, suffix, x):
     return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
 
 
-AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
-airport_tiles = lib.SpriteCollection('airport_modern') \
-    .add(INFRA_DIR / 'airport_modern_2x.ase',
-        tmpl_airport_tiles, ZOOM_2X) \
-    .compose_on(ground, AIRPORT_COMPOSITION)
-airport_tiles[:16].replace_old(2634)
-airport_tiles[16].replace_new(0x15, 86)
-airport_tiles[17].replace_new(0x10, 12)
+# AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
+# airport_tiles = lib.SpriteCollection('airport_modern') \
+#     .add(INFRA_DIR / 'airport_modern_2x.ase',
+#         tmpl_airport_tiles, ZOOM_2X) \
+#     .compose_on(ground, AIRPORT_COMPOSITION)
+# airport_tiles[:16].replace_old(2634)
+# airport_tiles[16].replace_new(0x15, 86)
+# airport_tiles[17].replace_new(0x10, 12)
 
 
 # ------------------------------ Trees ------------------------------
@@ -807,27 +807,32 @@ lib.SpriteCollection('forest') \
 def tmpl_oil_refinery(func, z):
     grid = lib.house_grid(func=func, height=128, z=z)
     return [
-        cc(grid('building1', (0, 0), frame=1)),
-        grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
-        cc(grid('building2', (1, 0), frame=1)),
-        grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
+        cc(grid('building1_stage1', (0, 0), frame=1)),
+        cc(grid('building1_stage2', (0, 0), frame=2)),
+        cc(grid('building1_stage3', (0, 0), frame=3)),
+        cc(grid('building2_stage1', (1, 0), frame=1)),
+        cc(grid('building2_stage2', (1, 0), frame=2)),
+        cc(grid('building2_stage3', (1, 0), frame=3)),
+        cc(grid('building3_stage1', (2, 0), frame=1)),
+        cc(grid('building3_stage2', (2, 0), frame=2)),
         lib.AlphaAndMask(
-            cc(grid('building3', (2, 0), frame=1, ignore_layers=('ANIMATED',))),
-            grid('building3_fire', (2, 0), frame=1, layers=('ANIMATED',)),
+            cc(grid('building3', (2, 0), frame=3, ignore_layers=('ANIMATED',))),
+            grid('building3_fire', (2, 0), frame=3, layers=('ANIMATED',)),
         ),
-        grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
-        cc(grid('building4', (3, 0), frame=1)),
-        grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
-        grid('building5', (4, 0), frame=1),
+        cc(grid('building4_stage1', (3, 0), frame=1)),
+        cc(grid('building4_stage2', (3, 0), frame=2)),
+        cc(grid('building4_stage3', (3, 0), frame=3)),
+        cc(grid('building5_stage1', (4, 0), frame=1)),
+        cc(grid('building5_stage2', (4, 0), frame=2)),
+        cc(grid('building5_stage3', (4, 0), frame=3)),
+        cc(grid('building6_stage1', (5, 0), frame=1)),
+        cc(grid('building6_stage2', (5, 0), frame=2)),
+        cc(grid('building6_stage3', (5, 0), frame=3)),
     ]
 
 lib.SpriteCollection('oil_refinery') \
     .add(INDUSTRY_DIR / 'oilrefinery_2x.ase', tmpl_oil_refinery, ZOOM_2X) \
-    .replace_old(2080)
+    .replace_old(2078)
 
 
 @lib.template(grf.FileSprite)
