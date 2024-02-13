@@ -118,12 +118,14 @@ def grid(*, func, width, height, padding=1, z=2):
     return sprite_func
 
 
-def flexgrid(*, func, padding=1, z=2):
+def flexgrid(*, func, padding=1, z=2, ground_scaling=False):
     zpadding = padding * z
     def sprite_func(name, width, height, **kw):
         x, y = sprite_func.x, sprite_func.y
         sprite_func.x += width * z + zpadding
-        return func(name, x, y, width * z, height * z, **kw)
+        gs = int(ground_scaling)
+        h = (height + gs) * z - gs
+        return func(name, x, y, width * z, h, **kw)
 
     sprite_func.x = zpadding
     sprite_func.y = zpadding
@@ -198,6 +200,19 @@ class SpriteCollection:
             res.sprites.append((zoom, kw, sprites[sl]))
         return res
 
+    def pick(self, *indexes):
+        res = SpriteCollection(self.name)
+        for zoom, kw, sprites in self.sprites:
+            res.sprites.append((zoom, kw, [sprites[i] for i in indexes]))
+        return res
+
+    def __mul__(self, amount):
+        assert isinstance(amount, int)
+        res = SpriteCollection(self.name)
+        for zoom, kw, sprites in self.sprites:
+            res.sprites.append((zoom, kw, sprites * amount))
+        return res
+
     def add(self, files, template, zoom,  *args, name=None, **kw):
         if not isinstance(files, tuple):
             files = (files,)
@@ -238,7 +253,15 @@ class SpriteCollection:
 
         def patternzip(dstl, srcl):
             if pattern is None:
-                l = zip(dstl, srcl)
+                if len(dstl) == 1:
+                    l = zip([dstl[0]] * len(srcl), srcl)
+                elif len(srcl) == 1:
+                    l = zip(dstl, [srcl[0]] * len(dstl))
+                else:
+                    print(dstl)
+                    print(srcl)
+                    assert len(dstl) == len(srcl)
+                    l = zip(dstl, srcl)
             else:
                 l = ((None if i is None else dstl[i], srcl[j]) for i, j in pattern)
             return [s if d is None else CompositeSprite((d, s)) for d, s in l]

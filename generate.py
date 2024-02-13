@@ -561,6 +561,25 @@ bus_stops[16:].replace_new(0x11, 0)
 
 # ------------------------------ Rail infrastructure ------------------------------
 
+@lib.template(grf.FileSprite)
+def tmpl_rails(func, z):
+    grid = lib.flexgrid(func=func, ground_scaling=True)
+    rail_layers = ('Rails/*', 'Sleepers/*', 'Shadow/*')
+    # rail_layers = ('Rails/*', 'Sleepers/*')
+    return [
+        grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=rail_layers, crop=False)
+        for name in ('y', 'x', 'n', 's', 'e', 'w', 'cross')
+    ]
+
+rails = lib.SpriteCollection('rail') \
+    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X) \
+
+rails.pick(1, 0, 2, 3, 4, 5).replace_old(1005)
+rails[:7].compose_on(ground[0]).replace_old(1011)
+(ground[0] * 5).replace_old(1018)
+rails[3].compose_on(rails[2]).compose_on(ground[0]).replace_old(1035)  # double diagonal tile Y
+rails[5].compose_on(rails[4]).compose_on(ground[0]).replace_old(1036)  # double diagonal tile X
+
 
 @lib.template(grf.FileSprite)
 def tmpl_rail_fences(func, z):
