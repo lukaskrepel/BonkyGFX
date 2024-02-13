@@ -562,21 +562,44 @@ bus_stops[16:].replace_new(0x11, 0)
 # ------------------------------ Rail infrastructure ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_rails(func, z):
+def tmpl_rails(func, z, layers):
     grid = lib.flexgrid(func=func, ground_scaling=True)
-    rail_layers = ('Rails/*', 'Sleepers/*', 'Shadow/*')
-    # rail_layers = ('Rails/*', 'Sleepers/*')
     return [
-        grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=rail_layers, crop=False)
+        grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=layers)
         for name in ('y', 'x', 'n', 's', 'e', 'w', 'cross')
+    ] # + [
+    #     grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=rail_layers + ('BALLAST/*',))
+    #     for name in ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')
+    # ]
+
+@lib.template(grf.FileSprite)
+def tmpl_ballast(func, z, layers):
+    grid = lib.flexgrid(func=func, ground_scaling=True, start=(910, 0))
+    return [
+        grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=layers)
+        for name in ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')
     ]
 
-rails = lib.SpriteCollection('rail') \
-    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X) \
 
-rails.pick(1, 0, 2, 3, 4, 5).replace_old(1005)
+rails = lib.SpriteCollection('rail') \
+    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*', 'SLEEPERS_ODD/*','SLEEPERS/*', 'SHADOW/*'))
+rail_overlays = lib.SpriteCollection('rail_overlays') \
+    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*',))
+# sleepers = lib.SpriteCollection('rail_overlays') \
+#     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('SLEEPERS_ODD/*','SLEEPERS/*'))
+ballast = lib.SpriteCollection('ballast') \
+    .add(INFRA_DIR / 'rail_2x.ase', tmpl_ballast, ZOOM_2X, ('BALLAST/*',))
+
+rail_overlays.pick(1, 0, 2, 3, 4, 5).replace_old(1005)
 rails[:7].compose_on(ground[0]).replace_old(1011)
-(ground[0] * 5).replace_old(1018)
+# (ground[0] * 5).replace_old(1018)
+# sleepers[3].compose_on(sleepers[5]).compose_on(sleepers[0]).compose_on(ground[0]).replace_old(1018)
+# sleepers[4].compose_on(sleepers[2]).compose_on(sleepers[0]).compose_on(ground[0]).replace_old(1019)
+# sleepers[3].compose_on(sleepers[4]).compose_on(sleepers[1]).compose_on(ground[0]).replace_old(1020)
+# sleepers[5].compose_on(sleepers[2]).compose_on(sleepers[1]).compose_on(ground[0]).replace_old(1021)
+# sleepers[3].compose_on(sleepers[5]).compose_on(sleepers[4]).compose_on(sleepers[2]).compose_on(sleepers[1]).compose_on(sleepers[0]).compose_on(ground[0]).replace_old(1022)
+# rails[7:].compose_on(ground[0]).replace_old(1018)
+ballast.compose_on(ground[0]).replace_old(1018)
 rails[3].compose_on(rails[2]).compose_on(ground[0]).replace_old(1035)  # double diagonal tile Y
 rails[5].compose_on(rails[4]).compose_on(ground[0]).replace_old(1036)  # double diagonal tile X
 

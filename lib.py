@@ -118,7 +118,7 @@ def grid(*, func, width, height, padding=1, z=2):
     return sprite_func
 
 
-def flexgrid(*, func, padding=1, z=2, ground_scaling=False):
+def flexgrid(*, func, padding=1, z=2, start=(0, 0), ground_scaling=False):
     zpadding = padding * z
     def sprite_func(name, width, height, **kw):
         x, y = sprite_func.x, sprite_func.y
@@ -127,8 +127,8 @@ def flexgrid(*, func, padding=1, z=2, ground_scaling=False):
         h = (height + gs) * z - gs
         return func(name, x, y, width * z, h, **kw)
 
-    sprite_func.x = zpadding
-    sprite_func.y = zpadding
+    sprite_func.x = zpadding + start[0]
+    sprite_func.y = zpadding + start[1]
 
     return sprite_func
 
