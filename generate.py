@@ -919,7 +919,7 @@ for i in range(6):
 @lib.template(grf.FileSprite)
 def tmpl_steel_mill(func, z):
     assert z == 2
-    ground_layers = ('REF/*', 'Spriteborder')
+    ground_layers = ('TILE/*', 'Spriteborder')
     building_layers = ('BUILDING/*', 'Spriteborder')
 
     def building(name, *args, **kw):
@@ -997,13 +997,15 @@ lib.SpriteCollection('factory') \
 @lib.template(grf.FileSprite)
 def tmpl_oil_wells(func, z):
     grid = lib.house_grid(func=func, height=75, z=z)
-    f = lambda frame: grid('frame{i}', (0, 0), ignore_layers='REF/*', frame=frame)
-    return [f(i + 1) for i in range(6)]
+    f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
+    return [
+        grid('ground', (0, 0), layers=('TILE/*', 'Spriteborder'), frame=1)
+    ] + [f(i + 1) for i in range(6)]
 
 
 lib.SpriteCollection('oild_wells') \
     .add(INDUSTRY_DIR / 'oilwells_2x.ase', tmpl_oil_wells, ZOOM_2X) \
-    .replace_old(2174)  # 2173 ground is missing
+    .replace_old(2173)
 
 
 @lib.template(grf.FileSprite)
