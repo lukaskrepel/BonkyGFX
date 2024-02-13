@@ -836,6 +836,40 @@ lib.SpriteCollection('oil_refinery') \
 
 
 @lib.template(grf.FileSprite)
+def tmpl_oil_rig(func, z):
+    assert z == 2
+
+    def chunk(name, x, w, h, *, xofs, frame):
+        x = x + 2
+        yofs = -282 + h
+        h = 345 - h
+        return lib.AlphaAndMask(
+            func(name, x, 2, w, h, xofs=xofs, yofs=yofs, ignore_layers='REF/*', frame=frame),
+            func(name + '_anim', x, 2, w, h, xofs=xofs, yofs=yofs, layers='ANIMATED/*', frame=frame)
+        )
+
+    return [
+        chunk(f'stage3_chunk1', 0, 64, 64, xofs=-62, frame=3),
+        chunk(f'stage3_chunk2', 64, 64, 32, xofs=-62, frame=3),
+        chunk(f'stage3_chunk3', 128, 128, 0, xofs=-62, frame=3),
+        chunk(f'stage3_chunk4', 256, 64, 32, xofs=2, frame=3),
+
+        chunk(f'stage2_chunk1', 0, 64, 64, xofs=-62, frame=2),
+        chunk(f'stage2_chunk2', 64, 64, 32, xofs=-62, frame=2),
+        chunk(f'stage2_chunk3', 128, 128, 0, xofs=-62, frame=2),
+
+        chunk(f'stage1_chunk1', 0, 64, 64, xofs=-62, frame=1),
+        chunk(f'stage1_chunk2', 64, 64, 32, xofs=-62, frame=1),
+        chunk(f'stage1_chunk3', 128, 128, 0, xofs=-62, frame=1),
+    ]
+
+
+lib.SpriteCollection('oil_rig') \
+    .add(INDUSTRY_DIR / 'oilrig_2x.ase', tmpl_oil_rig, ZOOM_2X) \
+    .replace_old(2096)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_farm(func, z):
     ground = func('ground1_whole', 2, 2, 192, 151, xofs=-62, yofs=-56, layers=('TILE/*', 'Spriteborder'))
     building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))
