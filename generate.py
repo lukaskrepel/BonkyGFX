@@ -60,7 +60,7 @@ g.add(grf.Label(0, b''))
 
 @lib.template(grf.FileSprite)
 def tmpl_groundtiles(func, z, y, frame=1):
-    grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
+    grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(0, z * y))
     grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
 
     sprites = [
@@ -87,42 +87,21 @@ def tmpl_groundtiles(func, z, y, frame=1):
         grid('steep_s', height=16 * z - 1),
         grid('steep_w', yofs=-8 * z),
         grid('steep_e', yofs=-8 * z),
-        # grid('flat', 1 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-(z // 2), frame=frame),
-        # grid('w', 81 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-        # grid('s', 161 * z + x * z, z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-        # grid('sw', 241 * z + x * z, z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-
-        # grid('e', 321 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-        # grid('ew', 399 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-        # grid('se', 479 * z + x * z, z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-        # grid('wse', 559 * z + x * z, z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-
-        # grid('n', 639 * z + x * z, z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-        # grid('nw', 719 * z + x * z, z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-        # grid('ns', 799 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-        # grid('nws', 879 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-
-        # grid('ne', 959 * z + x * z, z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-        # grid('enw', 1039 * z + x * z, z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-        # grid('sen', 1119 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-
-        # grid('steep_n', 1197 * z + x * z, z + y * z, 64 * z, 48 * z - 1, xofs=-31 * z, yofs=-16 * z, frame=frame),
-        # grid('steep_s', 1277 * z + x * z, z + y * z, 64 * z, 16 * z - 1, xofs=-31 * z, yofs=0 * z, frame=frame),
-        # grid('steep_w', 1357 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
-        # grid('steep_e', 1437 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z, frame=frame),
     ]
     return sprites
 
 
 def tmpl_groundtiles_extra(name, paths, zoom):
-    x, y = 0, 0
     @lib.template(grf.FileSprite)
     def tmpl_extra(func, z):
+        assert z == 2
+        grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(1235 * z, 0))
+        grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=1)
         return [
-            func('extra1', 1502 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-            func('extra2', 1567 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-            func('extra3', 1632 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-            func('extra4', 1697 * z + x * z, z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+            grid('extra1'),
+            grid('extra2'),
+            grid('extra3'),
+            grid('extra4'),
         ]
     return tmpl_groundtiles(name, paths, zoom, 0) + tmpl_extra(name, paths, zoom)
 
