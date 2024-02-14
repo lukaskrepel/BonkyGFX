@@ -118,19 +118,24 @@ def grid(*, func, width, height, padding=1, z=2):
     return sprite_func
 
 
-class FlexGrid:
-    def __init__(self, *, func, padding=0, start=(0, 0), add_xofs=None, add_yofs=None):
+class BaseGrid:
+    def __init__(self, func):
         self.func = func
-        self.padding = padding
-        self.x = padding + start[0]
-        self.y = padding + start[1]
-        self.add_xofs = add_xofs
-        self.add_yofs = add_yofs
         self.kw = {}
 
     def set_default(self, **kw):
         self.kw = kw
         return self
+
+
+class FlexGrid(BaseGrid):
+    def __init__(self, *, func, padding=0, start=(0, 0), add_xofs=None, add_yofs=None):
+        super().__init__(func)
+        self.padding = padding
+        self.x = padding + start[0]
+        self.y = padding + start[1]
+        self.add_xofs = add_xofs
+        self.add_yofs = add_yofs
 
     def __call__(self, name, *, keep_state=False, **kw):
         kw = {**self.kw, **kw}
@@ -149,6 +154,36 @@ class FlexGrid:
         return self.func(name, x, y, w, h, **kw)
 
 
+class HouseGrid(BaseGrid):
+    def __init__(self, *, func, height, width=64, padding=1, z=2, offset=(0, 0)):
+        super().__init__(func)
+        self.z = z
+
+        self.zwidth = width * z
+        self.zheight = height * z + z - 1
+
+        self.zpadding = padding * z
+        self.offset = offset
+
+    def __call__(self, name, grid_pos, bb=None, rel=None, **kw):
+        kw = {**self.kw, **kw}
+
+        assert bb is None or rel is None
+        x, y = grid_pos
+        fx = x * self.zwidth + self.zpadding * (x + 1) + self.offset[0]
+        fy = y * self.zheight + self.zpadding * (y + 1) + self.offset[1]
+        if rel is not None:
+            zxofs = -rel[0] * self.z
+            zyofs = -rel[1] * self.z + 1
+        else:
+            zxofs = -31 * self.z
+            zyofs = 31 * self.z - self.zheight #TODO - z // 2  # z // 2 is a ground sprite offset to align foundations
+            if bb is not None:
+                zxofs -= self.z * (bb[1] - bb[0]) * 2
+                zyofs -= self.z * (bb[0] + bb[1])
+        return self.func(name, fx, fy, self.zwidth, self.zheight, xofs=zxofs, yofs=zyofs, **kw)
+
+
 def flexgrid(*, func, padding=1, z=2, start=(0, 0), ground_scaling=False):
     zpadding = padding * z
     def sprite_func(name, width, height, **kw):
@@ -160,29 +195,6 @@ def flexgrid(*, func, padding=1, z=2, start=(0, 0), ground_scaling=False):
 
     sprite_func.x = zpadding + start[0]
     sprite_func.y = zpadding + start[1]
-
-    return sprite_func
-
-
-def house_grid(*, func, height, width=64, padding=1, z=2, offset=(0, 0)):
-    zheight = height * z + z - 1
-    zpadding = padding * z
-    zwidth = width * z
-    def sprite_func(name, grid_pos, bb=None, rel=None, **kw):
-        assert bb is None or rel is None
-        x, y = grid_pos
-        fx = x * zwidth + zpadding * (x + 1) + offset[0]
-        fy = y * zheight + zpadding * (y + 1) + offset[1]
-        if rel is not None:
-            zxofs = -rel[0] * z
-            zyofs = -rel[1] * z + 1
-        else:
-            zxofs = -31 * z
-            zyofs = (31 - height) * z #- z // 2  # z // 2 is a ground sprite offset to align foundations
-            if bb is not None:
-                zxofs -= z * (bb[1] - bb[0]) * 2
-                zyofs -= z * (bb[0] + bb[1])
-        return func(name, fx, fy, zwidth, zheight, xofs=zxofs, yofs=zyofs, **kw)
 
     return sprite_func
 

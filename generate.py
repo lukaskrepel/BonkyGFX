@@ -456,6 +456,7 @@ road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
 road.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
 
 
+# TODO remove thin stuff
 def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0, **kw):
     z = 2
     # OpenGFX2 uses h = h * z - z + 1 and
@@ -487,15 +488,16 @@ def tmpl_road_depot_old(func, z):
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_road_depot(func, z):
     # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/road_land.h
-    grid = lib.house_grid(func=func, height=75, z=z)
-    back_layer = 'Behind'
+    grid = lib.HouseGrid(func=func, height=75, z=z)
+    back_kw = {'layers': ('Behind', 'Spriteborder')}
+    front_kw = {'ignore_layers': ('Behind',)}
     return [
-        grid('se_back', (0, 0), bb=(0, 0), layers=back_layer),
-        grid('se_front', (0, 0), bb=(15, 0), ignore_layers=back_layer),
-        grid('sw_back', (1, 0), bb=(0, 0), layers=back_layer),
-        grid('sw_front', (1, 0), bb=(0, 15), ignore_layers=back_layer),
-        grid('ne', (2, 0), bb=(0, 15), ignore_layers=back_layer),
-        grid('nw', (3, 0), bb=(15, 0), ignore_layers=back_layer),
+        grid('se_back', (0, 0), bb=(0, 0), **back_kw),
+        grid('se_front', (0, 0), bb=(15, 0), **front_kw),
+        grid('sw_back', (1, 0), bb=(0, 0), **back_kw),
+        grid('sw_front', (1, 0), bb=(0, 15), **front_kw),
+        grid('ne', (2, 0), bb=(0, 15), **front_kw),
+        grid('nw', (3, 0), bb=(15, 0), **front_kw),
     ]
 
 
@@ -511,7 +513,7 @@ lib.SpriteCollection('road_depot') \
 def tmpl_truck_stop(func, z):
     # TODO cut front wals out of the back sprites for better transparency
     # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/station_land.h
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     ne_pos, se_pos, sw_pos, nw_pos = (2, 0), (0, 0), (1, 0), (3, 0)
     return [
         grid('ne_ground', ne_pos, layers='Tile/*'),
@@ -551,7 +553,7 @@ def tmpl_bus_stop(func, z):
     # TODO cut front wals out of the back sprites for better transparency
     # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/station_land.h
     # NOTE it's different from truck stop in bb and wall order (same in x/y views though)
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     ne_pos, se_pos, sw_pos, nw_pos = (2, 0), (0, 0), (1, 0), (3, 0)
     return [
         grid('ne_ground', ne_pos, layers='Tile/*'),
@@ -620,11 +622,6 @@ ballast = lib.SpriteCollection('ballast') \
 rail_overlays.pick(1, 0, 2, 3, 4, 5).replace_old(1005)
 rails[:7].compose_on(ground[0]).replace_old(1011)
 # (ground[0] * 5).replace_old(1018)
-# sleepers[3].compose_on(sleepers[5]).compose_on(sleepers[0]).compose_on(ground[0]).replace_old(1018)
-# sleepers[4].compose_on(sleepers[2]).compose_on(sleepers[0]).compose_on(ground[0]).replace_old(1019)
-# sleepers[3].compose_on(sleepers[4]).compose_on(sleepers[1]).compose_on(ground[0]).replace_old(1020)
-# sleepers[5].compose_on(sleepers[2]).compose_on(sleepers[1]).compose_on(ground[0]).replace_old(1021)
-# sleepers[3].compose_on(sleepers[5]).compose_on(sleepers[4]).compose_on(sleepers[2]).compose_on(sleepers[1]).compose_on(sleepers[0]).compose_on(ground[0]).replace_old(1022)
 # rails[7:].compose_on(ground[0]).replace_old(1018)
 ballast.compose_on(ground[0]).replace_old(1018)
 rails[3].compose_on(rails[2]).compose_on(ground[0]).replace_old(1035)  # double diagonal tile Y
@@ -657,14 +654,8 @@ lib.SpriteCollection('rail_fence') \
 # ------------------------------ Water ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_water(funcs, z, suffix, x):
-    magenta, mask = funcs
-    func = lambda *args, **kw: lib.MagentaAndMask(magenta(*args, **kw), mask(*args, **kw))
-    return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
-
-
-@lib.template(grf.FileSprite)
 def tmpl_water_full(sprite_func, z):
+    # TODO switch to grid and add z // 2 yofs
     x = y = 0
     func = lambda *args, **kw: lib.MagentaAndMask(sprite_func(*args, **kw), sprite_func(*args, **kw, layers='Animated'))
     return [
@@ -703,7 +694,7 @@ water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 
 @lib.template(grf.FileSprite)
 def tmpl_statues(func, z):
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     return [
         grid('statue', (0, 0), bb=(6, 5)),
         grid('fountain', (1, 0), bb=(3, 3)),
@@ -718,7 +709,7 @@ statues[2].replace_old(2632)
 
 @lib.template(grf.FileSprite)
 def tmpl_shops_and_offices(func, z):
-    grid = lib.house_grid(func=func, height=100, z=z)
+    grid = lib.HouseGrid(func=func, height=100, z=z)
     return [
         lib.MagentaToStruct(grid('29a_ground', (0, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
         lib.MagentaToStruct(grid('29a', (0, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
@@ -760,7 +751,7 @@ houses[13:19].replace_old(1540)  # 30
 @lib.template(grf.FileSprite)
 def tmpl_coal_mine(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     return [
         grid('building1_stage1', (0, 0), bb=(7, 0), frame=1),
         grid('building1_stage2', (0, 0), bb=(7, 0), frame=2),
@@ -788,7 +779,7 @@ lib.SpriteCollection('coal_mine') \
 @lib.template(grf.FileSprite)
 def tmpl_powerplant(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     return [
         grid('building1_stage1', (0, 0), bb=(1, 1), frame=1),
         grid('building1_stage2', (0, 0), bb=(1, 1), frame=2),
@@ -829,7 +820,7 @@ lib.SpriteCollection('chimney_smoke') \
 @lib.template(grf.FileSprite)
 def tmpl_sawmill(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     return [
         grid('building1_stage1', (0, 0), bb=(1, 0), frame=1),
         grid('building1_stage2', (0, 0), bb=(1, 0), frame=2),
@@ -852,7 +843,7 @@ lib.SpriteCollection('sawmill') \
 
 @lib.template(grf.FileSprite)
 def tmpl_forest(func, z):
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     ground_layers = ('TILE/*', 'Spriteborder')
     return [
         grid('growth1', (0, 0), frame=1, ignore_layers=ground_layers),
@@ -874,7 +865,7 @@ lib.SpriteCollection('forest') \
 
 @lib.template(grf.FileSprite)
 def tmpl_oil_refinery(func, z):
-    grid = lib.house_grid(func=func, height=128, z=z)
+    grid = lib.HouseGrid(func=func, height=128, z=z)
     return [
         cc(grid('building1_stage1', (0, 0), frame=1)),
         cc(grid('building1_stage2', (0, 0), frame=2)),
@@ -942,7 +933,7 @@ lib.SpriteCollection('oil_rig') \
 def tmpl_farm(func, z):
     ground = func('ground1_whole', 2, 2, 192, 151, xofs=-62, yofs=-56, layers=('TILE/*', 'Spriteborder'))
     building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))
-    grid = lib.house_grid(func=func, height=75, z=z, offset=(194, 0))
+    grid = lib.HouseGrid(func=func, height=75, z=z, offset=(194, 0))
     return [
         lib.CutGround(ground, (0, 0), name='ground1a'),
         lib.CutGround(ground, (0, 1), name='ground1b'),
@@ -1065,14 +1056,14 @@ lib.SpriteCollection('factory') \
 
 @lib.template(grf.FileSprite)
 def tmpl_oil_wells(func, z):
-    grid = lib.house_grid(func=func, height=75, z=z)
+    grid = lib.HouseGrid(func=func, height=75, z=z)
     f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
     return [
         func('ground', 2, 90, 128, 63, xofs=-31 * z, yofs=0, layers=('TILE/*', 'Spriteborder'), frame=1)
     ] + [f(i + 1) for i in range(6)]
 
 
-oil_wells = lib.SpriteCollection('oild_wells') \
+oil_wells = lib.SpriteCollection('oil_wells') \
     .add(INDUSTRY_DIR / 'oilwells_2x.ase', tmpl_oil_wells, ZOOM_2X)
 oil_wells[0].compose_on(ground[0]).replace_old(2173)
 oil_wells[1:].replace_old(2174)
