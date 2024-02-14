@@ -55,8 +55,7 @@ g.add(grf.Label(0, b''))
 
 @lib.template(grf.FileSprite)
 def tmpl_groundtiles(func, z, frame=1):
-    # TODO grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(0, z * y))
-    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0))
+    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2))
     grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
 
     return [
@@ -90,8 +89,7 @@ def tmpl_groundtiles_extra(name, paths, zoom):
     @lib.template(grf.FileSprite)
     def tmpl_extra(func, z):
         assert z == 2
-        grid = lib.FlexGrid(func=func, padding=z, start=(1235 * z, 0))
-        # TODO grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(1235 * z, 0))
+        grid = lib.FlexGrid(func=func, padding=z, start=(1235 * z, 0), add_yofs=-(z // 2))
         grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=1)
         return [
             grid('extra1'),
@@ -151,7 +149,7 @@ general_concrete[0].replace_old(1420)
 
 @lib.template(grf.FileSprite)
 def tmpl_airport_tiles(func, z):
-    grid = lib.FlexGrid(func=func, padding=2)  # TODO add_yofs=-(z // 2)
+    grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
     grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0)
     kw_default = {'ignore_layers': 'ANIMATED/*'}
     kw_light = {'layers': 'ANIMATED/*'}
@@ -192,11 +190,6 @@ def tmpl_airport_tiles(func, z):
     return [sprites[k] for k in (0, 1, 7, 8, 9, 10, 11, 12, 13, 14, 15, 2, 3, 4, 5, 6, 21, 22)]
 
 
-@lib.template(grf.FileSprite)
-def tmpl_flat_tile(func, z, suffix, x):
-    return [func(suffix, z * (1 + x), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0)]
-
-
 AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
 airport_tiles = lib.SpriteCollection('airport_modern') \
     .add(INFRA_DIR / 'airport_modern_2x.ase',
@@ -215,7 +208,7 @@ def tree(name, sprite_id, path):
     def tmpl(func, z, frame):
         # Variation of OpenGFX1 template with 2x zoom and only one tree
         return [
-            func('', 0 * z, 0, 45 * z, 80 * z, xofs=-24 * z, yofs=-73 * z, frame=frame)
+            func('', 0 * z, 0, 45 * z, 80 * z, xofs=-24 * z, yofs=-73 * z - (z // 2), frame=frame)
         ]
     sprites = []
     for i in range(7):
@@ -247,7 +240,7 @@ tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_road_8view(func, z, x, y, frame):
-    grid = lib.FlexGrid(func=func, padding=2, start=(x * 174 * z, y * 24 * z))  # TODO add_yofs=-(z // 2)
+    grid = lib.FlexGrid(func=func, padding=2, start=(x * 174 * z, y * 24 * z), add_yofs=-(z // 2))
     grid.set_default(frame=frame)
     res = [
         grid('n', width=8 * z, height=23 * z, xofs=-3 * z, yofs=-15 * z),
@@ -312,7 +305,7 @@ lib.SpriteCollection('bus_gen2') \
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_rail_4view(func, z, y, frame, **kw):
-    grid = lib.FlexGrid(func=func, padding=2, start=(0 * 87 * z, y * 24 * z))  # TODO add_yofs=-(z // 2)
+    grid = lib.FlexGrid(func=func, padding=2, start=(0 * 87 * z, y * 24 * z), add_yofs=-(z // 2))
     grid.set_default(frame=frame, **kw)
     return [
         grid( 'n', width= 8 * z, height=23 * z, xofs=-3 * z, yofs=-13 * z),
@@ -324,7 +317,7 @@ def tmpl_vehicle_rail_4view(func, z, y, frame, **kw):
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_rail_8view(func, z, y, frame, **kw):
-    grid = lib.FlexGrid(func=func, padding=2, start=(0 * 174 * z, y * 24 * z))  # TODO add_yofs=-(z // 2)
+    grid = lib.FlexGrid(func=func, padding=2, start=(0 * 174 * z, y * 24 * z), add_yofs=-(z // 2))
     grid.set_default(frame=frame, **kw)
     x = 0
     return [
@@ -402,7 +395,7 @@ engine('tim', 2973, tmpl_vehicle_rail_8view, 10)  # T.I.M. (Electric)
 
 @lib.template(grf.FileSprite)
 def tmpl_roadtiles(func, z, frame, **kw):
-    grid = lib.FlexGrid(func=func, padding=2)  # TODO add_yofs=-(z // 2)
+    grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
     grid.set_default(frame=frame, width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, **kw)
     return [
         grid('y'),
@@ -552,14 +545,14 @@ bus_stops[16:].replace_new(0x11, 0)
 
 @lib.template(grf.FileSprite)
 def tmpl_rails(func, z, layers):
-    grid = lib.FlexGrid(func=func, padding=2)
+    grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
     grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers)
     return list(map(grid, ('y', 'x', 'n', 's', 'e', 'w', 'cross')))
 
 
 @lib.template(grf.FileSprite)
 def tmpl_ballast(func, z, layers):
-    grid = lib.FlexGrid(func=func, padding=2, start=(910, 0))
+    grid = lib.FlexGrid(func=func, padding=2, start=(910, 0), add_yofs=-(z // 2))
     grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers)
     return list(map(grid, ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')))
 
@@ -588,7 +581,7 @@ def tmpl_rail_fences(func, z):
     relative = 2
     x_xofs, x_yofs = -59 - relative, -12 - relative // 2
     y_xofs, y_yofs = -3 + relative, -12 - relative // 2
-    grid = lib.FlexGrid(func=func, padding=2)
+    grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
     return [
         cc(grid('flat_x', width=33 * z, height=22 * z, xofs=x_xofs, yofs=x_yofs)),
         cc(grid('flat_y', width=33 * z, height=22 * z, xofs=y_xofs, yofs=y_yofs)),
@@ -610,29 +603,28 @@ lib.SpriteCollection('rail_fence') \
 
 @lib.template(grf.FileSprite)
 def tmpl_water_full(sprite_func, z):
-    # TODO switch to grid and add z // 2 yofs
     x = y = 0
     func = lambda *args, **kw: lib.MagentaAndMask(sprite_func(*args, **kw), sprite_func(*args, **kw, layers='Animated'))
     return [
-        func('full', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('1', 81 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('2', 161 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('3', 241 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('4', 321 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('5', 399 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('6', 479 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('7', 559 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('8', 639 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('9', 719 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('10', 799 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('11', 879 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('12', 959 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('13', 1039 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('14', 1119 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('15', 1197 * z + x * z, 1 * z + y * z, 64 * z, 48 * z - 1, xofs=-31 * z, yofs=16 * z),
-        func('16', 1277 * z + x * z, 1 * z + y * z, 64 * z, 16 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('17', 1357 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('18', 1437 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        func('full', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('1', 81 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('2', 161 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('3', 241 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('4', 321 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('5', 399 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('6', 479 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('7', 559 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('8', 639 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('9', 719 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('10', 799 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('11', 879 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('12', 959 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('13', 1039 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('14', 1119 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('15', 1197 * z + x * z, 1 * z + y * z, 64 * z, 48 * z - 1, xofs=-31 * z, yofs=16 * z - (z // 2)),
+        func('16', 1277 * z + x * z, 1 * z + y * z, 64 * z, 16 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
+        func('17', 1357 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        func('18', 1437 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
     ]
 
 water = lib.SpriteCollection('water') \
@@ -763,7 +755,7 @@ lib.SpriteCollection('power_plant') \
 @lib.template(grf.FileSprite)
 def tmpl_chimney_smoke(func, z):
     return [
-        func(f'{i}', x=2, y=2, w=128, h=128, xofs=0, yofs=-128, frame=i + 1)
+        func(f'{i}', x=2, y=2, w=128, h=128, xofs=0, yofs=-128 - (z // 2), frame=i + 1)
         for i in range(8)
     ]
 
@@ -856,7 +848,7 @@ def tmpl_oil_rig(func, z):
 
     def chunk(name, x, w, h, *, xofs, frame):
         x = x + 2
-        yofs = -282 + h
+        yofs = -282 + h - (z // 2)
         h = 345 - h
         return lib.AlphaAndMask(
             func(name, x, 2, w, h, xofs=xofs, yofs=yofs, ignore_layers='REF/*', frame=frame),
@@ -916,12 +908,12 @@ def tmpl_farm_fences(func, z, frame):
     x_xofs, x_yofs = -59 - relative, 21 - relative // 2
     y_xofs, y_yofs = -3 + relative, 21 - relative // 2
     return [
-        func('flat_x', 2 + 68 * 1, 2, 66, 44, xofs=x_xofs, yofs=x_yofs, frame=frame),
-        func('flat_y', 2 + 68 * 0, 2, 66, 44, xofs=y_xofs, yofs=y_yofs, frame=frame),
-        func('high_x', 2 + 68 * 5, 2, 66, 60, xofs=x_xofs, yofs=x_yofs - 16, frame=frame),
-        func('high_y', 2 + 68 * 4, 2, 66, 60, xofs=y_xofs, yofs=y_yofs - 16, frame=frame),
-        func('low_x', 2 + 68 * 3, 2, 66, 28, xofs=x_xofs, yofs=x_yofs + 16, frame=frame),
-        func('low_y', 2 + 68 * 2, 2, 66, 28, xofs=y_xofs, yofs=y_yofs + 16, frame=frame),
+        func('flat_x', 2 + 68 * 1, 2, 66, 44, xofs=x_xofs, yofs=x_yofs - (z // 2), frame=frame),
+        func('flat_y', 2 + 68 * 0, 2, 66, 44, xofs=y_xofs, yofs=y_yofs - (z // 2), frame=frame),
+        func('high_x', 2 + 68 * 5, 2, 66, 60, xofs=x_xofs, yofs=x_yofs - 16 - (z // 2), frame=frame),
+        func('high_y', 2 + 68 * 4, 2, 66, 60, xofs=y_xofs, yofs=y_yofs - 16 - (z // 2), frame=frame),
+        func('low_x', 2 + 68 * 3, 2, 66, 28, xofs=x_xofs, yofs=x_yofs + 16 - (z // 2), frame=frame),
+        func('low_y', 2 + 68 * 2, 2, 66, 28, xofs=y_xofs, yofs=y_yofs + 16 - (z // 2), frame=frame),
     ]
 
 
@@ -1106,18 +1098,9 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     #     for c, (f, a) in cd.items():
     #         print(f'    NEW [{set_type}]+{f} {c.name} {a}')
 
-    def add_global_offset(sprites):
-        global offset_sprites
-        for s in sprites:
-            if id(s) in offset_sprites:
-                continue
-            s.yofs -= 1
-            offset_sprites.add(id(s))
-
     if ranges:
         g.add(grf.ReplaceOldSprites([(offset, len(sprites)) for offset, sprites in ranges]))
         for offset, sprites in ranges:
-            add_global_offset(sprites)
             g.add(*sprites)
             for i, sa in enumerate(sprites):
                 names = ', '.join(s.name for s in (sa.sprites if isinstance(sa, grf.AlternativeSprites) else (sa,)))
@@ -1125,7 +1108,6 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
     for set_type, sprite_dict in lib.new_sprites[mode].items():
         for offset, sprites in group_ranges(sprite_dict):
             g.add(grf.ReplaceNewSprites(set_type, len(sprites), offset=offset))
-            add_global_offset(sprites)
             g.add(*sprites)
             for i, sa in enumerate(sprites):
                 names = ', '.join(s.name for s in (sa.sprites if isinstance(sa, grf.AlternativeSprites) else (sa,)))

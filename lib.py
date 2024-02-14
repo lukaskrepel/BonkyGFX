@@ -177,7 +177,7 @@ class HouseGrid(BaseGrid):
             zyofs = -rel[1] * self.z + 1
         else:
             zxofs = -31 * self.z
-            zyofs = 31 * self.z - self.zheight #TODO - z // 2  # z // 2 is a ground sprite offset to align foundations
+            zyofs = 31 * self.z - self.zheight - self.z // 2  # z // 2 is a ground sprite offset to align foundations
             if bb is not None:
                 zxofs -= self.z * (bb[1] - bb[0]) * 2
                 zyofs -= self.z * (bb[0] + bb[1])
@@ -727,7 +727,7 @@ class CutGround(grf.Sprite):
             self.above_l = self.above_r = above
         self.ground_h = 32 * z - 1
         self.above_h = max(self.above_l, self.above_r) * z
-        super().__init__(w=64 * z, h=self.ground_h + self.above_h, xofs=-31 * z, yofs=-self.above_h, zoom=sprite.zoom, bpp=sprite.bpp, name=name)
+        super().__init__(w=64 * z, h=self.ground_h + self.above_h, xofs=-31 * z, yofs=-self.above_h - (z // 2), zoom=sprite.zoom, bpp=sprite.bpp, name=name)
 
     def prepare_files(self):
         self.sprite.prepare_files()
