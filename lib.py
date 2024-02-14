@@ -131,14 +131,15 @@ class FlexGrid:
         self.kw = kw
         return self
 
-    def __call__(self, name, **kw):
+    def __call__(self, name, *, keep_state=False, **kw):
         kw = {**self.kw, **kw}
 
         x, y = self.x, self.y
         w = kw.pop('width')
         h = kw.pop('height')
 
-        self.x += w + self.padding
+        if not keep_state:
+            self.x += w + self.padding
 
         if self.add_xofs is not None:
             kw['xofs'] = self.add_xofs + kw.get('xofs', 0)

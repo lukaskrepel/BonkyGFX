@@ -60,10 +60,11 @@ g.add(grf.Label(0, b''))
 
 @lib.template(grf.FileSprite)
 def tmpl_groundtiles(func, z, y, frame=1):
-    grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(0, z * y))
+    # TODO grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(0, z * y))
+    grid = lib.FlexGrid(func=func, padding=z, start=(0, z * y))
     grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
 
-    sprites = [
+    return [
         grid('flat'),
         grid('w'),
         grid('s', height=24 * z - 1),
@@ -88,14 +89,14 @@ def tmpl_groundtiles(func, z, y, frame=1):
         grid('steep_w', yofs=-8 * z),
         grid('steep_e', yofs=-8 * z),
     ]
-    return sprites
 
 
 def tmpl_groundtiles_extra(name, paths, zoom):
     @lib.template(grf.FileSprite)
     def tmpl_extra(func, z):
         assert z == 2
-        grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(1235 * z, 0))
+        grid = lib.FlexGrid(func=func, padding=z, start=(1235 * z, 0))
+        # TODO grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(1235 * z, 0))
         grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=1)
         return [
             grid('extra1'),
@@ -157,29 +158,45 @@ general_concrete[0].replace_old(1420)
 
 @lib.template(grf.FileSprite)
 def tmpl_airport_tiles(func, z):
+    grid = lib.FlexGrid(func=func, padding=2)  # TODO add_yofs=-(z // 2)
+    grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0)
     kw_default = {'ignore_layers': 'ANIMATED/*'}
     kw_light = {'layers': 'ANIMATED/*'}
-    with_light = lambda *args, **kw: lib.AlphaAndMask(func(*args, **kw, **kw_default), func(*args, **kw, **kw_light))
-    return [
-        func('apron', z * (1 + 0), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('stand', z * (1 + 65), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_ns_west', z * (1 + 455), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_ew_south', z * (1 + 520), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_xing_south', z * (1 + 585), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_xing_west', z * (1 + 650), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_ns_ctr', z * (1 + 715), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_xing_east', z * (1 + 780), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_ns_east', z * (1 + 845), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_ew_north', z * (1 + 910), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        func('taxi_ew_ctr', z * (1 + 975), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
-        with_light('runway_a', z * (1 + 130), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        with_light('runway_b', z * (1 + 195), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        with_light('runway_c', z * (1 + 260), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        with_light('runway_d', z * (1 + 325), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        with_light('runway_end', z * (1 + 390), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0),
-        with_light('helipad', z * (1 + 1365), z, 64 * z, 32 * z - 1, xofs=-22 * z, yofs=-15 * z),
-        func('new_helipad', z * (1 + 1430), z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0, **kw_default),
+
+    def with_light(*args, **kw):
+        return lib.AlphaAndMask(
+            grid(*args, **kw, **kw_default, keep_state=True),
+            grid(*args, **kw, **kw_light)
+        )
+
+    sprites = [
+        grid('apron', **kw_default),
+        grid('stand', **kw_default),
+        with_light('runway_a'),
+        with_light('runway_b'),
+        with_light('runway_c'),
+        with_light('runway_d'),
+        with_light('runway_end'),
+        grid('taxi_ns_west', **kw_default),
+        grid('taxi_ew_south', **kw_default),
+        grid('taxi_xing_south', **kw_default),
+        grid('taxi_xing_west', **kw_default),
+        grid('taxi_ns_ctr', **kw_default),
+        grid('taxi_xing_east', **kw_default),
+        grid('taxi_ns_east', **kw_default),
+        grid('taxi_ew_north', **kw_default),
+        grid('taxi_ew_ctr', **kw_default),
+        with_light('runway_y_a'),  # unused
+        with_light('runway_y_b'),  # unused
+        with_light('runway_y_c'),  # unused
+        with_light('runway_y_d'),  # unused
+        with_light('runway_y_end'),  # unused
+        with_light('helipad', yofs = -15 * z),
+        grid('new_helipad', **kw_default),
     ]
+
+    # Rearrange to OpenTTD sprite order
+    return [sprites[k] for k in (0, 1, 7, 8, 9, 10, 11, 12, 13, 14, 15, 2, 3, 4, 5, 6, 21, 22)]
 
 
 @lib.template(grf.FileSprite)
