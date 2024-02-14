@@ -59,9 +59,9 @@ g.add(grf.Label(0, b''))
 # ------------------------------ Ground Tiles ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_groundtiles(func, z, y, frame=1):
+def tmpl_groundtiles(func, z, frame=1):
     # TODO grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2), start=(0, z * y))
-    grid = lib.FlexGrid(func=func, padding=z, start=(0, z * y))
+    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0))
     grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
 
     return [
@@ -104,23 +104,23 @@ def tmpl_groundtiles_extra(name, paths, zoom):
             grid('extra3'),
             grid('extra4'),
         ]
-    return tmpl_groundtiles(name, paths, zoom, 0) + tmpl_extra(name, paths, zoom)
+    return tmpl_groundtiles(name, paths, zoom) + tmpl_extra(name, paths, zoom)
 
 
 # Normal land
-make_ground = lambda name, y: lib.SpriteCollection(name) \
+make_ground = lambda name, frame: lib.SpriteCollection(name) \
     .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_groundtiles, ZOOM_2X, y, thin=False, climate=TEMPERATE) \
+         tmpl_groundtiles, ZOOM_2X, frame, thin=False, climate=TEMPERATE) \
     .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x_thin.ase', colourkey=(0, 0, 255)),
-         tmpl_groundtiles, ZOOM_2X, y, thin=True, climate=TEMPERATE) \
+         tmpl_groundtiles, ZOOM_2X, frame, thin=True, climate=TEMPERATE) \
     .add(TERRAIN_DIR / 'tropical_groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, y, climate=TROPICAL) \
+         tmpl_groundtiles, ZOOM_2X, frame, climate=TROPICAL) \
     .add(TERRAIN_DIR / 'arctic_groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, y, climate=ARCTIC)
-ground = make_ground('ground', 0)
-make_ground('ground_bare', 144).replace_old(3924)  # 0% grass
-make_ground('ground_33', 96).replace_old(3943)   # 33% grass
-make_ground('ground_66', 48).replace_old(3962)   # 66% grass
+         tmpl_groundtiles, ZOOM_2X, frame, climate=ARCTIC)
+ground = make_ground('ground', 1)
+make_ground('ground_bare', 4).replace_old(3924)  # 0% grass
+make_ground('ground_33', 3).replace_old(3943)   # 33% grass
+make_ground('ground_66', 2).replace_old(3962)   # 66% grass
 ground.replace_old(3981)  # 100% grass
 
 lib.SpriteCollection('temperate_rough') \
@@ -130,27 +130,27 @@ lib.SpriteCollection('temperate_rough') \
 
 lib.SpriteCollection('temperate_rocks') \
     .add(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 0) \
+         tmpl_groundtiles, ZOOM_2X) \
     .replace_old(4023)
 
 for i in range(9):
     lib.SpriteCollection(f'farmland{i}') \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, 0, i + 1) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1) \
         .replace_old(4126 + 19 * i)
 
 tropical_desert = lib.SpriteCollection('tropical_desert') \
     .add(TERRAIN_DIR / 'tropical_groundtiles_desert_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 0) \
+         tmpl_groundtiles, ZOOM_2X) \
     .replace_old(4550, climate=TROPICAL)
 
 lib.SpriteCollection('tropical_transitions') \
     .add(TERRAIN_DIR / 'tropical_groundtiles_deserttransition_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 0) \
+         tmpl_groundtiles, ZOOM_2X) \
     .replace_old(4512, climate=TROPICAL)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
     .add(lib.aseidx(TERRAIN_DIR / 'general_concretetiles_2x.ase', colourkey=(0, 0, 255)),
-        tmpl_groundtiles, ZOOM_2X, 0)
+        tmpl_groundtiles, ZOOM_2X)
 general_concrete[0].replace_old(1420)
 
 

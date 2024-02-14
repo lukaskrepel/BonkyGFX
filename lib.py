@@ -883,17 +883,24 @@ class AseImageFile(grf.ImageFile):
         self._images = {}
         for kw in self._kw_requested:
             frame, layers, ignore_layers = kw
-            with tempfile.NamedTemporaryFile(suffix='.png') as f:
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
                 args = [aseprite_executible, '-b', str(self.path), '--color-mode', 'rgb']
                 for l in layers:
                     args.extend(('--layer', l))
                 for l in ignore_layers:
                     args.extend(('--ignore-layer', l))
                 args.extend(('--frame-range', f'{frame - 1},{frame - 1}'))
-                res = subprocess.run(args + ['--save-as', f.name])
+                args.extend(['--save-as', f.name])
+                res = subprocess.run(args)
+                args_str = ' '.join(res.args)
                 if res.returncode != 0:
-                    raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}')
-                self._images[kw] = self._load_frame(f.name)
+                    raise RuntimeError(f'Aseprite returned non-zero code {res.returncode}, command line: {args_str}')
+                if not os.path.exists(f.name):
+                    raise RuntimeError(f'Aseprite didn''t create an output file {f.name}, command line: {args_str}')
+                try:
+                    self._images[kw] = self._load_frame(f.name)
+                except OSError as e:
+                    raise RuntimeError(f'Error loading aseprite output file {f.name}, command line: {args_str}')
 
     def get_image(self, **kw):
         self.load()
