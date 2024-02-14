@@ -408,44 +408,45 @@ engine('tim', 2973, tmpl_vehicle_rail_8view, 10)  # T.I.M. (Electric)
 # ------------------------------ Road Infrastructure ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_roadtiles(func, z, x, y):
-    x = y = 0
+def tmpl_roadtiles(func, z, frame, **kw):
+    grid = lib.FlexGrid(func=func, padding=2)  # TODO add_yofs=-(z // 2)
+    grid.set_default(frame=frame, width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, **kw)
     return [
-        func('y', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('x', 66 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('full', 131 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_y_ne', 196 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_x_nw', 261 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_y_sw', 326 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('t_x_se', 391 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('w', 456 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('n', 521 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('e', 586 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('s', 651 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        grid('y'),
+        grid('x'),
+        grid('full'),
+        grid('t_y_ne'),
+        grid('t_x_nw'),
+        grid('t_y_sw'),
+        grid('t_x_se'),
+        grid('w'),
+        grid('n'),
+        grid('e'),
+        grid('s'),
 
-        func('ne', 846 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('se', 911 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('sw', 716 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('nw', 781 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z),
+        grid('sw'),
+        grid('nw'),
+        grid('ne'),
+        grid('se'),
 
-        func('slope_ne', 976 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
-        func('slope_se', 1041 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('slope_sw', 1106 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z),
-        func('slope_nw', 1171 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z),
+        grid('slope_ne', height=40 * z - 1, yofs=-8 * z),
+        grid('slope_se', height=24 * z - 1),
+        grid('slope_sw', height=24 * z - 1),
+        grid('slope_nw', height=40 * z - 1, yofs=-8 * z),
     ]
 
 
 road_town = lib.SpriteCollection('road_town') \
     .add(lib.aseidx(INFRA_DIR / 'road_town_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 0, 0)
+         tmpl_roadtiles, ZOOM_2X, 1)
 
 road = lib.SpriteCollection('road') \
     .add(lib.aseidx(INFRA_DIR / 'road_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=False) \
+         tmpl_roadtiles, ZOOM_2X, 1, thin=False) \
     .add(lib.aseidx(INFRA_DIR / 'road_2x_thin.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 0, 0, thin=True) \
+         tmpl_roadtiles, ZOOM_2X, 1, thin=True) \
     .add(INFRA_DIR / 'road_noline_2x.ase',
-         tmpl_roadtiles, ZOOM_2X, 0, 0, climate=TROPICAL)
+         tmpl_roadtiles, ZOOM_2X, 1, climate=TROPICAL)
 
 ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
 road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
