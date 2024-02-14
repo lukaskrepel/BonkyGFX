@@ -126,6 +126,7 @@ class FlexGrid:
         self.y = padding + start[1]
         self.add_xofs = add_xofs
         self.add_yofs = add_yofs
+        self.kw = {}
 
     def set_default(self, **kw):
         self.kw = kw

@@ -254,15 +254,17 @@ tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_road_8view(func, z, x, y, frame):
+    grid = lib.FlexGrid(func=func, padding=2, start=(x * 174 * z, y * 24 * z))  # TODO add_yofs=-(z // 2)
+    grid.set_default(frame=frame)
     res = [
-        func('n', (1 + 0 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z, frame=frame),
-        func('ne', (2 + 8 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-10 * z, frame=frame),
-        func('e', (3 + 30 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-15 * z, yofs=-9 * z, frame=frame),
-        func('se', (4 + 61 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-10 * z, frame=frame),
-        func('s', (5 + 83 + x * 174) * z, (1 + y * 24) * z, 8 * z, 23 * z, xofs=-3 * z, yofs=-15 * z, frame=frame),
-        func('sw', (6 + 91 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-10 * z, frame=frame),
-        func('w', (7 + 113 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-15 * z, yofs=-9 * z, frame=frame),
-        func('nw', (8 + 144 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-10 * z, frame=frame),
+        grid('n', width=8 * z, height=23 * z, xofs=-3 * z, yofs=-15 * z),
+        grid('ne', width=22 * z, height=19 * z, xofs=-15 * z, yofs=-10 * z),
+        grid('e', width=31 * z, height=15 * z, xofs=-15 * z, yofs=-9 * z),
+        grid('se', width=22 * z, height=19 * z, xofs=-7 * z, yofs=-10 * z),
+        grid('s', width=8 * z, height=23 * z, xofs=-3 * z, yofs=-15 * z),
+        grid('sw', width=22 * z, height=19 * z, xofs=-15 * z, yofs=-10 * z),
+        grid('w', width=31 * z, height=15 * z, xofs=-15 * z, yofs=-9 * z),
+        grid('nw', width=22 * z, height=19 * z, xofs=-7 * z, yofs=-10 * z),
     ]
     return res
 
