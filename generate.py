@@ -552,22 +552,16 @@ bus_stops[16:].replace_new(0x11, 0)
 
 @lib.template(grf.FileSprite)
 def tmpl_rails(func, z, layers):
-    grid = lib.flexgrid(func=func, ground_scaling=True)
-    return [
-        grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=layers)
-        for name in ('y', 'x', 'n', 's', 'e', 'w', 'cross')
-    ] # + [
-    #     grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=rail_layers + ('BALLAST/*',))
-    #     for name in ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')
-    # ]
+    grid = lib.FlexGrid(func=func, padding=2)
+    grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers)
+    return list(map(grid, ('y', 'x', 'n', 's', 'e', 'w', 'cross')))
+
 
 @lib.template(grf.FileSprite)
 def tmpl_ballast(func, z, layers):
-    grid = lib.flexgrid(func=func, ground_scaling=True, start=(910, 0))
-    return [
-        grid(name, 64, 31, xofs=-31 * z, yofs=0 * z, layers=layers)
-        for name in ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')
-    ]
+    grid = lib.FlexGrid(func=func, padding=2, start=(910, 0))
+    grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers)
+    return list(map(grid, ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')))
 
 
 rails = lib.SpriteCollection('rail') \
@@ -590,19 +584,20 @@ rails[5].compose_on(rails[4]).compose_on(ground[0]).replace_old(1036)  # double 
 
 @lib.template(grf.FileSprite)
 def tmpl_rail_fences(func, z):
+    assert z == 2  # xofs/yofs are fixed
     relative = 2
     x_xofs, x_yofs = -59 - relative, -12 - relative // 2
     y_xofs, y_yofs = -3 + relative, -12 - relative // 2
-    grid = lib.flexgrid(func=func)
+    grid = lib.FlexGrid(func=func, padding=2)
     return [
-        cc(grid('flat_x', 33, 22, xofs=x_xofs, yofs=x_yofs)),
-        cc(grid('flat_y', 33, 22, xofs=y_xofs, yofs=y_yofs)),
-        cc(grid('vert', 3, 38, xofs=0, yofs=-40)),
-        cc(grid('hor', 65, 6, xofs=-61, yofs=-8)),
-        cc(grid('low_x', 33, 28, xofs=x_xofs, yofs=x_yofs + 16)),
-        cc(grid('low_y', 33, 28, xofs=y_xofs, yofs=y_yofs + 16)),
-        cc(grid('high_x', 33, 30, xofs=x_xofs, yofs=x_yofs - 16)),
-        cc(grid('high_y', 33, 30, xofs=y_xofs, yofs=y_yofs - 16)),
+        cc(grid('flat_x', width=33 * z, height=22 * z, xofs=x_xofs, yofs=x_yofs)),
+        cc(grid('flat_y', width=33 * z, height=22 * z, xofs=y_xofs, yofs=y_yofs)),
+        cc(grid('vert', width=3 * z, height=38 * z, xofs=0, yofs=-40)),
+        cc(grid('hor', width=65 * z, height=6 * z, xofs=-61, yofs=-8)),
+        cc(grid('low_x', width=33 * z, height=28 * z, xofs=x_xofs, yofs=x_yofs + 16)),
+        cc(grid('low_y', width=33 * z, height=28 * z, xofs=y_xofs, yofs=y_yofs + 16)),
+        cc(grid('high_x', width=33 * z, height=30 * z, xofs=x_xofs, yofs=x_yofs - 16)),
+        cc(grid('high_y', width=33 * z, height=30 * z, xofs=y_xofs, yofs=y_yofs - 16)),
     ]
 
 

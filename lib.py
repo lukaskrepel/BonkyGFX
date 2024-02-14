@@ -184,21 +184,6 @@ class HouseGrid(BaseGrid):
         return self.func(name, fx, fy, self.zwidth, self.zheight, xofs=zxofs, yofs=zyofs, **kw)
 
 
-def flexgrid(*, func, padding=1, z=2, start=(0, 0), ground_scaling=False):
-    zpadding = padding * z
-    def sprite_func(name, width, height, **kw):
-        x, y = sprite_func.x, sprite_func.y
-        sprite_func.x += width * z + zpadding
-        gs = int(ground_scaling)
-        h = (height + gs) * z - gs
-        return func(name, x, y, width * z, h, **kw)
-
-    sprite_func.x = zpadding + start[0]
-    sprite_func.y = zpadding + start[1]
-
-    return sprite_func
-
-
 old_sprites = defaultdict(dict)
 new_sprites = defaultdict(lambda: defaultdict(dict))
 old_sprites_collection = defaultdict(lambda: defaultdict(lambda: (10000, 0)))
