@@ -1041,13 +1041,14 @@ def tmpl_oil_wells(func, z):
     grid = lib.house_grid(func=func, height=75, z=z)
     f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
     return [
-        grid('ground', (0, 0), layers=('TILE/*', 'Spriteborder'), frame=1)
+        func('ground', 2, 90, 128, 63, xofs=-31 * z, yofs=0, layers=('TILE/*', 'Spriteborder'), frame=1)
     ] + [f(i + 1) for i in range(6)]
 
 
-lib.SpriteCollection('oild_wells') \
-    .add(INDUSTRY_DIR / 'oilwells_2x.ase', tmpl_oil_wells, ZOOM_2X) \
-    .replace_old(2173)
+oil_wells = lib.SpriteCollection('oild_wells') \
+    .add(INDUSTRY_DIR / 'oilwells_2x.ase', tmpl_oil_wells, ZOOM_2X)
+oil_wells[0].compose_on(ground[0]).replace_old(2173)
+oil_wells[1:].replace_old(2174)
 
 
 @lib.template(grf.FileSprite)
