@@ -319,28 +319,30 @@ lib.SpriteCollection('bus_gen2') \
 
 @lib.template(lib.CCReplacingFileSprite)
 def tmpl_vehicle_rail_4view(func, z, y, frame, **kw):
-    # Horizontal views have zoom-specific optimisation for perfect depot window alignment
+    grid = lib.FlexGrid(func=func, padding=2, start=(0 * 87 * z, y * 24 * z))  # TODO add_yofs=-(z // 2)
+    grid.set_default(frame=frame, **kw)
     return [
-        func( 'n', (1 +   0 + 0 * 87) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z, frame=frame),
-        func('ne', (2 +   8 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z, frame=frame),
-        func( 'e', (3 +  30 + 0 * 87) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2, yofs=-9 * z, frame=frame),
-        func('se', (4 +  61 + 0 * 87) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z, frame=frame),
+        grid( 'n', width= 8 * z, height=23 * z, xofs=-3 * z, yofs=-13 * z),
+        grid('ne', width= 22 * z, height=19 * z, xofs=-15 * z, yofs=-12 * z),
+        grid( 'e', width= 31 * z, height=15 * z, xofs=-16 * z, yofs=-9 * z),
+        grid('se', width= 22 * z, height=19 * z, xofs=-7 * z, yofs=-12 * z),
     ]
 
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_vehicle_rail_8view(func, z, y, _x):
-    # Horizontal views have zoom-specific optimisation for perfect depot window alignment
+def tmpl_vehicle_rail_8view(func, z, y, frame, **kw):
+    grid = lib.FlexGrid(func=func, padding=2, start=(0 * 174 * z, y * 24 * z))  # TODO add_yofs=-(z // 2)
+    grid.set_default(frame=frame, **kw)
     x = 0
     return [
-        func( 'n', (1 +   0 + x * 174) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z),
-        func('ne', (2 +   8 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z),
-        func( 'e', (3 +  30 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2,  yofs=-9 * z),
-        func('se', (4 +  61 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z),
-        func( 's', (5 +  83 + x * 174) * z, (1 + y * 24) * z,  8 * z, 23 * z, xofs=-3 * z, yofs=-13 * z),
-        func('sw', (6 +  91 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-15 * z, yofs=-12 * z),
-        func( 'w', (7 + 113 + x * 174) * z, (1 + y * 24) * z, 31 * z, 15 * z, xofs=-16 * z + z // 2,  yofs=-9 * z),
-        func('nw', (8 + 144 + x * 174) * z, (1 + y * 24) * z, 22 * z, 19 * z, xofs=-7 * z, yofs=-12 * z),
+        grid( 'n', width=8 * z, height=23 * z, xofs=-3 * z, yofs=-13 * z),
+        grid('ne', width=22 * z, height=19 * z, xofs=-15 * z, yofs=-12 * z),
+        grid( 'e', width=31 * z, height=15 * z, xofs=-16 * z,  yofs=-9 * z),
+        grid('se', width=22 * z, height=19 * z, xofs=-7 * z, yofs=-12 * z),
+        grid( 's', width=8 * z, height=23 * z, xofs=-3 * z, yofs=-13 * z),
+        grid('sw', width=22 * z, height=19 * z, xofs=-15 * z, yofs=-12 * z),
+        grid( 'w', width=31 * z, height=15 * z, xofs=-16 * z,  yofs=-9 * z),
+        grid('nw', width=22 * z, height=19 * z, xofs=-7 * z, yofs=-12 * z),
     ]
 
 
