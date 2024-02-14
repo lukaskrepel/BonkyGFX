@@ -30,11 +30,6 @@ g = grf.NewGRF(
     min_compatible_version=0,
     version=0,
 )
-g.add_bool_parameter(
-    name='Use thin lines',
-    description='Changes between graphical styles for 2x zoom',
-    default=False,
-)
 
 g.add_bool_parameter(
     name='Enable vehicles from all climates',
@@ -109,10 +104,8 @@ def tmpl_groundtiles_extra(name, paths, zoom):
 
 # Normal land
 make_ground = lambda name, frame: lib.SpriteCollection(name) \
-    .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_groundtiles, ZOOM_2X, frame, thin=False, climate=TEMPERATE) \
-    .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x_thin.ase', colourkey=(0, 0, 255)),
-         tmpl_groundtiles, ZOOM_2X, frame, thin=True, climate=TEMPERATE) \
+    .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x.ase'),
+         tmpl_groundtiles, ZOOM_2X, frame, climate=TEMPERATE) \
     .add(TERRAIN_DIR / 'tropical_groundtiles_2x.ase',
          tmpl_groundtiles, ZOOM_2X, frame, climate=TROPICAL) \
     .add(TERRAIN_DIR / 'arctic_groundtiles_2x.ase',
@@ -442,9 +435,7 @@ road_town = lib.SpriteCollection('road_town') \
 
 road = lib.SpriteCollection('road') \
     .add(lib.aseidx(INFRA_DIR / 'road_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 1, thin=False) \
-    .add(lib.aseidx(INFRA_DIR / 'road_2x_thin.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 1, thin=True) \
+         tmpl_roadtiles, ZOOM_2X, 1) \
     .add(INFRA_DIR / 'road_noline_2x.ase',
          tmpl_roadtiles, ZOOM_2X, 1, climate=TROPICAL)
 
@@ -454,35 +445,6 @@ road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
 
 # TODO do not replace in non-tropical
 road.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
-
-
-# TODO remove thin stuff
-def subtmpl_house_1x1(suffix, func, x, y, h, ox=0, oy=0, **kw):
-    z = 2
-    # OpenGFX2 uses h = h * z - z + 1 and
-    # yofs = 32 * z - h * z + oy * z - (z - 1) // 2 - 1
-    xofs = -31 * z + ox * z
-    yofs = (31 - h) * z + oy * z
-    return func(
-        suffix,
-        1 * z + x * z, 1 * z + y * z, 64 * z, h * z + z - 1,
-        xofs=xofs, yofs=yofs,
-        **kw
-    )
-
-
-@lib.template(lib.CCReplacingFileSprite)
-def tmpl_road_depot_old(func, z):
-    kw_front = {'ignore_layers': 'Behind'}
-    kw_back = {'layers': 'Behind'}
-    return [
-        subtmpl_house_1x1('se_back', func, 0, 0, 64, 0, 1, **kw_back),
-        subtmpl_house_1x1('se_front', func, 0, 0, 64, 30, -14, **kw_front),
-        subtmpl_house_1x1('sw_back', func, 0, 65, 64, 0, 1, **kw_back),
-        subtmpl_house_1x1('sw_front', func, 0, 65, 64, -30, -14, **kw_front),
-        subtmpl_house_1x1('ne', func, 0, 195, 64, -30, -14, **kw_front),
-        subtmpl_house_1x1('nw', func, 0, 130, 64, 30, -14, **kw_front),
-    ]
 
 
 @lib.template(lib.CCReplacingFileSprite)
@@ -503,9 +465,7 @@ def tmpl_road_depot(func, z):
 
 lib.SpriteCollection('road_depot') \
     .add(STATION_DIR / 'roaddepots_2x.ase',
-         tmpl_road_depot, ZOOM_2X, thin=False) \
-    .add(STATION_DIR / 'roaddepots_2x_thin.ase',
-         tmpl_road_depot_old, ZOOM_2X, thin=True) \
+         tmpl_road_depot, ZOOM_2X) \
     .replace_old(1408)
 
 
@@ -1139,10 +1099,6 @@ for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
 
     keys = dict(mode)
     has_if = False
-    if 'thin' in keys:
-        thin_value = int(keys['thin'])
-        g.add(grf.If(is_static=False, variable=0x00, condition=0x03, value=thin_value, skip=0, varsize=1))  # skip if thin param != value
-        has_if = True
     if 'climate' in keys:
         climate_value = {TEMPERATE: 0, ARCTIC: 1, TROPICAL: 2, TOYLAND: 3}[keys['climate']]
         g.add(grf.If(is_static=False, variable=0x83, condition=0x03, value=climate_value, skip=0, varsize=1))  # skip if climate != value
