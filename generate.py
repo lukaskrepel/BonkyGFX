@@ -102,42 +102,49 @@ def tmpl_groundtiles_extra(name, paths, zoom):
 
 # Normal land
 make_ground = lambda name, frame: lib.SpriteCollection(name) \
-    .add(lib.aseidx(TERRAIN_DIR / 'temperate_groundtiles_2x.ase'),
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
          tmpl_groundtiles, ZOOM_2X, frame, climate=TEMPERATE) \
-    .add(TERRAIN_DIR / 'tropical_groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, frame, climate=TROPICAL) \
-    .add(TERRAIN_DIR / 'arctic_groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, frame, climate=ARCTIC)
-ground = make_ground('ground', 1)
-make_ground('ground_bare', 4).replace_old(3924)  # 0% grass
-make_ground('ground_33', 3).replace_old(3943)   # 33% grass
-make_ground('ground_66', 2).replace_old(3962)   # 66% grass
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, frame + 16, climate=TROPICAL) \
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, frame + 6, climate=ARCTIC) \
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, frame + 24, climate=TOYLAND)
+ground = make_ground('ground', 4)
+make_ground('ground_bare', 1).replace_old(3924)  # 0% grass
+make_ground('ground_33', 2).replace_old(3943)   # 33% grass
+make_ground('ground_66', 3).replace_old(3962)   # 66% grass
 ground.replace_old(3981)  # 100% grass
+
+make_ground('rough', 5).replace_old(4000)
 
 lib.SpriteCollection('temperate_rough') \
     .add(TERRAIN_DIR / 'temperate_groundtiles_rough_2x.ase',
-         tmpl_groundtiles_extra, ZOOM_2X) \
-    .replace_old(4000)
+         tmpl_groundtiles_extra, ZOOM_2X)[-4:] \
+    .replace_old(4000 + 19)
 
-lib.SpriteCollection('temperate_rocks') \
-    .add(TERRAIN_DIR / 'temperate_groundtiles_rocks_2x.ase',
-         tmpl_groundtiles, ZOOM_2X) \
-    .replace_old(4023)
+make_ground('rocks', 6).replace_old(4023)
 
 for i in range(9):
     lib.SpriteCollection(f'farmland{i}') \
         .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1) \
         .replace_old(4126 + 19 * i)
 
-tropical_desert = lib.SpriteCollection('tropical_desert') \
-    .add(TERRAIN_DIR / 'tropical_groundtiles_desert_2x.ase',
-         tmpl_groundtiles, ZOOM_2X) \
-    .replace_old(4550, climate=TROPICAL)
+for i in range(4):
+    lib.SpriteCollection(f'snow_{25 * i}') \
+        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+             tmpl_groundtiles, ZOOM_2X, 13 + i) \
+        .replace_old(4493 + i * 19, climate=ARCTIC)
 
-lib.SpriteCollection('tropical_transitions') \
-    .add(TERRAIN_DIR / 'tropical_groundtiles_deserttransition_2x.ase',
-         tmpl_groundtiles, ZOOM_2X) \
+lib.SpriteCollection('tropical_transition') \
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, 23) \
     .replace_old(4512, climate=TROPICAL)
+
+tropical_desert = lib.SpriteCollection('tropical_desert') \
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, 24) \
+    .replace_old(4550, climate=TROPICAL)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
     .add(lib.aseidx(TERRAIN_DIR / 'general_concretetiles_2x.ase', colourkey=(0, 0, 255)),
