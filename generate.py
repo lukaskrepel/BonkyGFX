@@ -612,7 +612,7 @@ lib.SpriteCollection('rail_fence') \
 @lib.template(grf.FileSprite)
 def tmpl_water_full(sprite_func, z):
     x = y = 0
-    func = lambda *args, **kw: lib.MagentaAndMask(sprite_func(*args, **kw), sprite_func(*args, **kw, layers='Animated'))
+    func = lambda *args, **kw: lib.MagentaAndMask(sprite_func(*args, **kw, ignore_layers=('ANIMATED/*')), sprite_func(*args, **kw, layers='ANIMATED/*'))
     return [
         func('full', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
         func('1', 81 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
@@ -637,7 +637,7 @@ def tmpl_water_full(sprite_func, z):
 
 water = lib.SpriteCollection('water') \
     .add(TERRAIN_DIR / 'shorelines_2x.ase',
-         tmpl_water_full, ZOOM_2X)
+         tmpl_groundtiles, ZOOM_2X)
 water[0].replace_old(4061)
 
 
