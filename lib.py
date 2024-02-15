@@ -260,6 +260,11 @@ class SpriteCollection:
             res.sprites.append((zoom, kw, sprites * amount))
         return res
 
+    def __len__(self):
+        if len(self.sprites) == 0:
+            return 0
+        return len(self.sprites[0][2])
+
     def add(self, files, template, zoom,  *args, name=None, **kw):
         if not isinstance(files, tuple):
             files = (files,)

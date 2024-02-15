@@ -85,41 +85,41 @@ def tmpl_groundtiles(func, z, frame=1):
     ]
 
 
-def tmpl_groundtiles_extra(name, paths, zoom):
+def tmpl_groundtiles_extra(name, paths, zoom, *args):
     @lib.template(grf.FileSprite)
-    def tmpl_extra(func, z):
+    def tmpl_extra(func, z, frame=1):
         assert z == 2
         grid = lib.FlexGrid(func=func, padding=z, start=(1235 * z, 0), add_yofs=-(z // 2))
-        grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=1)
+        grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
         return [
             grid('extra1'),
             grid('extra2'),
             grid('extra3'),
             grid('extra4'),
         ]
-    return tmpl_groundtiles(name, paths, zoom) + tmpl_extra(name, paths, zoom)
+    return tmpl_groundtiles(name, paths, zoom, *args) + tmpl_extra(name, paths, zoom, *args)
 
 
-# Normal land
-make_ground = lambda name, frame: lib.SpriteCollection(name) \
-    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, frame, climate=TEMPERATE) \
-    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, frame + 16, climate=TROPICAL) \
-    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, frame + 6, climate=ARCTIC) \
-    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, frame + 24, climate=TOYLAND)
+def make_ground(name, frame, *, extra=False):
+    tmpl = tmpl_groundtiles_extra if extra else tmpl_groundtiles
+    return lib.SpriteCollection(name) \
+        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+             tmpl, ZOOM_2X, frame, climate=TEMPERATE) \
+        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+             tmpl, ZOOM_2X, frame + 16, climate=TROPICAL) \
+        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+             tmpl, ZOOM_2X, frame + 6, climate=ARCTIC) \
+        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+             tmpl, ZOOM_2X, frame + 24, climate=TOYLAND)
+
+
 ground = make_ground('ground', 4)
 make_ground('ground_bare', 1).replace_old(3924)  # 0% grass
 make_ground('ground_33', 2).replace_old(3943)   # 33% grass
 make_ground('ground_66', 3).replace_old(3962)   # 66% grass
 ground.replace_old(3981)  # 100% grass
 
-make_ground('rough', 5).replace_old(4000)
-
-lib.SpriteCollection('temperate_rough') \
-
+make_ground('rough', 5, extra=True).replace_old(4000)
 
 make_ground('rocks', 6).replace_old(4023)
 
