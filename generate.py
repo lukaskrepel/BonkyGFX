@@ -119,9 +119,7 @@ ground.replace_old(3981)  # 100% grass
 make_ground('rough', 5).replace_old(4000)
 
 lib.SpriteCollection('temperate_rough') \
-    .add(TERRAIN_DIR / 'temperate_groundtiles_rough_2x.ase',
-         tmpl_groundtiles_extra, ZOOM_2X)[-4:] \
-    .replace_old(4000 + 19)
+
 
 make_ground('rocks', 6).replace_old(4023)
 
