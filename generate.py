@@ -145,7 +145,7 @@ tropical_desert = lib.SpriteCollection('tropical_desert') \
     .replace_old(4550, climate=TROPICAL)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
-    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase', colourkey=(0, 0, 255)),
+    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
         tmpl_groundtiles, ZOOM_2X, 31)
 general_concrete[0].replace_old(1420)
 
@@ -431,11 +431,11 @@ def tmpl_roadtiles(func, z, frame, **kw):
 
 
 road_town = lib.SpriteCollection('road_town') \
-    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase', colourkey=(0, 0, 255)),
+    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase'),
          tmpl_roadtiles, ZOOM_2X, 2)
 
 road = lib.SpriteCollection('road') \
-    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase', colourkey=(0, 0, 255)),
+    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase'),
          tmpl_roadtiles, ZOOM_2X, 1) \
     .add(INFRA_DIR / 'roads_2x.ase',
          tmpl_roadtiles, ZOOM_2X, 3, climate=TROPICAL)
