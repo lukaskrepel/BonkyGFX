@@ -124,8 +124,27 @@ class BaseGrid:
         self.kw = {}
 
     def set_default(self, **kw):
-        self.kw = kw
+        self.kw.update(kw)
         return self
+
+
+class RectGrid(BaseGrid):
+    def __init__(self, *, func, width, height, padding=0):
+        super().__init__(func)
+        self.set_default(width=width, height=height)
+
+        self.height = height
+        self.width = width
+        self.padding = padding
+
+    def __call__(self, name, grid_pos, **kw):
+        x, y = grid_pos
+        fx = x * self.width + self.padding * (x + 1)
+        fy = y * self.height + self.padding * (y + 1)
+        kw = {**self.kw, **kw}
+        w = kw.pop('width')
+        h = kw.pop('height')
+        return self.func(name, fx, fy, w, h, xofs=0, yofs=0, **kw)
 
 
 class FlexGrid(BaseGrid):
@@ -197,7 +216,7 @@ def replace_old(collection, first_id, sprites, **kw):
         sprites = [sprites]
 
     amount = len(sprites)
-    assert first_id + amount < 4896
+    assert first_id + amount <= 4896
     key = dict_to_key(kw)
     first, amount = old_sprites_collection[key][collection]
     old_sprites_collection[key][collection] = (min(first, first_id), amount + len(sprites))

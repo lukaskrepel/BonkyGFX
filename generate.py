@@ -1068,6 +1068,66 @@ lib.SpriteCollection('cargo_icon') \
     .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X) \
     .replace_old(4297)
 
+
+ICON_SHEET = (
+    ( 679,  680,  681,  684,  708,  713,  723, 4083, 4986),
+    ( 724,  725,  726,  735,  736,  737,  745,  751,   -1),  # TODO
+    ( 693,  694,  695,  703,  714, 4987,  705,  706,  707),
+    ( 709,  710,  711,  712,  713,  697,  698,  700,  701),
+    ( 727,  728,  729,  730, 5075, 2594),
+    ( 731,  732,  733,  734,   -1,   -1,   -1),  # TODO
+    ( 738,  739,  740,  741,  742,  743, 4077, 4082,   -1),  # TODO
+    (1298,    0,  746,  744,    0,  750,  749, 1299, 1291),
+    ( 685,  686,  748, 5391,   -1, 1291, 4972, 4984, 5041),  # TODO  685 dup? 686->1295 ?
+    (1251, 1252, 1253, 1254, 2430, 4949, 4951, 1294),
+    (5667, 5668, 5669, 5670, 5675, 4953, 4955, 4957),
+    (1255, 1256, 1257, 1258, 2431, 4959, 4961, 4963),
+    (1259, 1260, 1261, 1262, 2432, 4965, 4967, 4969),
+
+)
+# 694: 696,
+# 695: 699,
+# 703: 704,
+# 4077: 4088,  # that's lighthouse cursor though
+# 1291: 1293,
+# 1251 - 1262 -> 1263 - 1274
+
+CURSOR_SPRITES = [697,  698,  700,  701]
+ICON_WIDTH = {2594: 43, 1298: 40, 744: 39}
+
+ase = lib.aseidx(ICON_DIR / 'icons_2x.ase')
+func = lambda name, *args, **kw: grf.FileSprite(ase, *args, **kw, name=name, ignore_layers='REF Numbers')
+z = 2
+grid = lib.RectGrid(func=func, width=20 * z, height=20 * z, padding=z)
+grid.set_default(zoom=ZOOM_2X)
+res = []
+
+ACTION5_RANGES = [
+    (4896, 191, 0x15),
+    (5327, 65, 0x08),
+    (5631, 48, 0x05),
+]
+
+def replace_by_global_id(sid, sprites):
+    if sid < 4896:
+        lib.replace_old(None, sid, sprites)
+        return
+
+    for start, count, set_type in ACTION5_RANGES:
+        if start <= sid < start + count:
+            lib.replace_new(None, set_type, sid - start, sprites)
+            return
+
+    assert False, sid
+
+
+for i, row in enumerate(ICON_SHEET):
+    for j, sid in enumerate(row):
+        if sid <= 0:
+            continue
+        sprite = grid(f'ui_{sid}', (j, i), width=ICON_WIDTH.get(sid, 20) * z)
+        replace_by_global_id(sid, [sprite])
+
 # ------------------------------ Sprite Replacement Magic ------------------------------
 
 def group_ranges(sprites):
