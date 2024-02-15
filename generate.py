@@ -613,31 +613,34 @@ lib.SpriteCollection('rail_fence') \
 def tmpl_water_full(sprite_func, z):
     x = y = 0
     func = lambda *args, **kw: lib.MagentaAndMask(sprite_func(*args, **kw, ignore_layers=('ANIMATED/*')), sprite_func(*args, **kw, layers='ANIMATED/*'))
+    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2))
+    grid.set_default(width=64 * z, xofs=-31 * z)
     return [
-        func('full', 1 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('1', 81 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('2', 161 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('3', 241 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('4', 321 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('5', 399 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('6', 479 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('7', 559 * z + x * z, 1 * z + y * z, 64 * z, 24 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('8', 639 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('9', 719 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('10', 799 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('11', 879 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('12', 959 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('13', 1039 * z + x * z, 1 * z + y * z, 64 * z, 40 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('14', 1119 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('15', 1197 * z + x * z, 1 * z + y * z, 64 * z, 48 * z - 1, xofs=-31 * z, yofs=16 * z - (z // 2)),
-        func('16', 1277 * z + x * z, 1 * z + y * z, 64 * z, 16 * z - 1, xofs=-31 * z, yofs=0 * z - (z // 2)),
-        func('17', 1357 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
-        func('18', 1437 * z + x * z, 1 * z + y * z, 64 * z, 32 * z - 1, xofs=-31 * z, yofs=-8 * z - (z // 2)),
+        grid('full', height=32 * z - 1, yofs=0 * z),
+        grid('1', height=32 * z - 1, yofs=0 * z),
+        grid('2', height=24 * z - 1, yofs=0 * z),
+        grid('3', height=24 * z - 1, yofs=0 * z),
+        grid('4', height=32 * z - 1, yofs=0 * z),
+        grid('5', height=32 * z - 1, yofs=0 * z),
+        grid('6', height=24 * z - 1, yofs=0 * z),
+        grid('7', height=24 * z - 1, yofs=0 * z),
+        grid('8', height=40 * z - 1, yofs=-8 * z),
+        grid('9', height=40 * z - 1, yofs=-8 * z),
+        grid('10', height=32 * z - 1, yofs=-8 * z),
+        grid('11', height=32 * z - 1, yofs=-8 * z),
+        grid('12', height=40 * z - 1, yofs=-8 * z),
+        grid('13', height=40 * z - 1, yofs=-8 * z),
+        grid('14', height=32 * z - 1, yofs=-8 * z),
+        grid('15', height=48 * z - 1, yofs=16 * z),
+        grid('16', height=16 * z - 1, yofs=0 * z),
+        grid('17', height=32 * z - 1, yofs=-8 * z),
+        grid('18', height=32 * z - 1, yofs=-8 * z),
     ]
+
 
 water = lib.SpriteCollection('water') \
     .add(TERRAIN_DIR / 'shorelines_2x.ase',
-         tmpl_groundtiles, ZOOM_2X)
+         tmpl_water_full, ZOOM_2X)
 water[0].replace_old(4061)
 
 
