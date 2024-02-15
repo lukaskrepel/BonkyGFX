@@ -145,8 +145,8 @@ tropical_desert = lib.SpriteCollection('tropical_desert') \
     .replace_old(4550, climate=TROPICAL)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
-    .add(lib.aseidx(TERRAIN_DIR / 'general_concretetiles_2x.ase', colourkey=(0, 0, 255)),
-        tmpl_groundtiles, ZOOM_2X)
+    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase', colourkey=(0, 0, 255)),
+        tmpl_groundtiles, ZOOM_2X, 31)
 general_concrete[0].replace_old(1420)
 
 
