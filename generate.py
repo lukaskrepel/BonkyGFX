@@ -241,6 +241,9 @@ for i in range(18):
 tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus_2x.ase')
 tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
 
+for i in range(19):
+    tree('toyland_tree', 1947 + i * 7, TREE_DIR / 'toyland_tree_2x.ase')
+
 # ------------------------------ Road Vehicles ------------------------------
 
 @lib.template(lib.CCReplacingFileSprite)
