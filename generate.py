@@ -241,7 +241,7 @@ for i in range(18):
 tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus_2x.ase')
 tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
 
-for i in range(19):
+for i in range(9):
     tree('toyland_tree', 1947 + i * 7, TREE_DIR / 'toyland_tree_2x.ase')
 
 # ------------------------------ Road Vehicles ------------------------------
@@ -431,14 +431,14 @@ def tmpl_roadtiles(func, z, frame, **kw):
 
 
 road_town = lib.SpriteCollection('road_town') \
-    .add(lib.aseidx(INFRA_DIR / 'road_town_2x.ase', colourkey=(0, 0, 255)),
-         tmpl_roadtiles, ZOOM_2X, 1)
+    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase', colourkey=(0, 0, 255)),
+         tmpl_roadtiles, ZOOM_2X, 2)
 
 road = lib.SpriteCollection('road') \
-    .add(lib.aseidx(INFRA_DIR / 'road_2x.ase', colourkey=(0, 0, 255)),
+    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase', colourkey=(0, 0, 255)),
          tmpl_roadtiles, ZOOM_2X, 1) \
-    .add(INFRA_DIR / 'road_noline_2x.ase',
-         tmpl_roadtiles, ZOOM_2X, 1, climate=TROPICAL)
+    .add(INFRA_DIR / 'roads_2x.ase',
+         tmpl_roadtiles, ZOOM_2X, 3, climate=TROPICAL)
 
 ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
 road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
