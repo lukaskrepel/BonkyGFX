@@ -241,12 +241,12 @@ airport_tiles[17].replace_new(0x10, 12)
 # ------------------------------ Trees ------------------------------
 
 
-def tree(name, sprite_id, path):
+def tree(name, sprite_id, path, **kw):
     @lib.template(grf.FileSprite)
     def tmpl(func, z, frame):
         # Variation of OpenGFX1 template with 2x zoom and only one tree
         return [
-            func('', 0 * z, 0, 45 * z, 80 * z, xofs=-24 * z, yofs=-73 * z - (z // 2), frame=frame)
+            func('', 2 + 0 * z, 2, 45 * z, 80 * z, xofs=-24 * z, yofs=-73 * z - (z // 2), frame=frame, **kw)
         ]
     sprites = []
     for i in range(7):
@@ -265,8 +265,8 @@ for i in range(19):
     tree('temperate_tree', 1576 + i * 7, TREE_DIR / 'temperate_tree_2x.ase')
 
 for i in range(8):
-    tree('arctic_tree', 1709 + i * 7, TREE_DIR / 'arctic_tree_2x.ase') # TODO exclude "SNOW" layergroup
-    tree('arctic_tree_snow', 1765 + i * 7, TREE_DIR / 'arctic_tree_2x.ase') # TODO include "SNOW" layergroup
+    tree('arctic_tree', 1709 + i * 7, TREE_DIR / 'arctic_tree_2x.ase', ignore_layers='SNOW/*')
+    tree('arctic_tree_snow', 1765 + i * 7, TREE_DIR / 'arctic_tree_2x.ase')
 
 for i in range(18):
     tree('tropic_tree', 1821 + i * 7, TREE_DIR / 'tropical_tree_2x.ase')
