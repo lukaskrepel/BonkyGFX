@@ -152,36 +152,41 @@ general_concrete[0].replace_old(1420)
 
 @lib.template(grf.FileSprite)
 def tmpl_foundations(func, z, frame=1):
-    grid = lib.FlexGrid(func=func, padding=z, add_yofs=-(z // 2))
+    grid = lib.RectGrid(func=func, width=64 * z, height=41 * z - 1, padding=z, add_yofs=-(z // 2))
     # TODO figure out why it glitches with crop
-    grid.set_default(width=64 * z, height=41 * z - 1, xofs=-31 * z, yofs=-9 * z, frame=frame, crop=False)
+    grid.set_default(xofs=-31 * z, yofs=-9 * z, frame=frame, crop=False)
 
-    return [grid(str(i))for _ in range(74)] + [
-        grid('74', xofs=-15 * z, yofs=-17 * z),
-        grid('75', yofs=-25 * z),
-        grid('76', xofs=-47 * z, yofs=-17 * z),
-        grid('77', yofs=-9 * z),
-        grid('78', xofs=-15 * z, yofs=-17 * z),
-        grid('79', yofs=-25 * z),
-        grid('80', xofs=-47 * z, yofs=-17 * z),
-        grid('81', yofs=-9 * z),
-        grid('82', xofs=-15 * z, yofs=-17 * z),
-        grid('83', yofs=-25 * z),
-        grid('84', xofs=-47 * z, yofs=-17 * z),
-        grid('85', yofs=-9 * z),
-        grid('86', xofs=-15 * z, yofs=-17 * z),
-        grid('87', yofs=-25 * z),
-        grid('88', xofs=-47 * z, yofs=-17 * z),
-        grid('89', yofs=-9 * z),
-    ]
+    return (
+        [grid(f'base_{i}', (i % 7, i // 7)) for i in range(14)] +
+        [grid(f'new_{i}', (i % 7, i // 7 + 2)) for i in range(74)] +
+        [
+            grid('new_74', (4, 12), xofs=-15 * z, yofs=-17 * z),
+            grid('new_75', (5, 12), yofs=-25 * z),
+            grid('new_76', (6, 12), xofs=-47 * z, yofs=-17 * z),
+            grid('new_77', (0, 13), yofs=-9 * z),
+            grid('new_78', (1, 13), xofs=-15 * z, yofs=-17 * z),
+            grid('new_79', (2, 13), yofs=-25 * z),
+            grid('new_80', (3, 13), xofs=-47 * z, yofs=-17 * z),
+            grid('new_81', (4, 13), yofs=-9 * z),
+            grid('new_82', (5, 13), xofs=-15 * z, yofs=-17 * z),
+            grid('new_83', (6, 13), yofs=-25 * z),
+            grid('new_84', (0, 14), xofs=-47 * z, yofs=-17 * z),
+            grid('new_85', (1, 14), yofs=-9 * z),
+            grid('new_86', (2, 14), xofs=-15 * z, yofs=-17 * z),
+            grid('new_87', (3, 14), yofs=-25 * z),
+            grid('new_88', (4, 14), xofs=-47 * z, yofs=-17 * z),
+            grid('new_89', (5, 14), yofs=-9 * z),
+        ]
+    )
 
 
-lib.SpriteCollection('foundations') \
+foundations = lib.SpriteCollection('foundations') \
     .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 1, climate=TEMPERATE) \
     .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 2, climate=ARCTIC) \
     .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 3, climate=TROPICAL) \
-    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 4, climate=TOYLAND) \
-    .replace_new(0x06, 0)
+    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 4, climate=TOYLAND)
+foundations[:14].replace_old(990)
+foundations[14:].replace_new(0x06, 0)
 
 # ------------------------------ Airport Tiles ------------------------------
 
