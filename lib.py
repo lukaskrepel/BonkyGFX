@@ -119,18 +119,29 @@ def grid(*, func, width, height, padding=1, z=2):
 
 
 class BaseGrid:
-    def __init__(self, func):
+    def __init__(self, *, func, add_xofs=0, add_yofs=0):
         self.func = func
+        self.add_xofs = add_xofs
+        self.add_yofs = add_yofs
         self.kw = {}
 
     def set_default(self, **kw):
         self.kw.update(kw)
         return self
 
+    def __call__(self, name, x, y, **kw):
+        w = kw.pop('width')
+        h = kw.pop('height')
+        if self.add_xofs is not None:
+            kw['xofs'] = self.add_xofs + kw.get('xofs', 0)
+        if self.add_yofs is not None:
+            kw['yofs'] = self.add_yofs + kw.get('yofs', 0)
+        return self.func(name, x, y, w, h, **kw)
+
 
 class RectGrid(BaseGrid):
-    def __init__(self, *, func, width, height, padding=0):
-        super().__init__(func)
+    def __init__(self, *, func, width, height, padding=0, **kw):
+        super().__init__(func=func, **kw)
         self.set_default(width=width, height=height)
 
         self.height = height
@@ -142,40 +153,30 @@ class RectGrid(BaseGrid):
         fx = x * self.width + self.padding * (x + 1)
         fy = y * self.height + self.padding * (y + 1)
         kw = {**self.kw, **kw}
-        w = kw.pop('width')
-        h = kw.pop('height')
-        return self.func(name, fx, fy, w, h, xofs=0, yofs=0, **kw)
+        return super().__call__(name, fx, fy, **kw)
 
 
 class FlexGrid(BaseGrid):
-    def __init__(self, *, func, padding=0, start=(0, 0), add_xofs=None, add_yofs=None):
-        super().__init__(func)
+    def __init__(self, *, func, padding=0, start=(0, 0), **kw):
+        super().__init__(func=func, **kw)
         self.padding = padding
         self.x = padding + start[0]
         self.y = padding + start[1]
-        self.add_xofs = add_xofs
-        self.add_yofs = add_yofs
 
     def __call__(self, name, *, keep_state=False, **kw):
         kw = {**self.kw, **kw}
 
         x, y = self.x, self.y
-        w = kw.pop('width')
-        h = kw.pop('height')
 
         if not keep_state:
-            self.x += w + self.padding
+            self.x += kw['width'] + self.padding
 
-        if self.add_xofs is not None:
-            kw['xofs'] = self.add_xofs + kw.get('xofs', 0)
-        if self.add_yofs is not None:
-            kw['yofs'] = self.add_yofs + kw.get('yofs', 0)
-        return self.func(name, x, y, w, h, **kw)
+        return super().__call__(name, x, y, **kw)
 
 
 class HouseGrid(BaseGrid):
-    def __init__(self, *, func, height, width=64, padding=1, z=2, offset=(0, 0)):
-        super().__init__(func)
+    def __init__(self, *, func, height, width=64, padding=1, z=2, offset=(0, 0), **kw):
+        super().__init__(func=func, **kw)
         self.z = z
 
         self.zwidth = width * z
@@ -200,7 +201,7 @@ class HouseGrid(BaseGrid):
             if bb is not None:
                 zxofs -= self.z * (bb[1] - bb[0]) * 2
                 zyofs -= self.z * (bb[0] + bb[1])
-        return self.func(name, fx, fy, self.zwidth, self.zheight, xofs=zxofs, yofs=zyofs, **kw)
+        return super().__call__(name, fx, fy, width=self.zwidth, height=self.zheight, xofs=zxofs, yofs=zyofs, **kw)
 
 
 old_sprites = defaultdict(dict)

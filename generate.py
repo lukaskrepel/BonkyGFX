@@ -150,6 +150,39 @@ general_concrete = lib.SpriteCollection('general_concrete') \
 general_concrete[0].replace_old(1420)
 
 
+@lib.template(grf.FileSprite)
+def tmpl_foundations(func, z, frame=1):
+    grid = lib.FlexGrid(func=func, padding=z, add_yofs=-(z // 2))
+    # TODO figure out why it glitches with crop
+    grid.set_default(width=64 * z, height=41 * z - 1, xofs=-31 * z, yofs=-9 * z, frame=frame, crop=False)
+
+    return [grid(str(i))for _ in range(74)] + [
+        grid('74', xofs=-15 * z, yofs=-17 * z),
+        grid('75', yofs=-25 * z),
+        grid('76', xofs=-47 * z, yofs=-17 * z),
+        grid('77', yofs=-9 * z),
+        grid('78', xofs=-15 * z, yofs=-17 * z),
+        grid('79', yofs=-25 * z),
+        grid('80', xofs=-47 * z, yofs=-17 * z),
+        grid('81', yofs=-9 * z),
+        grid('82', xofs=-15 * z, yofs=-17 * z),
+        grid('83', yofs=-25 * z),
+        grid('84', xofs=-47 * z, yofs=-17 * z),
+        grid('85', yofs=-9 * z),
+        grid('86', xofs=-15 * z, yofs=-17 * z),
+        grid('87', yofs=-25 * z),
+        grid('88', xofs=-47 * z, yofs=-17 * z),
+        grid('89', yofs=-9 * z),
+    ]
+
+
+lib.SpriteCollection('foundations') \
+    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 1, climate=TEMPERATE) \
+    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 4, climate=TOYLAND) \
+    .replace_new(0x06, 0)
+
 # ------------------------------ Airport Tiles ------------------------------
 
 @lib.template(grf.FileSprite)
