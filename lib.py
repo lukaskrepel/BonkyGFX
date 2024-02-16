@@ -197,7 +197,8 @@ class HouseGrid(BaseGrid):
             zyofs = -rel[1] * self.z + 1
         else:
             zxofs = -31 * self.z
-            zyofs = 31 * self.z - self.zheight - self.z // 2  # z // 2 is a ground sprite offset to align foundations
+            # TODO buildings are aligned to bb so don't need z // 2 but maybe some stuff does
+            zyofs = 31 * self.z - self.zheight # - self.z // 2  # z // 2 is a ground sprite offset to align foundations
             if bb is not None:
                 zxofs -= self.z * (bb[1] - bb[0]) * 2
                 zyofs -= self.z * (bb[0] + bb[1])
