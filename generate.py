@@ -622,13 +622,13 @@ def tmpl_slope_rails(func, z, layers):
 
 
 rails = lib.SpriteCollection('rail') \
-    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*', 'SLEEPERS_ODD/*','SLEEPERS/*', 'SHADOW/*'))
+    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'))
 rail_overlays = lib.SpriteCollection('rail_overlays') \
     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*',))
 slope_rails = lib.SpriteCollection('rail') \
-    .add(INFRA_DIR / 'rail_2x.ase', tmpl_slope_rails, ZOOM_2X, ('RAILS/*', 'SLEEPERS_ODD/*','SLEEPERS/*', 'SHADOW/*'))
+    .add(INFRA_DIR / 'rail_2x.ase', tmpl_slope_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'))
 # sleepers = lib.SpriteCollection('rail_overlays') \
-#     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('SLEEPERS_ODD/*','SLEEPERS/*'))
+#     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, (SLEEPERS/*'))
 ballast = lib.SpriteCollection('ballast') \
     .add(INFRA_DIR / 'rail_2x.ase', tmpl_ballast, ZOOM_2X, ('BALLAST/*',))
 
