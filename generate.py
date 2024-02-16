@@ -232,8 +232,8 @@ for i in range(19):
     tree('temperate_tree', 1576 + i * 7, TREE_DIR / 'temperate_tree_2x.ase')
 
 for i in range(8):
-    tree('arctic_tree', 1709 + i * 7, TREE_DIR / 'arctic_tree_2x.ase')
-    tree('arctic_tree_snow', 1765 + i * 7, TREE_DIR / 'arctic_tree_snow_2x.ase')
+    tree('arctic_tree', 1709 + i * 7, TREE_DIR / 'arctic_tree_2x.ase') # TODO exclude "SNOW" layergroup
+    tree('arctic_tree_snow', 1765 + i * 7, TREE_DIR / 'arctic_tree_2x.ase') # TODO include "SNOW" layergroup
 
 for i in range(18):
     tree('tropic_tree', 1821 + i * 7, TREE_DIR / 'tropical_tree_2x.ase')
