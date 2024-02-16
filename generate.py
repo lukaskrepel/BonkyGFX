@@ -128,21 +128,27 @@ for i in range(9):
         .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1) \
         .replace_old(4126 + 19 * i)
 
-for i in range(4):
+for i in range(2):
     lib.SpriteCollection(f'snow_{25 * i}') \
         .add(TERRAIN_DIR / 'groundtiles_2x.ase',
              tmpl_groundtiles, ZOOM_2X, 13 + i) \
         .replace_old(4493 + i * 19, climate=ARCTIC)
 
-lib.SpriteCollection('tropical_transition') \
+# TODO default to tropical sprites on all climates
+lib.SpriteCollection('desert_and_snow_transition') \
     .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 23) \
-    .replace_old(4512, climate=TROPICAL)
+         tmpl_groundtiles, ZOOM_2X, 23, climate=TROPICAL) \
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, 13 + 2, climate=ARCTIC) \
+    .replace_old(4512)
 
-tropical_desert = lib.SpriteCollection('tropical_desert') \
+# TODO default to tropical sprites on all climates
+desert_and_snow = lib.SpriteCollection('desert_and_snow') \
     .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 24) \
-    .replace_old(4550, climate=TROPICAL)
+         tmpl_groundtiles, ZOOM_2X, 24, climate=TROPICAL) \
+    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+         tmpl_groundtiles, ZOOM_2X, 13 + 3, climate=ARCTIC) \
+    .replace_old(4550)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
     .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
@@ -483,7 +489,7 @@ road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
 road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
 
 # TODO do not replace in non-tropical
-road.compose_on(tropical_desert, ROAD_COMPOSITION).replace_old(1351)
+road.compose_on(desert_and_snow, ROAD_COMPOSITION).replace_old(1351)
 
 
 @lib.template(lib.CCReplacingFileSprite)
@@ -627,20 +633,28 @@ ballast = lib.SpriteCollection('ballast') \
     .add(INFRA_DIR / 'rail_2x.ase', tmpl_ballast, ZOOM_2X, ('BALLAST/*',))
 
 rail_overlays.pick(1, 0, 2, 3, 4, 5).replace_old(1005)
-rails[:7].compose_on(ground[0]).replace_old(1011)
 
-rails.pick(3, 5, 4, 2, 4, 3, 5, 2).compose_on(
-        ground.pick(8, 4, 1, 2, 14, 7, 11, 13),
-        exact_size=False,
-        offsets=((0, 16), None, None, None, None, (0, -16), None, None),
-    ).replace_old(1023)
-slope_rails.compose_on(ground.pick(12, 6, 3, 9)).replace_old(1031)
+
+def replace_rail_sprites(ground, first_id):
+    rails[:7].compose_on(ground[0]).replace_old(first_id)
+
+    ballast.compose_on(ground[0]).replace_old(first_id + 7)
+
+    rails.pick(3, 5, 4, 2, 4, 3, 5, 2).compose_on(
+            ground.pick(8, 4, 1, 2, 14, 7, 11, 13),
+            exact_size=False,
+            offsets=((0, 16), None, None, None, None, (0, -16), None, None),
+        ).replace_old(first_id + 12)
+    slope_rails.compose_on(ground.pick(12, 6, 3, 9)).replace_old(first_id + 20)
+
+    rails[3].compose_on(rails[2]).compose_on(ground[0]).replace_old(first_id + 24)  # double diagonal tile Y
+    rails[5].compose_on(rails[4]).compose_on(ground[0]).replace_old(first_id + 25)  # double diagonal tile X
+
+replace_rail_sprites(ground, 1011)
+replace_rail_sprites(desert_and_snow, 1037)
 
 # (ground[0] * 5).replace_old(1018)
 # rails[7:].compose_on(ground[0]).replace_old(1018)
-ballast.compose_on(ground[0]).replace_old(1018)
-rails[3].compose_on(rails[2]).compose_on(ground[0]).replace_old(1035)  # double diagonal tile Y
-rails[5].compose_on(rails[4]).compose_on(ground[0]).replace_old(1036)  # double diagonal tile X
 
 
 @lib.template(grf.FileSprite)
