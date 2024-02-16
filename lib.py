@@ -285,7 +285,7 @@ class SpriteCollection:
         self.sprites.append((zoom, kw, sprites))
         return self
 
-    def compose_on(self, dest, pattern=None):
+    def compose_on(self, dest, pattern=None, exact_size=True, offsets=None):
         srckeys = set(tuple(p) for _, kw, _ in self.sprites for p in kw.items())
         dstkeys = set(tuple(p) for _, kw, _ in dest.sprites for p in kw.items())
 
@@ -311,13 +311,21 @@ class SpriteCollection:
                 elif len(srcl) == 1:
                     l = zip(dstl, [srcl[0]] * len(dstl))
                 else:
-                    print(dstl)
-                    print(srcl)
                     assert len(dstl) == len(srcl)
                     l = zip(dstl, srcl)
             else:
                 l = ((None if i is None else dstl[i], srcl[j]) for i, j in pattern)
-            return [s if d is None else CompositeSprite((d, s)) for d, s in l]
+
+            res = []
+            for i, (d, s) in enumerate(l):
+                if d is None:
+                    res.append(s)
+                    continue
+                offset = None if offsets is None else offsets[i]
+                res.append(CompositeSprite((d, s), exact_size=exact_size, offset=offset))
+            return res
+
+            return [s if d is None else CompositeSprite((d, s), exact_size=exact_size) for d, s in l]
 
         for keys in compose_keys:
             srcl = self.get_sprites(keys)
@@ -932,13 +940,15 @@ class AseImageFile(grf.ImageFile):
 
 
 class CompositeSprite(grf.Sprite):
-    def __init__(self, sprites, **kw):
+    def __init__(self, sprites, *, exact_size=True, offset=None, **kw):
         if len(sprites) == 0:
             raise ValueError('CompositeSprite requires a non-empty list of sprites to compose')
         if len(set(s.zoom for s in sprites)) > 1:
             sprite_list = ', '.join(f'{s.name}<zoom={s.zoom}>' for s in sprites)
             raise ValueError(f'CompositeSprite requires a list of sprites of same zoom level: {sprite_list}')
         self.sprites = sprites
+        self.exact_size = exact_size
+        self.offset = offset
         super().__init__(sprites[0].w, sprites[0].h, xofs=sprites[0].xofs, yofs=sprites[0].yofs, zoom=sprites[0].zoom, **kw)
 
     def prepare_files(self):
@@ -950,6 +960,7 @@ class CompositeSprite(grf.Sprite):
         npalpha = None
         npmask = None
         nw, nh = self.w, self.h
+        first = True
         for s in self.sprites:
             w, h, ni, na, nm = s.get_data_layers(context)
             timer = context.start_timer()
@@ -958,49 +969,64 @@ class CompositeSprite(grf.Sprite):
                 nw = w
             if nh is None:
                 nh = h
-            if nw != w or nh != h:
+            if self.exact_size and (nw != w or nh != h):
                 raise RuntimeError(f'CompositeSprite layers have different size: {self.sprites[0].name}({nw}, {nh}) vs {s.name}({w}, {h})')
 
-            if ni is not None:
-                if npimg is None or na is None:
-                    npimg = ni.copy()
-                    if na is not None:
-                        npalpha = na.copy()
+            ox, oy = (0, 0) if self.offset is None or first else self.offset
+            first = False
+
+            dst_x, dst_y = max(ox, 0), max(oy, 0)
+            src_x, src_y = -min(0, ox), -min(0, oy)
+            src_my, src_mx = min(h, max(nh - dst_y + src_y, 0)), min(w, max(nw - dst_x + src_x, 0))
+
+            dst = np.s_[dst_y:dst_y + src_my - src_y, dst_x: dst_x + src_mx - src_x]
+            src = np.s_[src_y:src_my, src_x:src_mx]
+            cur_rgb = None if ni is None else ni[src]
+            cur_alpha = None if na is None else na[src]
+            cur_mask = None if nm is None else nm[src]
+
+            if cur_rgb is not None:
+                if npimg is None or cur_alpha is None:
+                    assert w == nw and h == nh  # TODO
+                    npimg = cur_rgb.copy()
+                    if cur_alpha is not None:
+                        npalpha = cur_alpha.copy()
                     else:
                         npalpha = None
                 else:
-                    full_mask = (na[:, :] == 255)
-                    partial_mask = (na[:, :] > 0) & ~full_mask
+                    full_mask = (cur_alpha == 255)
+                    partial_mask = (cur_alpha > 0) & ~full_mask
 
-                    npimg[full_mask] = ni[full_mask]
+                    npimg[dst][full_mask] = cur_rgb[full_mask]
                     if npalpha is not None:
-                        npalpha[full_mask] = 255
+                        npalpha[dst][full_mask] = 255
 
                     if npalpha is None:
                         npalpha_norm_mask = np.full(partial_mask.sum(), 1.0)
                     else:
-                        npalpha_norm_mask = npalpha[partial_mask] / 255.0
+                        npalpha_norm_mask = npalpha[dst][partial_mask] / 255.0
 
-                    na_norm_mask = na[partial_mask] / 255.0
+                    na_norm_mask = cur_alpha[partial_mask] / 255.0
                     resa = npalpha_norm_mask + na_norm_mask * (1 - npalpha_norm_mask)
 
-                    npimg[partial_mask] = (
-                        npimg[partial_mask] * npalpha_norm_mask[..., np.newaxis] +
-                        ni[partial_mask] * (na_norm_mask * (1.0 - npalpha_norm_mask))[..., np.newaxis]
+                    # TODO compose in oklab ?
+                    npimg[dst][partial_mask] = (
+                        npimg[dst][partial_mask] * npalpha_norm_mask[..., np.newaxis] +
+                        cur_rgb[partial_mask] * (na_norm_mask * (1.0 - npalpha_norm_mask))[..., np.newaxis]
                     ) / resa[..., np.newaxis]
                     if npalpha is not None:
-                        npalpha[partial_mask] = (resa * 255).astype(np.uint8)
+                        npalpha[dst][partial_mask] = (resa * 255).astype(np.uint8)
 
-            if nm is not None:
+            if cur_mask is not None:
                 if npmask is None:
-                    npmask = nm.copy()
+                    assert w == nw and h == nh  # TODO
+                    npmask = cur_mask.copy()
                 else:
-                    mask = (nm[:, :] != 0)
-                    npmask[mask] = nm[mask]
+                    mask = (cur_mask != 0)
+                    npmask[dst][mask] = cur_mask[mask]
 
             timer.count_custom('Layering')
-
-        return w, h, npimg, npalpha, npmask
+        return nw, nh, npimg, npalpha, npmask
 
     def get_resource_files(self):
         res = [THIS_FILE]
@@ -1011,7 +1037,8 @@ class CompositeSprite(grf.Sprite):
     def get_fingerprint(self):
         return {
             'class': self.__class__.__name__,
-            'sprites': [s.get_fingerprint() for s in self.sprites]
+            'sprites': [s.get_fingerprint() for s in self.sprites],
+            'offset': self.offset,
         }
 
 

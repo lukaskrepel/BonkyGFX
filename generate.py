@@ -603,10 +603,24 @@ def tmpl_ballast(func, z, layers):
     return list(map(grid, ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')))
 
 
+@lib.template(grf.FileSprite)
+def tmpl_slope_rails(func, z, layers):
+    grid = lib.FlexGrid(func=func, padding=2, start=(1560, 0), add_yofs=-(z // 2))
+    grid.set_default(width=64 * z, xofs=-31 * z, yofs=0, layers=layers)
+    return [
+        grid('ne', height=40 * z - 1),
+        grid('se', height=24 * z - 1),
+        grid('sw', height=24 * z - 1),
+        grid('nw', height=40 * z - 1),
+    ]
+
+
 rails = lib.SpriteCollection('rail') \
     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*', 'SLEEPERS_ODD/*','SLEEPERS/*', 'SHADOW/*'))
 rail_overlays = lib.SpriteCollection('rail_overlays') \
     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*',))
+slope_rails = lib.SpriteCollection('rail') \
+    .add(INFRA_DIR / 'rail_2x.ase', tmpl_slope_rails, ZOOM_2X, ('RAILS/*', 'SLEEPERS_ODD/*','SLEEPERS/*', 'SHADOW/*'))
 # sleepers = lib.SpriteCollection('rail_overlays') \
 #     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('SLEEPERS_ODD/*','SLEEPERS/*'))
 ballast = lib.SpriteCollection('ballast') \
@@ -614,6 +628,14 @@ ballast = lib.SpriteCollection('ballast') \
 
 rail_overlays.pick(1, 0, 2, 3, 4, 5).replace_old(1005)
 rails[:7].compose_on(ground[0]).replace_old(1011)
+
+rails.pick(3, 5, 4, 2, 4, 3, 5, 2).compose_on(
+        ground.pick(8, 4, 1, 2, 14, 7, 11, 13),
+        exact_size=False,
+        offsets=((0, 16), None, None, None, None, (0, -16), None, None),
+    ).replace_old(1023)
+slope_rails.compose_on(ground.pick(12, 6, 3, 9)).replace_old(1031)
+
 # (ground[0] * 5).replace_old(1018)
 # rails[7:].compose_on(ground[0]).replace_old(1018)
 ballast.compose_on(ground[0]).replace_old(1018)
