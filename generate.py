@@ -983,9 +983,9 @@ def tmpl_farm(func, z):
 
 
 lib.SpriteCollection('farm') \
-    .add(INDUSTRY_DIR / 'farm_2x.ase', tmpl_farm, ZOOM_2X, climate=TEMPERATE) \
+    .add(INDUSTRY_DIR / 'farm_temperate_2x.ase', tmpl_farm, ZOOM_2X, climate=TEMPERATE) \
     .add(INDUSTRY_DIR / 'farm_arctic_2x.ase', tmpl_farm, ZOOM_2X, climate=ARCTIC) \
-    .add(INDUSTRY_DIR / 'farm_2x.ase', tmpl_farm, ZOOM_2X, climate=TROPICAL) \
+    .add(INDUSTRY_DIR / 'farm_tropical_2x.ase', tmpl_farm, ZOOM_2X, climate=TROPICAL) \
     .replace_old(2106)
 
 
