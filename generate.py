@@ -125,7 +125,11 @@ make_ground('rocks', 6).replace_old(4023)
 
 for i in range(9):
     lib.SpriteCollection(f'farmland{i}') \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1, climate=TEMPERATE) \
+        .replace_old(4126 + 19 * i) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 10, climate=ARCTIC) \
+        .replace_old(4126 + 19 * i) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 19, climate=TROPICAL) \
         .replace_old(4126 + 19 * i)
 
 for i in range(3):
