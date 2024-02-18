@@ -893,7 +893,6 @@ lib.SpriteCollection('forest') \
     .add(INDUSTRY_DIR / 'forest_temperate_2x.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
     .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
     .replace_old(2072)
-    # .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 
 @lib.template(grf.FileSprite)
