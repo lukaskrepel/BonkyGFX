@@ -1105,20 +1105,26 @@ oil_wells[1:].replace_old(2174)
 
 
 @lib.template(grf.FileSprite)
-def tmpl_bank(func, z):
+def tmpl_bank(func, z, frame):
     assert z == 2
-    ground = func('ground', 2, 2, 192, 160, xofs=-126, yofs=-65, layers=('TILE/*', 'Spriteborder'))
+    ground = func('ground', 2, 2, 192, 160, xofs=-126, yofs=-65, layers=('TILE/*', 'Spriteborder'), frame=frame)
     return [
-        func('building1', 130, 2, 64, 160, xofs=2, yofs=-65, layers=('BUILDING/*', 'Spriteborder')),
-        func('building2', 2, 2, 128, 160, xofs=-62, yofs=-97, layers=('BUILDING/*', 'Spriteborder')),
+        func('building1', 130, 2, 64, 160, xofs=2, yofs=-65, layers=('BUILDING/*', 'Spriteborder'), frame=frame),
+        func('building2', 2, 2, 128, 160, xofs=-62, yofs=-97, layers=('BUILDING/*', 'Spriteborder'), frame=frame),
         lib.CutGround(ground, (1, 0), name='ground1'),
         lib.CutGround(ground, (0, 0), name='ground2'),
     ]
 
 
 lib.SpriteCollection('bank') \
-    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X, 1) \
     .replace_old(2180)
+
+lib.SpriteCollection('bank') \
+    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X, 3, climate=TROPICAL) \
+    .pick(3, 2, 0, 1) \
+    .replace_old(2184)
 
 
 @lib.template(grf.FileSprite)
