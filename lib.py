@@ -395,13 +395,11 @@ class SpriteCollection:
         for k in self.get_keys():
             sprites = self.get_exact_sprites(k)
             replace_old(self, first_id, sprites, **dict(k), **kw)
-        return self
 
     def replace_new(self, set_type, offset, **kw):
         for k in self.get_keys():
             sprites = self.get_exact_sprites(k)
             replace_new(self, set_type, offset, sprites, **dict(k), **kw)
-        return self
 
 
 class CCReplacingFileSprite(grf.FileSprite):

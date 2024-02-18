@@ -147,8 +147,8 @@ desert_and_snow = lib.SpriteCollection('desert_and_snow') \
     .add(TERRAIN_DIR / 'groundtiles_2x.ase',
          tmpl_groundtiles, ZOOM_2X, 24, climate=TROPICAL) \
     .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 13 + 3, climate=ARCTIC) \
-    .replace_old(4550)
+         tmpl_groundtiles, ZOOM_2X, 13 + 3, climate=ARCTIC)
+desert_and_snow.replace_old(4550)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
     .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
@@ -891,6 +891,7 @@ def tmpl_forest(func, z):
 # TODO remove climate=TEMPERATE? (but ensure the right order)
 lib.SpriteCollection('forest') \
     .add(INDUSTRY_DIR / 'forest_temperate_2x.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
+    .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
     .replace_old(2072)
     # .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
