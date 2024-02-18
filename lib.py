@@ -913,7 +913,7 @@ class AseImageFile(grf.ImageFile):
         self._images = {}
         for kw in self._kw_requested:
             frame, layers, ignore_layers = kw
-            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=True) as f:
                 args = [aseprite_executible, '-b', str(self.path), '--color-mode', 'rgb']
                 for l in layers:
                     args.extend(('--layer', l))
@@ -931,6 +931,11 @@ class AseImageFile(grf.ImageFile):
                     self._images[kw] = self._load_frame(f.name)
                 except OSError as e:
                     raise RuntimeError(f'Error loading aseprite output file {f.name}, command line: {args_str}')
+
+    def unload(self):
+        for im in self._images.values():
+            im[0].close()
+        self._images = None
 
     def get_image(self, **kw):
         self.load()
