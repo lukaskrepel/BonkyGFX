@@ -890,9 +890,9 @@ def tmpl_forest(func, z):
 # TODO Why are 128/322 forest sprites too?
 # TODO remove climate=TEMPERATE? (but ensure the right order)
 lib.SpriteCollection('forest') \
-    .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
+    .add(INDUSTRY_DIR / 'forest_temperate_2x.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
     .replace_old(2072)
-    # .add(INDUSTRY_DIR / 'forest.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
+    # .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, 76, climate=ARCTIC) \
 
 
 @lib.template(grf.FileSprite)
