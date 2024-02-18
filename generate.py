@@ -1117,11 +1117,8 @@ def tmpl_bank(func, z):
 
 lib.SpriteCollection('bank') \
     .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X) \
-    .replace_old(2180) \
-    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X) \ # TODO wrong code... 
-    .replace_old(2186) # TODO wrong code...
-    # TODO (2190 vs 2186 ??? Tiles don't show up)
-    # TODO bank_2x.ase has 3 frames, 1 frame per climate.
+    .replace_old(2180)
+
 
 @lib.template(grf.FileSprite)
 def tmpl_iron_mine(func, z, frame):
