@@ -739,8 +739,9 @@ water.compose_on(ground, WATER_COMPOSITION).replace_new(0x0d, 0)
 # ------------------------------ Towns ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_street_lights(func, z):
+def tmpl_street_lights(func, z, frame):
     grid = lib.HouseGrid(func=func, height=49, z=z)
+    grid.set_default(frame=frame)
     return [
         grid('ne', (0, 0), bb=(1, 8)),
         grid('nw', (1, 0), bb=(8, 1)),
@@ -748,10 +749,12 @@ def tmpl_street_lights(func, z):
 
 
 lib.SpriteCollection('street_lights') \
-    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X) \
+    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 1, climate=TEMPERATE) \
+    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 4, climate=TOYLAND) \
     .pick(1, 0) \
     .replace_old(1406)
-
 
 @lib.template(grf.FileSprite)
 def tmpl_statues(func, z):
