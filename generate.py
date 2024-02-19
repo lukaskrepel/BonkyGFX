@@ -106,11 +106,11 @@ def make_ground(name, frame, *, extra=False):
         .add(TERRAIN_DIR / 'groundtiles_2x.ase',
              tmpl, ZOOM_2X, frame, climate=TEMPERATE) \
         .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-             tmpl, ZOOM_2X, frame + 16, climate=TROPICAL) \
+             tmpl, ZOOM_2X, frame + 7, climate=ARCTIC) \
         .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-             tmpl, ZOOM_2X, frame + 6, climate=ARCTIC) \
+             tmpl, ZOOM_2X, frame + 18, climate=TROPICAL) \
         .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-             tmpl, ZOOM_2X, frame + 24, climate=TOYLAND)
+             tmpl, ZOOM_2X, frame + 27, climate=TOYLAND)
 
 
 ground = make_ground('ground', 4)
@@ -139,20 +139,26 @@ for i in range(3):
 # TODO default to tropical sprites on all climates
 lib.SpriteCollection('desert_and_snow_transition') \
     .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 23, climate=TROPICAL) \
+         tmpl_groundtiles, ZOOM_2X, 25, climate=TROPICAL) \
     .replace_old(4512)
 
 # TODO default to tropical sprites on all climates
 desert_and_snow = lib.SpriteCollection('desert_and_snow') \
     .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 24, climate=TROPICAL) \
+         tmpl_groundtiles, ZOOM_2X, 14 + 3, climate=ARCTIC) \
     .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-         tmpl_groundtiles, ZOOM_2X, 13 + 3, climate=ARCTIC)
+         tmpl_groundtiles, ZOOM_2X, 26, climate=TROPICAL)
 desert_and_snow.replace_old(4550)
 
 general_concrete = lib.SpriteCollection('general_concrete') \
     .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
-        tmpl_groundtiles, ZOOM_2X, 31)
+        tmpl_groundtiles, ZOOM_2X, 7, climate=TEMPERATE) \
+    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
+        tmpl_groundtiles, ZOOM_2X, 18, climate=ARCTIC) \
+    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
+        tmpl_groundtiles, ZOOM_2X, 27, climate=TROPICAL) \
+    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
+        tmpl_groundtiles, ZOOM_2X, 34, climate=TOYLAND) 
 general_concrete[0].replace_old(1420)
 
 
