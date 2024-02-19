@@ -10,6 +10,22 @@ from grf import ZOOM_NORMAL, ZOOM_2X, ZOOM_4X, TEMPERATE, ARCTIC, TROPICAL, TOYL
 import lib
 
 cc = lib.MagentaToCC
+struct = lib.MagentaToStruct
+
+def animated(name, grid, *args, **kw):
+    return lib.AlphaAndMask(
+        grid(name + '_rgb', *args, **kw, ignore_layers=('ANIMATED',), keep_state=True),
+        grid(name + '_anim', *args, **kw, layers=('ANIMATED',)),
+        name=name,
+    )
+
+def animatedcc(name, grid, *args, **kw):
+    return lib.AlphaAndMask(
+        cc(grid(name + '_rgb', *args, **kw, ignore_layers=('ANIMATED',), keep_state=True)),
+        grid(name + '_anim', *args, **kw, layers=('ANIMATED',)),
+        name=name,
+    )
+
 
 SPRITE_DIR = pathlib.Path('sprites')
 TERRAIN_DIR = SPRITE_DIR / 'terrain'
@@ -207,22 +223,15 @@ def tmpl_airport_tiles(func, z):
     grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
     grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0)
     kw_default = {'ignore_layers': 'ANIMATED/*'}
-    kw_light = {'layers': 'ANIMATED/*'}
-
-    def with_light(*args, **kw):
-        return lib.AlphaAndMask(
-            grid(*args, **kw, **kw_default, keep_state=True),
-            grid(*args, **kw, **kw_light)
-        )
 
     sprites = [
         grid('apron', **kw_default),
         grid('stand', **kw_default),
-        with_light('runway_a'),
-        with_light('runway_b'),
-        with_light('runway_c'),
-        with_light('runway_d'),
-        with_light('runway_end'),
+        animated('runway_a', grid),
+        animated('runway_b', grid),
+        animated('runway_c', grid),
+        animated('runway_d', grid),
+        animated('runway_end', grid),
         grid('taxi_ns_west', **kw_default),
         grid('taxi_ew_south', **kw_default),
         grid('taxi_xing_south', **kw_default),
@@ -232,12 +241,12 @@ def tmpl_airport_tiles(func, z):
         grid('taxi_ns_east', **kw_default),
         grid('taxi_ew_north', **kw_default),
         grid('taxi_ew_ctr', **kw_default),
-        with_light('runway_y_a'),  # unused
-        with_light('runway_y_b'),  # unused
-        with_light('runway_y_c'),  # unused
-        with_light('runway_y_d'),  # unused
-        with_light('runway_y_end'),  # unused
-        with_light('helipad', yofs = -15 * z),
+        animated('runway_y_a', grid),  # unused
+        animated('runway_y_b', grid),  # unused
+        animated('runway_y_c', grid),  # unused
+        animated('runway_y_d', grid),  # unused
+        animated('runway_y_end', grid),  # unused
+        animated('helipad', grid, yofs = -15 * z),
         grid('new_helipad', **kw_default),
     ]
 
@@ -690,31 +699,30 @@ lib.SpriteCollection('rail_fence') \
 # ------------------------------ Water ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_water_full(sprite_func, z):
+def tmpl_water_full(func, z):
     x = y = 0
-    func = lambda *args, **kw: lib.MagentaAndMask(sprite_func(*args, **kw, ignore_layers=('ANIMATED/*')), sprite_func(*args, **kw, layers='ANIMATED/*'))
     grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2))
     grid.set_default(width=64 * z, xofs=-31 * z)
     return [
-        grid('full', height=32 * z - 1, yofs=0 * z),
-        grid('1', height=32 * z - 1, yofs=0 * z),
-        grid('2', height=24 * z - 1, yofs=0 * z),
-        grid('3', height=24 * z - 1, yofs=0 * z),
-        grid('4', height=32 * z - 1, yofs=0 * z),
-        grid('5', height=32 * z - 1, yofs=0 * z),
-        grid('6', height=24 * z - 1, yofs=0 * z),
-        grid('7', height=24 * z - 1, yofs=0 * z),
-        grid('8', height=40 * z - 1, yofs=-8 * z),
-        grid('9', height=40 * z - 1, yofs=-8 * z),
-        grid('10', height=32 * z - 1, yofs=-8 * z),
-        grid('11', height=32 * z - 1, yofs=-8 * z),
-        grid('12', height=40 * z - 1, yofs=-8 * z),
-        grid('13', height=40 * z - 1, yofs=-8 * z),
-        grid('14', height=32 * z - 1, yofs=-8 * z),
-        grid('15', height=48 * z - 1, yofs=16 * z),
-        grid('16', height=16 * z - 1, yofs=0 * z),
-        grid('17', height=32 * z - 1, yofs=-8 * z),
-        grid('18', height=32 * z - 1, yofs=-8 * z),
+        animated('full', grid, height=32 * z - 1, yofs=0 * z),
+        animated('1', grid, height=32 * z - 1, yofs=0 * z),
+        animated('2', grid, height=24 * z - 1, yofs=0 * z),
+        animated('3', grid, height=24 * z - 1, yofs=0 * z),
+        animated('4', grid, height=32 * z - 1, yofs=0 * z),
+        animated('5', grid, height=32 * z - 1, yofs=0 * z),
+        animated('6', grid, height=24 * z - 1, yofs=0 * z),
+        animated('7', grid, height=24 * z - 1, yofs=0 * z),
+        animated('8', grid, height=40 * z - 1, yofs=-8 * z),
+        animated('9', grid, height=40 * z - 1, yofs=-8 * z),
+        animated('10', grid, height=32 * z - 1, yofs=-8 * z),
+        animated('11', grid, height=32 * z - 1, yofs=-8 * z),
+        animated('12', grid, height=40 * z - 1, yofs=-8 * z),
+        animated('13', grid, height=40 * z - 1, yofs=-8 * z),
+        animated('14', grid, height=32 * z - 1, yofs=-8 * z),
+        animated('15', grid, height=48 * z - 1, yofs=16 * z),
+        animated('16', grid, height=16 * z - 1, yofs=0 * z),
+        animated('17', grid, height=32 * z - 1, yofs=-8 * z),
+        animated('18', grid, height=32 * z - 1, yofs=-8 * z),
     ]
 
 
@@ -735,8 +743,8 @@ def tmpl_statues(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
     return [
         grid('statue', (0, 0), bb=(6, 5)),
-        grid('fountain', (1, 0), bb=(3, 3)),
-        lib.MagentaToCC(grid('owner_statue', (2, 0), bb=(0, 0))),
+        animated('fountain', grid, (1, 0), bb=(3, 3)),
+        cc(grid('owner_statue', (2, 0), bb=(0, 0))),
     ]
 
 statues = lib.SpriteCollection('house') \
@@ -749,14 +757,14 @@ statues[2].replace_old(2632)
 def tmpl_shops_and_offices(func, z):
     grid = lib.HouseGrid(func=func, height=100, z=z)
     return [
-        lib.MagentaToStruct(grid('29a_ground', (0, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
-        lib.MagentaToStruct(grid('29a', (0, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
-        lib.MagentaToStruct(grid('29b_ground', (1, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
-        lib.MagentaToStruct(grid('29b', (1, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
+        struct(grid('29a_ground', (0, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
+        struct(grid('29a', (0, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
+        struct(grid('29b_ground', (1, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
+        struct(grid('29b', (1, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
 
-        lib.MagentaToStruct(grid('16_stage1', (2, 0), bb=(2, 0), frame=1, ignore_layers='TILE/*')),
-        lib.MagentaToStruct(grid('16_stage2', (2, 0), bb=(2, 0), frame=2, ignore_layers='TILE/*')),
-        lib.MagentaToStruct(grid('16_stage3', (2, 0), bb=(2, 0), frame=3, ignore_layers='TILE/*')),
+        struct(grid('16_stage1', (2, 0), bb=(2, 0), frame=1, ignore_layers='TILE/*')),
+        struct(grid('16_stage2', (2, 0), bb=(2, 0), frame=2, ignore_layers='TILE/*')),
+        struct(grid('16_stage3', (2, 0), bb=(2, 0), frame=3, ignore_layers='TILE/*')),
 
         grid('14_stage1', (3, 0), bb=(1, 3), frame=1, ignore_layers='TILE/*'),
         grid('14_stage2', (3, 0), bb=(1, 3), frame=2, ignore_layers='TILE/*'),
@@ -913,10 +921,7 @@ def tmpl_oil_refinery(func, z):
         cc(grid('building2_stage3', (1, 0), bb=(3, 3), frame=3)),
         cc(grid('building3_stage1', (2, 0), bb=(4, 4), frame=1)),
         cc(grid('building3_stage2', (2, 0), bb=(4, 4), frame=2)),
-        lib.AlphaAndMask(
-            cc(grid('building3', (2, 0), bb=(4, 4), frame=3, ignore_layers=('ANIMATED',))),
-            grid('building3_fire', (2, 0), bb=(4, 4), frame=3, layers=('ANIMATED',)),
-        ),
+        animatedcc('building3', grid, (2, 0), bb=(4, 4), frame=3),
         cc(grid('building4_stage1', (3, 0), bb=(2, 0), frame=1)),
         cc(grid('building4_stage2', (3, 0), bb=(2, 0), frame=2)),
         cc(grid('building4_stage3', (3, 0), bb=(2, 0), frame=3)),
@@ -1287,7 +1292,7 @@ def cmd_debugcc_add_args(parser):
 def cmd_debugcc_handler(g, grf_file, args):
     ase = lib.AseImageFile(args.ase_file)
     sprite = grf.FileSprite(ase, 0, 0, None, None, name=args.ase_file, layers=args.layer, frame=args.frame)
-    sprite = lib.MagentaToCC(sprite)
+    sprite = cc(sprite)
     lib.debug_cc_recolour([sprite], horizontal=args.horizontal)
 
 
@@ -1301,7 +1306,7 @@ def cmd_debugstruct_add_args(parser):
 def cmd_debugstruct_handler(g, grf_file, args):
     ase = lib.AseImageFile(args.ase_file)
     sprite = grf.FileSprite(ase, 0, 0, None, None, name=args.ase_file, layers=args.layer, frame=args.frame)
-    sprite = lib.MagentaToStruct(sprite)
+    sprite = struct(sprite)
     lib.debug_struct_recolour([sprite], horizontal=args.horizontal)
 
 

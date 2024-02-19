@@ -129,14 +129,12 @@ class BaseGrid:
         self.kw.update(kw)
         return self
 
-    def __call__(self, name, x, y, **kw):
-        w = kw.pop('width')
-        h = kw.pop('height')
+    def __call__(self, name, x, y, *, width, height, keep_state=None, **kw):
         if self.add_xofs is not None:
             kw['xofs'] = self.add_xofs + kw.get('xofs', 0)
         if self.add_yofs is not None:
             kw['yofs'] = self.add_yofs + kw.get('yofs', 0)
-        return self.func(name, x, y, w, h, **kw)
+        return self.func(name, x, y, width, height, **kw)
 
 
 class RectGrid(BaseGrid):
@@ -689,9 +687,9 @@ class MagentaAndMask(grf.Sprite):
 
 
 class AlphaAndMask(grf.Sprite):
-    def __init__(self, sprite, mask):
+    def __init__(self, sprite, mask, name=None):
         self.sprite = sprite
-        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
+        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=name or self.sprite.name)
         self.mask = mask  # TODO sprite mask has a special meaning
 
     def prepare_files(self):
