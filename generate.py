@@ -813,7 +813,7 @@ houses[13:19].replace_old(1540)  # 30
 @lib.template(grf.FileSprite)
 def tmpl_transmitter(func, z):
     grid = lib.HouseGrid(func=func, height=123, z=z)
-    return [grid('', (0, 0), bb=(7, 7))]
+    return [animated('', grid, (0, 0), bb=(7, 7))]
 
 
 lib.SpriteCollection('transmitter') \
