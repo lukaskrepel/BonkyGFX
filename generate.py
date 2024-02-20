@@ -684,8 +684,8 @@ def tmpl_rail_fences(func, z):
         cc(grid('flat_y', width=33 * z, height=22 * z, xofs=y_xofs, yofs=y_yofs)),
         cc(grid('vert', width=3 * z, height=38 * z, xofs=0, yofs=-40)),
         cc(grid('hor', width=65 * z, height=6 * z, xofs=-61, yofs=-8)),
-        cc(grid('low_x', width=33 * z, height=28 * z, xofs=x_xofs, yofs=x_yofs + 16)),
-        cc(grid('low_y', width=33 * z, height=28 * z, xofs=y_xofs, yofs=y_yofs + 16)),
+        cc(grid('low_x', width=33 * z, height=14 * z, xofs=x_xofs, yofs=x_yofs + 0)),
+        cc(grid('low_y', width=33 * z, height=14 * z, xofs=y_xofs, yofs=y_yofs + 0)),
         cc(grid('high_x', width=33 * z, height=30 * z, xofs=x_xofs, yofs=x_yofs - 16)),
         cc(grid('high_y', width=33 * z, height=30 * z, xofs=y_xofs, yofs=y_yofs - 16)),
     ]
