@@ -801,13 +801,35 @@ def tmpl_shops_and_offices(func, z):
     ]
 
 houses = lib.SpriteCollection('house') \
-    .add(lib.aseidx(TOWN_DIR / 'shopsandoffices_2x.ase'), tmpl_shops_and_offices, ZOOM_2X) \
+    .add(TOWN_DIR / 'shopsandoffices_2x.ase', tmpl_shops_and_offices, ZOOM_2X) \
 
 houses[0:4].replace_old(1536)  # 29
 houses[4:7].replace_old(1467)  # 16
 houses[7:10].replace_old(1461)  # 14
 houses[10:13].replace_old(1466)  # 15
 houses[13:19].replace_old(1540)  # 30
+
+
+@lib.template(grf.FileSprite)
+def tmpl_transmitter(func, z):
+    grid = lib.HouseGrid(func=func, height=123, z=z)
+    return [grid('', (0, 0), bb=(7, 7))]
+
+
+lib.SpriteCollection('transmitter') \
+    .add(TOWN_DIR / 'transmitter_2x.ase', tmpl_transmitter, ZOOM_2X) \
+    .replace_old(2601)
+
+
+@lib.template(grf.FileSprite)
+def tmpl_lighthouse(func, z):
+    grid = lib.HouseGrid(func=func, height=123, z=z)
+    return [animated('', grid, (0, 0), bb=(4, 4))]
+
+
+lib.SpriteCollection('lighthouse') \
+    .add(TOWN_DIR / 'lighthouse_2x.ase', tmpl_lighthouse, ZOOM_2X) \
+    .replace_old(2602)
 
 
 # ------------------------------ Industries ------------------------------
