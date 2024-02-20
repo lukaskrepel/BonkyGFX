@@ -832,6 +832,19 @@ lib.SpriteCollection('lighthouse') \
     .replace_old(2602)
 
 
+@lib.template(grf.FileSprite)
+def tmpl_town_tree(func, z, x):
+    grid = lib.RectGrid(func=func, width=19 * z, height=41 * z, padding=z)
+    return [grid('', (x, 0), xofs=-9 * z, yofs=-37 * z)]
+
+
+lib.SpriteCollection('town_tree') \
+    .add(TREE_DIR / 'town_trees_2x.ase', tmpl_town_tree, ZOOM_2X, 0, climate=TEMPERATE) \
+    .add(TREE_DIR / 'town_trees_2x.ase', tmpl_town_tree, ZOOM_2X, 1, climate=ARCTIC) \
+    .add(TREE_DIR / 'town_trees_2x.ase', tmpl_town_tree, ZOOM_2X, 2, climate=TROPICAL) \
+    .replace_old(4626)
+
+
 # ------------------------------ Industries ------------------------------
 
 @lib.template(grf.FileSprite)
