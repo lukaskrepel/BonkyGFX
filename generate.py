@@ -1207,9 +1207,10 @@ for i in range(0, 3):
 
 @lib.template(grf.FileSprite)
 def tmpl_cargo_icons(func, z, frame):
-    grid = lib.grid(func=func, width=11, height=11)
+    grid = lib.RectGrid(func=func, width=11 * z, height=11 * z, padding=z)
     grid.set_default(frame=frame)
     return [grid(str(i), (i, 0)) for i in range(27)]
+
 
 lib.SpriteCollection('cargo_icon') \
     .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 1, climate=TEMPERATE) \

@@ -111,19 +111,6 @@ def template(sprite_class):
     return decorator
 
 
-def grid(*, func, width, height, padding=1, z=2):
-    zheight = height * z
-    zpadding = padding * z
-    zwidth = width * z
-    def sprite_func(name, grid_pos, **kw):
-        x, y = grid_pos
-        fx = x * zwidth + zpadding * (x + 1)
-        fy = y * zheight + zpadding * (y + 1)
-        return func(name, fx, fy, zwidth, zheight, xofs=0, yofs=-1, **kw)
-
-    return sprite_func
-
-
 class BaseGrid:
     def __init__(self, *, func, add_xofs=0, add_yofs=0, add_width=0, add_height=0):
         self.func = func
