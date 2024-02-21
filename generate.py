@@ -209,10 +209,10 @@ def tmpl_foundations(func, z, frame=1):
 
 
 foundations = lib.SpriteCollection('foundations') \
-    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 1, climate=TEMPERATE) \
-    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 2, climate=ARCTIC) \
-    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 3, climate=TROPICAL) \
-    .add(lib.aseidx(TERRAIN_DIR / 'foundations_2x.ase'), tmpl_foundations, ZOOM_2X, 4, climate=TOYLAND)
+    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 1, climate=TEMPERATE) \
+    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 4, climate=TOYLAND)
 foundations[:14].replace_old(990)
 foundations[14:].replace_new(0x06, 0)
 
@@ -263,6 +263,14 @@ airport_tiles[:16].replace_old(2634)
 airport_tiles[16].replace_new(0x15, 86)
 airport_tiles[17].replace_new(0x10, 12)
 
+
+def tmpl_tile_selection(name, paths, zoom, *args):
+    return [lib.MoveSprite(lib.MagentaToSelection(s), yofs=14) for s in tmpl_groundtiles(name, paths, zoom, *args)]
+
+
+lib.SpriteCollection('tile_selection') \
+    .add(TERRAIN_DIR / 'selectiontiles_2x.ase', tmpl_tile_selection, ZOOM_2X) \
+    .replace_old(752)
 
 # ------------------------------ Trees ------------------------------
 
@@ -1251,6 +1259,7 @@ ICON_SHEET = (
 # 4077: 4088,  # that's lighthouse cursor though
 # 1291: 1293,
 # 1251 - 1262 -> 1263 - 1274
+
 # 4084, 4085, 4086 - > 4087, 4088, 4089
 CURSOR_SPRITES = [697,  698,  700,  701]
 ICON_WIDTH = {2594: 43, 1298: 40, 744: 39}
