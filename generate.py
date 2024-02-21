@@ -142,7 +142,7 @@ for i in range(9):
 for i in range(3):
     lib.SpriteCollection(f'snow_{25 * i}') \
         .add(TERRAIN_DIR / 'groundtiles_2x.ase',
-             tmpl_groundtiles, ZOOM_2X, 13 + i) \
+             tmpl_groundtiles, ZOOM_2X, 14 + i) \
         .replace_old(4493 + i * 19, climate=ARCTIC)
 
 # TODO default to tropical sprites on all climates
@@ -159,15 +159,7 @@ desert_and_snow = lib.SpriteCollection('desert_and_snow') \
          tmpl_groundtiles, ZOOM_2X, 26, climate=TROPICAL)
 desert_and_snow.replace_old(4550)
 
-general_concrete = lib.SpriteCollection('general_concrete') \
-    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
-        tmpl_groundtiles, ZOOM_2X, 7, climate=TEMPERATE) \
-    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
-        tmpl_groundtiles, ZOOM_2X, 18, climate=ARCTIC) \
-    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
-        tmpl_groundtiles, ZOOM_2X, 27, climate=TROPICAL) \
-    .add(lib.aseidx(TERRAIN_DIR / 'groundtiles_2x.ase'),
-        tmpl_groundtiles, ZOOM_2X, 34, climate=TOYLAND) 
+general_concrete = make_ground('general_concrete', 7)
 general_concrete[0].replace_old(1420)
 
 
