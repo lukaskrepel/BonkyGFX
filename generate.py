@@ -1206,12 +1206,16 @@ for i in range(0, 3):
 # ------------------------------ User Interface ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_cargo_icons(func, z):
+def tmpl_cargo_icons(func, z, frame):
     grid = lib.grid(func=func, width=11, height=11)
+    grid.set_default(frame=frame)
     return [grid(str(i), (i, 0)) for i in range(27)]
 
 lib.SpriteCollection('cargo_icon') \
-    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X) \
+    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 1, climate=TEMPERATE) \
+    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 4, climate=TOYLAND) \
     .replace_old(4297)
 
 
