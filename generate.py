@@ -64,8 +64,8 @@ g.add(grf.Label(0, b''))
 
 @lib.template(grf.FileSprite)
 def tmpl_groundtiles(func, z, frame=1, above=0):
-    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2) - above * z)
-    grid.set_default(width=64 * z, height=32 * z - 1 + above * z, xofs=-31 * z, yofs=0, frame=frame)
+    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2) - above * z, add_height=above * z)
+    grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
 
     return [
         grid('flat'),

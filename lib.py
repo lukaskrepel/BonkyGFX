@@ -125,10 +125,12 @@ def grid(*, func, width, height, padding=1, z=2):
 
 
 class BaseGrid:
-    def __init__(self, *, func, add_xofs=0, add_yofs=0):
+    def __init__(self, *, func, add_xofs=0, add_yofs=0, add_width=0, add_height=0):
         self.func = func
         self.add_xofs = add_xofs
         self.add_yofs = add_yofs
+        self.add_width = add_width
+        self.add_height = add_height
         self.kw = {}
 
     def set_default(self, **kw):
@@ -140,7 +142,7 @@ class BaseGrid:
             kw['xofs'] = self.add_xofs + kw.get('xofs', 0)
         if self.add_yofs is not None:
             kw['yofs'] = self.add_yofs + kw.get('yofs', 0)
-        return self.func(name, x, y, width, height, **kw)
+        return self.func(name, x, y, width + self.add_width, height + self.add_height, **kw)
 
 
 class RectGrid(BaseGrid):
@@ -173,7 +175,7 @@ class FlexGrid(BaseGrid):
         x, y = self.x, self.y
 
         if not keep_state:
-            self.x += kw['width'] + self.padding
+            self.x += kw['width'] + self.add_width + self.padding
 
         return super().__call__(name, x, y, **kw)
 
