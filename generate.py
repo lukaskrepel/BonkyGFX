@@ -63,9 +63,9 @@ g.add(grf.Label(0, b''))
 # ------------------------------ Ground Tiles ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_groundtiles(func, z, frame=1):
-    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2))
-    grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
+def tmpl_groundtiles(func, z, frame=1, above=0):
+    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2) - above * z)
+    grid.set_default(width=64 * z, height=32 * z - 1 + above * z, xofs=-31 * z, yofs=0, frame=frame)
 
     return [
         grid('flat'),
@@ -134,9 +134,9 @@ make_ground('rocks', 6).replace_old(4023)
 
 for i in range(9):
     lib.SpriteCollection(f'farmland{i}') \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1, climate=TEMPERATE) \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 10, climate=ARCTIC) \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 19, climate=TROPICAL) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1, 5, climate=TEMPERATE) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 10, 5, climate=ARCTIC) \
+        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 19, 5, climate=TROPICAL) \
         .replace_old(4126 + 19 * i)
 
 for i in range(3):
