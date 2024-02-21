@@ -604,23 +604,23 @@ bus_stops[16:].replace_new(0x11, 0)
 # ------------------------------ Rail infrastructure ------------------------------
 
 @lib.template(grf.FileSprite)
-def tmpl_rails(func, z, layers):
+def tmpl_rails(func, z, layers, frame):
     grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
-    grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers)
+    grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers, frame=frame)
     return list(map(grid, ('y', 'x', 'n', 's', 'e', 'w', 'cross')))
 
 
 @lib.template(grf.FileSprite)
-def tmpl_ballast(func, z, layers):
+def tmpl_ballast(func, z, layers, frame):
     grid = lib.FlexGrid(func=func, padding=2, start=(910, 0), add_yofs=-(z // 2))
-    grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers)
+    grid.set_default(width=64 * z, height = 32 * z - 1, xofs=-31 * z, yofs=0, layers=layers, frame=frame)
     return list(map(grid, ('ground_tne', 'ground_tsw', 'ground_tnw', 'ground_tse', 'ground_x')))
 
 
 @lib.template(grf.FileSprite)
-def tmpl_slope_rails(func, z, layers):
+def tmpl_slope_rails(func, z, layers, frame):
     grid = lib.FlexGrid(func=func, padding=2, start=(1560, 0), add_yofs=-(z // 2))
-    grid.set_default(width=64 * z, xofs=-31 * z, yofs=0, layers=layers)
+    grid.set_default(width=64 * z, xofs=-31 * z, yofs=0, layers=layers, frame=frame)
     return [
         grid('ne', height=40 * z - 1),
         grid('se', height=24 * z - 1),
@@ -629,22 +629,8 @@ def tmpl_slope_rails(func, z, layers):
     ]
 
 
-rails = lib.SpriteCollection('rail') \
-    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'))
-rail_overlays = lib.SpriteCollection('rail_overlays') \
-    .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*',))
-slope_rails = lib.SpriteCollection('rail') \
-    .add(INFRA_DIR / 'rail_2x.ase', tmpl_slope_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'))
-# sleepers = lib.SpriteCollection('rail_overlays') \
-#     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, (SLEEPERS/*'))
-ballast = lib.SpriteCollection('ballast') \
-    .add(INFRA_DIR / 'rail_2x.ase', tmpl_ballast, ZOOM_2X, ('BALLAST/*',))
-
-rail_overlays.pick(1, 0, 2, 3, 4, 5).replace_old(1005)
-
-
-def replace_rail_sprites(ground, first_id):
-    rails[:7].compose_on(ground[0]).replace_old(first_id)
+def replace_climate_rail_sprites(rails, slope_rails, ballast, ground, first_id):
+    rails.compose_on(ground[0]).replace_old(first_id)
 
     ballast.compose_on(ground[0]).replace_old(first_id + 7)
 
@@ -658,11 +644,29 @@ def replace_rail_sprites(ground, first_id):
     rails[3].compose_on(rails[2]).compose_on(ground[0]).replace_old(first_id + 24)  # double diagonal tile Y
     rails[5].compose_on(rails[4]).compose_on(ground[0]).replace_old(first_id + 25)  # double diagonal tile X
 
-replace_rail_sprites(ground, 1011)
-replace_rail_sprites(desert_and_snow, 1037)
 
-# (ground[0] * 5).replace_old(1018)
-# rails[7:].compose_on(ground[0]).replace_old(1018)
+def replace_rail_type(name, frame, first_id):
+    rails = lib.SpriteCollection(name) \
+        .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'), frame)
+    rail_overlays = lib.SpriteCollection(f'{name}_overlay') \
+        .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*',), frame)
+    slope_rails = lib.SpriteCollection(f'{name}_slope') \
+        .add(INFRA_DIR / 'rail_2x.ase', tmpl_slope_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'), frame)
+    # sleepers = lib.SpriteCollection('rail_overlays') \
+    #     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, (SLEEPERS/*'))
+    ballast = lib.SpriteCollection(f'{name}_ballast') \
+        .add(INFRA_DIR / 'rail_2x.ase', tmpl_ballast, ZOOM_2X, ('BALLAST/*',), frame)
+
+    rail_overlays.pick(1, 0, 2, 3, 4, 5).replace_old(first_id)
+
+    replace_climate_rail_sprites(rails, slope_rails, ballast, ground, first_id + 6)
+    replace_climate_rail_sprites(rails, slope_rails, ballast, desert_and_snow, first_id + 32)
+
+
+replace_rail_type('rail', 1, 1005)
+replace_rail_type('mono', 2, 1087)
+replace_rail_type('maglev', 3, 1169)
+
 
 
 @lib.template(grf.FileSprite)
