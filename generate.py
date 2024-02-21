@@ -19,13 +19,6 @@ def animated(name, grid, *args, **kw):
         name=name,
     )
 
-def animatedcc(name, grid, *args, **kw):
-    return lib.AlphaAndMask(
-        cc(grid(name + '_rgb', *args, **kw, ignore_layers=('ANIMATED',), keep_state=True)),
-        grid(name + '_anim', *args, **kw, layers=('ANIMATED',)),
-        name=name,
-    )
-
 
 SPRITE_DIR = pathlib.Path('sprites')
 TERRAIN_DIR = SPRITE_DIR / 'terrain'
@@ -982,7 +975,7 @@ def tmpl_oil_refinery(func, z):
         cc(grid('building2_stage3', (1, 0), bb=(3, 3), frame=3)),
         cc(grid('building3_stage1', (2, 0), bb=(4, 4), frame=1)),
         cc(grid('building3_stage2', (2, 0), bb=(4, 4), frame=2)),
-        animatedcc('building3', grid, (2, 0), bb=(4, 4), frame=3),
+        cc(animated('building3', grid, (2, 0), bb=(4, 4), frame=3)),
         cc(grid('building4_stage1', (3, 0), bb=(2, 0), frame=1)),
         cc(grid('building4_stage2', (3, 0), bb=(2, 0), frame=2)),
         cc(grid('building4_stage3', (3, 0), bb=(2, 0), frame=3)),
@@ -1089,10 +1082,10 @@ def tmpl_steel_mill(func, z):
     building_layers = ('BUILDING/*', 'Spriteborder')
 
     def building(name, *args, **kw):
-        return lib.AlphaAndMask(
-            cc(func(name, *args, **kw, layers=building_layers)),
+        return cc(lib.AlphaAndMask(
+            func(name, *args, **kw, layers=building_layers),
             func(name + '_anim', *args, **kw, layers=('ANIMATED/*',)),
-        )
+        ))
 
     def full_stage(frame):
         ground1 = func('ground1', 2, 2, 192, 161, xofs=-126, yofs=-34-32, layers=ground_layers, frame=frame)
