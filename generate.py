@@ -60,6 +60,22 @@ for feature in (grf.RV, grf.TRAIN, grf.SHIP, grf.AIRCRAFT):
 g.add(grf.Label(0, b''))
 
 
+# ------------------------------ Cursors ------------------------------
+
+# TODO Animated "Zzzz" waiting cursor if possible, otherwise use better colors than anim-palette
+# TODO compositing icons onto cursor
+# TODO sprite width is 104/2=52 to be able to add wider icons such as station
+@lib.template(grf.FileSprite)
+def tmpl_cursors(func, z, frame):
+    grid = lib.RectGrid(func=func, width=48 * z, height=32 * z, padding=z)
+    grid.set_default(frame=frame)
+    return [grid(str(i), (0, 0))]
+
+for i in range(2):
+    lib.SpriteCollection(f'cursor{i}') \
+        .add(ICON_DIR / 'cursor.ase', tmpl_cursors, ZOOM_2X, i + 1) \
+        .replace_old(i)
+
 # ------------------------------ Ground Tiles ------------------------------
 
 @lib.template(grf.FileSprite)
