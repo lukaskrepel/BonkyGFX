@@ -1180,6 +1180,31 @@ oil_wells[0].compose_on(ground[0]).replace_old(2173)
 oil_wells[1:].replace_old(2174)
 
 
+# TODO Plastic fountain template is very bad, even though the current TILE is not animated,
+# it would be nice to use the frames in case it changes into animation later.
+@lib.template(grf.FileSprite)
+def tmpl_plastic_fountains(func, z):
+    grid = lib.HouseGrid(func=func, height=75, z=z)
+    f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
+    return [
+        func('ground', 2, 90, 128, 63, xofs=-31 * z, yofs=0, layers=('TILE/*', 'Spriteborder'), frame=1)
+    ] + [f(i + 1) for i in range(8)]
+
+
+# TODO Plastic fountain creation is very bad
+plastic_fountain = lib.SpriteCollection('plastic_fountain') \
+    .add(INDUSTRY_DIR / 'plasticfountain_2x.ase', tmpl_plastic_fountains, ZOOM_2X)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4721)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4722)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4723)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4724)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4725)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4726)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4727)
+plastic_fountain[0].compose_on(ground[0]).replace_old(4728)
+plastic_fountain[1:].replace_old(4729)
+
+
 @lib.template(grf.FileSprite)
 def tmpl_bank(func, z, frame):
     assert z == 2
