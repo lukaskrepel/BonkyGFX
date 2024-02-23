@@ -40,24 +40,25 @@ g = grf.NewGRF(
     version=0,
 )
 
-g.add_bool_parameter(
-    name='Enable vehicles from all climates',
-    description='Sets the climate availability for all vehicles (useful for debugging)',
-    default=False,
-)
+# TODO (I commented this part out as it was often giving me all vehicles even though the paremeter was set to false)
+# g.add_bool_parameter(
+#     name='Enable vehicles from all climates',
+#     description='Sets the climate availability for all vehicles (useful for debugging)',
+#     default=False,
+# )
 
-g.add(grf.If(is_static=False, variable=0x01, condition=0x03, value=1, skip=0, varsize=1))  # skip if vehicle param not enabled
-for feature in (grf.RV, grf.TRAIN, grf.SHIP, grf.AIRCRAFT):
-    count = grf.DisableDefault.DISABLE_INFO[feature][0]
-    g.add(grf.DefineMultiple(
-        feature=feature,
-        first_id=0,
-        count=count,
-        props={
-            'climates_available': [grf.ALL_CLIMATES] * count,
-        }
-    ))
-g.add(grf.Label(0, b''))
+# g.add(grf.If(is_static=False, variable=0x01, condition=0x03, value=1, skip=0, varsize=1))  # skip if vehicle param not enabled
+# for feature in (grf.RV, grf.TRAIN, grf.SHIP, grf.AIRCRAFT):
+#     count = grf.DisableDefault.DISABLE_INFO[feature][0]
+#     g.add(grf.DefineMultiple(
+#         feature=feature,
+#         first_id=0,
+#         count=count,
+#         props={
+#             'climates_available': [grf.ALL_CLIMATES] * count,
+#         }
+#     ))
+# g.add(grf.Label(0, b''))
 
 
 # ------------------------------ Cursors ------------------------------
