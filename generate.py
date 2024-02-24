@@ -310,8 +310,11 @@ for i in range(18):
 tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus_2x.ase')
 tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
 
-for i in range(9):
+for i in range(7):
     tree('toyland_tree', 1947 + i * 7, TREE_DIR / 'toyland_tree_2x.ase')
+
+tree('toyland_tree', 1947 + 7 * 7, TREE_DIR / 'battery_tree_2x.ase')
+tree('toyland_tree', 1947 + 7 * 8, TREE_DIR / 'cottoncandy_tree_2x.ase')
 
 # ------------------------------ Road Vehicles ------------------------------
 
@@ -975,6 +978,27 @@ lib.SpriteCollection('forest') \
     .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
     .add(INDUSTRY_DIR / 'cottoncandyforest_2x.ase', tmpl_forest, ZOOM_2X, climate=TOYLAND) \
     .replace_old(2072)
+
+
+# TODO This is basically a copy of the forest template except for the tile sprite,
+# not sure if that's the proper way to do this or to manipulate the forest template to be able to...
+# skip the ground sprite for the battery farm.
+@lib.template(grf.FileSprite)
+def tmpl_batteryfarm(func, z):
+    grid = lib.HouseGrid(func=func, height=75, z=z)
+    ground_layers = ('TILE/*', 'Spriteborder')
+    return [
+        grid('growth1', (0, 0), frame=1, ignore_layers=ground_layers),
+        grid('growth2', (0, 0), frame=2, ignore_layers=ground_layers),
+        grid('growth3', (0, 0), frame=3, ignore_layers=ground_layers),
+        grid('grown', (0, 0), frame=4, ignore_layers=ground_layers),
+        grid('logs', (0, 0), frame=5, ignore_layers=ground_layers),
+    ]
+
+
+lib.SpriteCollection('batteryfarm') \
+    .add(INDUSTRY_DIR / 'batteryfarm_2x.ase', tmpl_batteryfarm, ZOOM_2X) \
+    .replace_old(4686)
 
 
 @lib.template(grf.FileSprite)
