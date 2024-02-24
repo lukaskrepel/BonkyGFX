@@ -364,9 +364,9 @@ def replace_rv_generation(path2x, generation):
     tmpl('rubber_loaded', 1, 13).replace_old(3468 + o)
 
 
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_2x.ase', 1)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_2x.ase', 2)
-replace_rv_generation(VEHICLE_DIR / 'road_lorries_2x.ase', 3)
+replace_rv_generation(VEHICLE_DIR / 'road_trucks_2x.ase', 1)
+replace_rv_generation(VEHICLE_DIR / 'road_trucks_2x.ase', 2)
+replace_rv_generation(VEHICLE_DIR / 'road_trucks_2x.ase', 3)
 lib.SpriteCollection('bus_gen1') \
     .add(VEHICLE_DIR / 'road_buses_2x.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 0, 0) \
     .replace_old(3284)
