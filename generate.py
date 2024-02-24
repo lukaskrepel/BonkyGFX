@@ -973,6 +973,7 @@ def tmpl_forest(func, z):
 lib.SpriteCollection('forest') \
     .add(INDUSTRY_DIR / 'forest_temperate_2x.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
     .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
+    .add(INDUSTRY_DIR / 'cottoncandyforest_2x.ase', tmpl_forest, ZOOM_2X, climate=TOYLAND) \
     .replace_old(2072)
 
 
