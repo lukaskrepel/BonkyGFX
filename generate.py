@@ -178,7 +178,8 @@ desert_and_snow.replace_old(4550)
 
 general_concrete = make_ground('general_concrete', 7)
 general_concrete[0].replace_old(1420)
-
+general_concrete[0].replace_old(4675) # TODO Amateur code. Toyland extra concrete
+general_concrete[0].replace_old(4676) # TODO Amateur code. Toyland extra concrete
 
 @lib.template(grf.FileSprite)
 def tmpl_foundations(func, z, frame=1):
