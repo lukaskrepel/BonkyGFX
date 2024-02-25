@@ -780,12 +780,14 @@ def tmpl_statues(func, z):
         grid('statue', (0, 0), bb=(6, 5)),
         animated('fountain', grid, (1, 0), bb=(3, 3)),
         cc(grid('owner_statue', (2, 0), bb=(0, 0))),
+        grid('statue', (3, 0), bb=(6, 5)), #TODO Amateur code. Toyland statue 4694 (needs y offset)
     ]
 
 statues = lib.SpriteCollection('house') \
     .add(TOWN_DIR / 'statues_2x.ase', tmpl_statues, ZOOM_2X)
 statues[:2].replace_old(1454)
 statues[2].replace_old(2632)
+statues[3].replace_old(4694) #TODO Amateur code. Toyland statue 4694 (needs y offset)
 
 
 @lib.template(grf.FileSprite)
