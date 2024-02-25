@@ -1206,8 +1206,9 @@ oil_wells[0].compose_on(ground[0]).replace_old(2173)
 oil_wells[1:].replace_old(2174)
 
 
-# TODO Plastic fountain template is very bad, even though the current TILE is not animated,
-# it would be nice to use the frames in case it changes into animation later.
+# TODO Check amateur code, Plastic Fountain template
+# Even though the current TILE is not animated,
+# it would be nice to use the frames anyway in case it changes into animation later.
 @lib.template(grf.FileSprite)
 def tmpl_plastic_fountains(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
@@ -1217,7 +1218,7 @@ def tmpl_plastic_fountains(func, z):
     ] + [f(i + 1) for i in range(8)]
 
 
-# TODO Plastic fountain creation is very bad
+# TODO Check amateur code, Plastic Fountain
 plastic_fountain = lib.SpriteCollection('plastic_fountain') \
     .add(INDUSTRY_DIR / 'plasticfountain_2x.ase', tmpl_plastic_fountains, ZOOM_2X)
 plastic_fountain[0].compose_on(ground[0]).replace_old(4721)
@@ -1229,6 +1230,20 @@ plastic_fountain[0].compose_on(ground[0]).replace_old(4726)
 plastic_fountain[0].compose_on(ground[0]).replace_old(4727)
 plastic_fountain[0].compose_on(ground[0]).replace_old(4728)
 plastic_fountain[1:].replace_old(4729)
+
+
+# TODO Check amateur code, Cola Wells template
+@lib.template(grf.FileSprite)
+def tmpl_cola_wells(func, z):
+    grid = lib.HouseGrid(func=func, height=75, z=z)
+    f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
+    return [f(i + 1) for i in range(3)]
+
+
+# TODO Check amateur code, Cola Wells
+cola_wells = lib.SpriteCollection('cola_wells') \
+    .add(INDUSTRY_DIR / 'colawells_2x.ase', tmpl_cola_wells, ZOOM_2X)
+cola_wells.replace_old(4691)
 
 
 @lib.template(grf.FileSprite)
