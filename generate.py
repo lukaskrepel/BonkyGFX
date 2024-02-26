@@ -831,6 +831,87 @@ houses[10:13].replace_old(1466)  # 15
 houses[13:19].replace_old(1540)  # 30
 
 
+# TODO Amateur code, toyhouses
+# 4627 first stage of first toy house
+# 4628
+# 4629 final stage of first toy house
+# --
+# 4674 final stage of last toy house
+@lib.template(grf.FileSprite)
+def tmpl_houses_toyland(func, z):
+    grid = lib.HouseGrid(func=func, height=100, z=z)
+    return [
+        grid('church_stage1', (0, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('church_stage2', (0, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('church_stage3', (0, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (1, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (1, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (1, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (2, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (2, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (2, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (3, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (3, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (3, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (4, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (4, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (4, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (5, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (5, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (5, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (6, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (6, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (6, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (7, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (7, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (7, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (0, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (0, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (0, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (1, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (1, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (1, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (2, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (2, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (2, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (3, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (3, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (3, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (4, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (4, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (4, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (5, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (5, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (5, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (6, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (6, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (6, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+
+        grid('bla_stage1', (7, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage2', (7, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('bla_stage3', (7, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+    ]
+
+# TODO Amateur Code
+houses_toyland = lib.SpriteCollection('toyhouse') \
+    .add(TOWN_DIR / 'houses_toyland_2x.ase', tmpl_houses_toyland, ZOOM_2X) \
+houses_toyland[0:23].replace_old(4627)
+
+
 @lib.template(grf.FileSprite)
 def tmpl_transmitter(func, z):
     grid = lib.HouseGrid(func=func, height=123, z=z)
