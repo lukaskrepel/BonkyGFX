@@ -782,7 +782,7 @@ def tmpl_statues(func, z):
         animated('fountain', grid, (1, 0), bb=(3, 3)),
         cc(grid('owner_statue', (2, 0), bb=(0, 0))),
         grid('toy_statue', (3, 0), bb=(6, 5)), #TODO Amateur code. Toyland statue 4694 (needs y offset)
-        grid('piggy_bank', (3, 0), bb=(6, 5)), #TODO Amateur code. Toyland piggy bank 4698 (needs y offset)
+        grid('piggy_bank', (4, 0), bb=(6, 5)), #TODO Amateur code. Toyland piggy bank 4698 (needs y offset)
     ]
 
 statues = lib.SpriteCollection('house') \
@@ -873,9 +873,12 @@ def tmpl_houses_toyland(func, z):
         grid('bla_stage2', (7, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
         grid('bla_stage3', (7, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
 
-        grid('bla_stage1', (0, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('bla_stage2', (0, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('bla_stage3', (0, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('shoe-left_stage1', (8, 0), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('shoe-right_stage1', (0, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('shoe-left_stage2', (8, 0), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('shoe-right_stage2', (0, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('shoe-left_stage3', (8, 0), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('shoe-right_stage3', (0, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
 
         grid('bla_stage1', (1, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
         grid('bla_stage2', (1, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
@@ -901,15 +904,19 @@ def tmpl_houses_toyland(func, z):
         grid('bla_stage2', (6, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
         grid('bla_stage3', (6, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
 
-        grid('bla_stage1', (7, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('bla_stage2', (7, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('bla_stage3', (7, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('teapot_stage1', (7, 1), bb=(1, 3), frame=1, layers=('BUILDING/*', 'Spriteborder')),
+        grid('teapot_stage2', (7, 1), bb=(1, 3), frame=2, layers=('BUILDING/*', 'Spriteborder')),
+        grid('teapot_stage3', (7, 1), bb=(1, 3), frame=3, layers=('BUILDING/*', 'Spriteborder')),
     ]
+
+    # Teapot copy = 4695 4696 4697
 
 # TODO Amateur Code
 houses_toyland = lib.SpriteCollection('toyhouse') \
     .add(TOWN_DIR / 'houses_toyland_2x.ase', tmpl_houses_toyland, ZOOM_2X) \
-    .replace_old(4627)
+    #.replace_old(4627)
+houses_toyland[:48].replace_old(4627)
+houses_toyland[48:51].replace_old(4695)
 
 
 @lib.template(grf.FileSprite)
