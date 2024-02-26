@@ -909,7 +909,7 @@ def tmpl_houses_toyland(func, z):
 # TODO Amateur Code
 houses_toyland = lib.SpriteCollection('toyhouse') \
     .add(TOWN_DIR / 'houses_toyland_2x.ase', tmpl_houses_toyland, ZOOM_2X) \
-houses_toyland[0:23].replace_old(4627)
+    .replace_old(4627)
 
 
 @lib.template(grf.FileSprite)
