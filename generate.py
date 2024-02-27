@@ -1281,6 +1281,28 @@ lib.SpriteCollection('factory') \
     .replace_old(2146)
 
 
+# TODO Amateur Code
+@lib.template(grf.FileSprite)
+def tmpl_candy_factory(func, z):
+    assert z == 2
+    return [
+        func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
+        func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building2_stage2', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2),
+        func('building3_stage2', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
+        cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        grf.EMPTY_SPRITE, # Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
+        cc(func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+    ]
+
+# TODO Amateur Code
+candy_factory = lib.SpriteCollection('candy_factory') \
+    .add(INDUSTRY_DIR / 'factory_2x.ase', tmpl_candy_factory, ZOOM_2X) \
+    .replace_old(4677)
+
+
 @lib.template(grf.FileSprite)
 def tmpl_oil_wells(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
