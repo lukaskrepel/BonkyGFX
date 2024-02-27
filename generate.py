@@ -1375,6 +1375,36 @@ for i in range(0, 3):
         .replace_old(2293 + 16 * i)
 
 
+@lib.template(grf.FileSprite)
+def tmpl_toy_factory(func, z):
+    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(4, 2), xofs=-256, yofs=-135)
+    grid.set_default(layers=('BUILDING', 'BUILDING_INSIDE', 'Spriteborder'))
+    # building stage 4708
+    # grid('', (0, 1)),
+    # grid('', (1, 1)), # back
+    # grid('', (2, 1)),
+    # grid('', (3, 1)),
+    # no 3, 0
+    assert z == 2
+    toy_grid = lib.RectGrid(func=func, width=26, height=41, padding=z)
+    toy_grid.set_default(layers='OBJECTS')
+    return [
+        grid('0_1', (0, 1)),
+        grid('1_1_back', (1, 1), layers=('BUILDING_INSIDE', 'Spriteborder')),
+        grid('2_1', (2, 1)),
+        grid('3_1', (3, 1)),
+        grid('3_0', (3, 0)),
+        grid('1_1_front', (1, 1), xofs=0, yofs=-110, layers=('BUILDING', 'Spriteborder')),  # WARNING relative offset nonsense
+        func('stomper', 198, 2, 54, 196, xofs=-32, yofs=-64, layers='STOMPER'),  # NOTE positioned randomly
+        toy_grid('lump', (0, 0), xofs=-32, yofs=-100 + 16 - 32),  # NOTE positioned randomly
+        toy_grid('duck', (1, 0), xofs=-32, yofs=-100 + 16),  # NOTE positioned randomly
+    ]
+
+lib.SpriteCollection('toy_factory') \
+    .add(INDUSTRY_DIR / 'toyfactory_2x.ase', tmpl_toy_factory, ZOOM_2X, name='toy_factory') \
+    .replace_old(4712)
+
+
 # ------------------------------ User Interface ------------------------------
 
 @lib.template(grf.FileSprite)
