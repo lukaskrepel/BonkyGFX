@@ -198,6 +198,42 @@ class HouseGrid(BaseGrid):
         return super().__call__(name, fx, fy, width=self.zwidth, height=self.zheight, xofs=zxofs, yofs=zyofs, **kw)
 
 
+class BuildingSlicesGrid(BaseGrid):
+    def __init__(self, *, func, offset, z=1, tile_size=(1, 1), xofs=0, yofs=0, **kw):
+        super().__init__(func=func, **kw)
+        self.offset = offset
+        self.tile_size = tile_size
+        self.z = z
+        self.xofs = xofs
+        self.yofs = yofs
+
+    def __call__(self, name, grid_pos, bb=None, **kw):
+        gx, gy = grid_pos
+        has_left = (gx == self.tile_size[0] - 1)
+        has_right = (gy == self.tile_size[1] - 1)
+        assert has_left or has_right
+
+        tile_ws = 32 * self.z
+        tile_hs = 16 * self.z
+        x = -self.xofs - 31 * self.z + (gy - gx) * tile_ws
+        y = -self.yofs + (gx + gy) * tile_hs
+        MAX_HEIGHT = 200  # above ground
+        h = min(MAX_HEIGHT, y - self.offset[1])
+        xofs = kw.pop('xofs', None)
+        yofs = kw.pop('yofs', None)
+        kw = {**self.kw, **kw}
+        return super().__call__(
+            name,
+            x + tile_ws * (not has_left),
+            y - h,
+            width=tile_ws * (has_left + has_right),
+            height=2 * tile_hs - 1 + h,
+            xofs=-31 * self.z if has_left else self.z if xofs is None else xofs,
+            yofs=-h - (self.z // 2) if yofs is None else yofs,
+            **kw
+        )
+
+
 old_sprites = defaultdict(dict)
 new_sprites = defaultdict(lambda: defaultdict(dict))
 old_sprites_collection = defaultdict(lambda: defaultdict(lambda: (10000, 0)))
