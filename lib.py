@@ -420,14 +420,57 @@ class SpriteCollection:
             res.append(grf.AlternativeSprites(x1, x2))
         return res
 
+    def reduce(self, keys):
+        if not keys:
+            return self
+
+        matches = {}
+        for zoom, kw, sprites in self.sprites:
+
+            # Find common keys
+            match = []
+            for k, v in kw.items():
+                if k in keys:
+                    if v != keys[k]:
+                        continue  # Incompatible keys are filtered out
+                    match.append(k)
+            m = frozenset(match)
+
+            if m in matches:
+                matches[m].append((zoom, kw, sprites))
+                continue
+
+            # There is a better match already
+            if any(m.issubset(mi) for mi in matches.keys()):
+                continue
+
+            # Delete worse matches
+            for mi in list(matches.keys()):
+                if mi.issubset(m):
+                    del matches[mi]
+
+            matches[m] = [(zoom, kw, sprites)]
+
+        res = SpriteCollection(self.name)
+        for sl in matches.values():
+            res.sprites.extend(sl)
+        return res
+
     def replace_old(self, first_id, **kw):
-        for k in self.get_keys():
-            sprites = self.get_exact_sprites(k)
-            replace_old(self, first_id, sprites, **dict(k), **kw)
+        reduced = self.reduce(kw)
+        for key in reduced.get_keys():
+            sprites = reduced.get_exact_sprites(key)
+            cur_kw = kw.copy()
+            for k, v in key:
+                if k in cur_kw:
+                    assert cur_kw[k] == v, (k, cur_kw[k], v)
+                cur_kw[k] = v
+            replace_old(self, first_id, sprites, **cur_kw)
 
     def replace_new(self, set_type, offset, **kw):
+        reduced = self.reduce(kw)
         for k in self.get_keys():
-            sprites = self.get_exact_sprites(k)
+            sprites = reduced.get_exact_sprites(k)
             replace_new(self, set_type, offset, sprites, **dict(k), **kw)
 
 
