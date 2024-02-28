@@ -781,16 +781,16 @@ def tmpl_statues(func, z):
         grid('statue', (0, 0), bb=(6, 5)),
         animated('fountain', grid, (1, 0), bb=(3, 3)),
         cc(grid('owner_statue', (2, 0), bb=(0, 0))),
-        grid('toy_statue', (3, 0), bb=(6, 5)), #TODO Amateur code. Toyland statue 4694 (needs y offset)
-        grid('piggy_bank', (4, 0), bb=(6, 5)), #TODO Amateur code. Toyland piggy bank 4698 (needs y offset)
+        grid('toy_statue', (3, 0), bb=(0, 0))
+        grid('piggy_bank', (4, 0), bb=(0, 0))
     ]
 
 statues = lib.SpriteCollection('house') \
     .add(TOWN_DIR / 'statues.ase', tmpl_statues, ZOOM_2X)
 statues[:2].replace_old(1454)
 statues[2].replace_old(2632)
-statues[3].replace_old(4694) # TODO Amateur code. Toyland statue 4694 (needs y offset)
-statues[4].replace_old(4698) # TODO Amateur code. Piggy bank 4698 (needs y offset)
+statues[3].replace_old(4694)
+statues[4].replace_old(4698)
 
 @lib.template(grf.FileSprite)
 def tmpl_shops_and_offices(func, z):
