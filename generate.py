@@ -781,8 +781,8 @@ def tmpl_statues(func, z):
         grid('statue', (0, 0), bb=(6, 5)),
         animated('fountain', grid, (1, 0), bb=(3, 3)),
         cc(grid('owner_statue', (2, 0), bb=(0, 0))),
-        grid('toy_statue', (3, 0), bb=(0, 0))
-        grid('piggy_bank', (4, 0), bb=(0, 0))
+        grid('toy_statue', (3, 0), bb=(0, 0)),
+        grid('piggy_bank', (4, 0), bb=(0, 0)),
     ]
 
 statues = lib.SpriteCollection('house') \
