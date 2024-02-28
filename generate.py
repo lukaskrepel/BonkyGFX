@@ -1,5 +1,6 @@
 import itertools
 import pathlib
+from collections import defaultdict
 from typing import Optional, Union
 
 from typeguard import typechecked
@@ -162,25 +163,23 @@ for i in range(3):
              tmpl_groundtiles, ZOOM_2X, 15 + i) \
         .replace_old(4493 + i * 19, climate=ARCTIC)
 
-# TODO default to tropical sprites on all climates
 lib.SpriteCollection('desert_and_snow_transition') \
     .add(TERRAIN_DIR / 'groundtiles.ase',
-         tmpl_groundtiles, ZOOM_2X, 26, climate=TROPICAL) \
+         tmpl_groundtiles, ZOOM_2X, 26) \
     .replace_old(4512)
 
-# TODO default to tropical sprites on all climates
 desert_and_snow = lib.SpriteCollection('desert_and_snow') \
     .add(TERRAIN_DIR / 'groundtiles.ase',
-         tmpl_groundtiles, ZOOM_2X, 15 + 3, climate=ARCTIC) \
+         tmpl_groundtiles, ZOOM_2X, 27) \
     .add(TERRAIN_DIR / 'groundtiles.ase',
-         tmpl_groundtiles, ZOOM_2X, 27, climate=TROPICAL)
+         tmpl_groundtiles, ZOOM_2X, 15 + 3, climate=ARCTIC)
 desert_and_snow.replace_old(4550)
 
 general_concrete = make_ground('general_concrete', 7)
 general_concrete[0].replace_old(1420)
 general_concrete[0].replace_old(4675)  # Toyland extra concrete
 general_concrete[0].replace_old(4676)  # Toyland extra concrete
-general_concrete[0].replace_old(2022, climate=TEMPERATE)  # Some toyland industries use coal mine dirt tile, replace it with concrete
+general_concrete[0].replace_old(2022, climate=TOYLAND)  # Some toyland industries use coal mine dirt tile, replace it with concrete
 
 
 @lib.template(grf.FileSprite)
@@ -518,9 +517,10 @@ road = lib.SpriteCollection('road') \
 ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
 road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
 road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
+desert_and_snow_road = road.compose_on(desert_and_snow, ROAD_COMPOSITION)
 
-# TODO do not replace in non-tropical
-road.compose_on(desert_and_snow, ROAD_COMPOSITION).replace_old(1351)
+desert_and_snow_road.unspecify(climate=ARCTIC).replace_old(1351)  # default sprite - snowy road
+desert_and_snow_road.replace_old(1351, climate=TROPICAL)  # in tropic - desert road
 
 
 @lib.template(lib.CCReplacingFileSprite)
@@ -1067,9 +1067,8 @@ def tmpl_forest(func, z):
 
 
 # TODO Why are 128/322 forest sprites too?
-# TODO remove climate=TEMPERATE? (but ensure the right order)
 lib.SpriteCollection('forest') \
-    .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
+    .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X) \
     .add(INDUSTRY_DIR / 'forest_arctic.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
     .add(INDUSTRY_DIR / 'cottoncandyforest.ase', tmpl_forest, ZOOM_2X, climate=TOYLAND) \
     .replace_old(2072)
@@ -1592,7 +1591,41 @@ def group_ranges(sprites):
 
 
 offset_sprites = set()
-for mode in set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()):
+modes = list(set(lib.old_sprites.keys()) | set(lib.new_sprites.keys()))
+
+# Toposort
+covers = defaultdict(list)
+ncovered = [0] * len(modes)
+for i, mi in enumerate(modes):
+    mikeys = frozenset(x[0] for x in mi)
+    for j, mj in enumerate(modes):
+        if i == j:
+            continue
+        mjkeys = frozenset(x[0] for x in mj)
+        if mikeys == mjkeys:
+            continue
+        if mikeys.issubset(mjkeys):
+            ncovered[i] += 1
+            covers[j].append(i)
+
+unordered = list(range(len(modes)))
+modes_order = []
+while unordered:
+    new_unordered = []
+    for k in unordered:
+        if ncovered[k] > 0:
+            new_unordered.append(k)
+            continue
+
+        modes_order.append(k)
+        for i in covers[k]:
+            ncovered[i] -= 1
+
+    unordered = new_unordered
+
+
+for i in reversed(modes_order):
+    mode = modes[i]
     ranges = list(group_ranges(lib.old_sprites[mode]))
     if not ranges and mode not in lib.new_sprites:
         continue

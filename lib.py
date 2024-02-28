@@ -420,7 +420,7 @@ class SpriteCollection:
             res.append(grf.AlternativeSprites(x1, x2))
         return res
 
-    def reduce(self, keys):
+    def _reduce(self, unspecify, **keys):
         if not keys:
             return self
 
@@ -449,6 +449,9 @@ class SpriteCollection:
                 if mi.issubset(m):
                     del matches[mi]
 
+            if unspecify:
+                kw = {k: v for k, v in kw.items() if k not in keys}
+
             matches[m] = [(zoom, kw, sprites)]
 
         res = SpriteCollection(self.name)
@@ -456,8 +459,14 @@ class SpriteCollection:
             res.sprites.extend(sl)
         return res
 
+    def reduce(self, **keys):
+        return self._reduce(False, **keys)
+
+    def unspecify(self, **keys):
+        return self._reduce(True, **keys)
+
     def replace_old(self, first_id, **kw):
-        reduced = self.reduce(kw)
+        reduced = self.reduce(**kw)
         for key in reduced.get_keys():
             sprites = reduced.get_exact_sprites(key)
             cur_kw = kw.copy()
@@ -468,7 +477,7 @@ class SpriteCollection:
             replace_old(self, first_id, sprites, **cur_kw)
 
     def replace_new(self, set_type, offset, **kw):
-        reduced = self.reduce(kw)
+        reduced = self.reduce(**kw)
         for k in self.get_keys():
             sprites = reduced.get_exact_sprites(k)
             replace_new(self, set_type, offset, sprites, **dict(k), **kw)
