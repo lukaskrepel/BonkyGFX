@@ -13,9 +13,12 @@ import lib
 cc = lib.MagentaToCC
 struct = lib.MagentaToStruct
 
-def animated(name, grid, *args, **kw):
+def animated(name, grid, *args, layers=None, ignore_layers=(), **kw):
+    grid_args = {}
+    if isinstance(grid, lib.BaseGrid):
+        grid_args = {'keep_state': True}
     return lib.AlphaAndMask(
-        grid(name + '_rgb', *args, **kw, ignore_layers=('ANIMATED',), keep_state=True),
+        grid(name + '_rgb', *args, **kw, layers=layers, ignore_layers=tuple(ignore_layers) + ('ANIMATED',), **grid_args),
         grid(name + '_anim', *args, **kw, layers=('ANIMATED',)),
         name=name,
     )
@@ -1320,7 +1323,7 @@ def tmpl_toy_shop(func, z):
         func('building3_stage2', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
         func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2),
         cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
-        cc(func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        cc(animated('building3_stage3', func, 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
         grf.EMPTY_SPRITE, # Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
     ]
 
