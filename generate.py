@@ -896,11 +896,11 @@ def tmpl_houses_toyland(func, z):
 
         grid('shops-and-offices1_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
         grid('shops-and-offices1_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shops-and-offices1_stage3', (4, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        animated('shops-and-offices2_stage3', grid, (4, 1), frame=3),
 
         grid('shops-and-offices2_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
         grid('shops-and-offices2_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shops-and-offices2_stage3', (5, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        animated('shops-and-offices2_stage3', grid, (5, 1), frame=3),
 
         grid('tall-office3_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
         grid('tall-office3_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
@@ -1400,7 +1400,7 @@ plastic_fountain[1:].replace_old(4729)
 @lib.template(grf.FileSprite)
 def tmpl_cola_wells(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
+    f = lambda frame: animated('frame{i}', grid, (0, 0), bb=(0, 0), frame=frame)
     return [f(i + 1) for i in range(3)]
 
 
