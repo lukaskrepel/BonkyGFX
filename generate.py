@@ -129,13 +129,13 @@ def tmpl_groundtiles_extra(name, paths, zoom, *args):
 def make_ground(name, frame, *, extra=False):
     tmpl = tmpl_groundtiles_extra if extra else tmpl_groundtiles
     return lib.SpriteCollection(name) \
-        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+        .add(TERRAIN_DIR / 'groundtiles.ase',
              tmpl, ZOOM_2X, frame, climate=TEMPERATE) \
-        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+        .add(TERRAIN_DIR / 'groundtiles.ase',
              tmpl, ZOOM_2X, frame + 7, climate=ARCTIC) \
-        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+        .add(TERRAIN_DIR / 'groundtiles.ase',
              tmpl, ZOOM_2X, frame + 18, climate=TROPICAL) \
-        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+        .add(TERRAIN_DIR / 'groundtiles.ase',
              tmpl, ZOOM_2X, frame + 27, climate=TOYLAND)
 
 
@@ -151,28 +151,28 @@ make_ground('rocks', 6).replace_old(4023)
 
 for i in range(9):
     lib.SpriteCollection(f'farmland{i}') \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 1, 5, climate=TEMPERATE) \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 10, 5, climate=ARCTIC) \
-        .add(TERRAIN_DIR / 'farmtiles_2x.ase', tmpl_groundtiles, ZOOM_2X, i + 19, 5, climate=TROPICAL) \
+        .add(TERRAIN_DIR / 'farmtiles.ase', tmpl_groundtiles, ZOOM_2X, i + 1, 5, climate=TEMPERATE) \
+        .add(TERRAIN_DIR / 'farmtiles.ase', tmpl_groundtiles, ZOOM_2X, i + 10, 5, climate=ARCTIC) \
+        .add(TERRAIN_DIR / 'farmtiles.ase', tmpl_groundtiles, ZOOM_2X, i + 19, 5, climate=TROPICAL) \
         .replace_old(4126 + 19 * i)
 
 for i in range(3):
     lib.SpriteCollection(f'snow_{25 * i}') \
-        .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+        .add(TERRAIN_DIR / 'groundtiles.ase',
              tmpl_groundtiles, ZOOM_2X, 15 + i) \
         .replace_old(4493 + i * 19, climate=ARCTIC)
 
 # TODO default to tropical sprites on all climates
 lib.SpriteCollection('desert_and_snow_transition') \
-    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+    .add(TERRAIN_DIR / 'groundtiles.ase',
          tmpl_groundtiles, ZOOM_2X, 26, climate=TROPICAL) \
     .replace_old(4512)
 
 # TODO default to tropical sprites on all climates
 desert_and_snow = lib.SpriteCollection('desert_and_snow') \
-    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+    .add(TERRAIN_DIR / 'groundtiles.ase',
          tmpl_groundtiles, ZOOM_2X, 15 + 3, climate=ARCTIC) \
-    .add(TERRAIN_DIR / 'groundtiles_2x.ase',
+    .add(TERRAIN_DIR / 'groundtiles.ase',
          tmpl_groundtiles, ZOOM_2X, 27, climate=TROPICAL)
 desert_and_snow.replace_old(4550)
 
@@ -212,10 +212,10 @@ def tmpl_foundations(func, z, frame=1):
 
 
 foundations = lib.SpriteCollection('foundations') \
-    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 1, climate=TEMPERATE) \
-    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 2, climate=ARCTIC) \
-    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 3, climate=TROPICAL) \
-    .add(TERRAIN_DIR / 'foundations_2x.ase', tmpl_foundations, ZOOM_2X, 4, climate=TOYLAND)
+    .add(TERRAIN_DIR / 'foundations.ase', tmpl_foundations, ZOOM_2X, 1, climate=TEMPERATE) \
+    .add(TERRAIN_DIR / 'foundations.ase', tmpl_foundations, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(TERRAIN_DIR / 'foundations.ase', tmpl_foundations, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(TERRAIN_DIR / 'foundations.ase', tmpl_foundations, ZOOM_2X, 4, climate=TOYLAND)
 foundations[:14].replace_old(990)
 foundations[14:].replace_new(0x06, 0)
 
@@ -259,7 +259,7 @@ def tmpl_airport_tiles(func, z):
 
 AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
 airport_tiles = lib.SpriteCollection('airport_modern') \
-    .add(INFRA_DIR / 'airport_modern_2x.ase',
+    .add(INFRA_DIR / 'airport_modern.ase',
         tmpl_airport_tiles, ZOOM_2X) \
     .compose_on(ground, AIRPORT_COMPOSITION)
 airport_tiles[:16].replace_old(2634)
@@ -272,7 +272,7 @@ def tmpl_tile_selection(name, paths, zoom, *args):
 
 
 lib.SpriteCollection('tile_selection') \
-    .add(TERRAIN_DIR / 'selectiontiles_2x.ase', tmpl_tile_selection, ZOOM_2X) \
+    .add(TERRAIN_DIR / 'selectiontiles.ase', tmpl_tile_selection, ZOOM_2X) \
     .replace_old(752)
 
 # ------------------------------ Trees ------------------------------
@@ -299,23 +299,23 @@ TREE_RANGES = [
 ]
 
 for i in range(19):
-    tree('temperate_tree', 1576 + i * 7, TREE_DIR / 'temperate_tree_2x.ase')
+    tree('temperate_tree', 1576 + i * 7, TREE_DIR / 'temperate_tree.ase')
 
 for i in range(8):
-    tree('arctic_tree', 1709 + i * 7, TREE_DIR / 'arctic_tree_2x.ase', ignore_layers='SNOW/*')
-    tree('arctic_tree_snow', 1765 + i * 7, TREE_DIR / 'arctic_tree_2x.ase')
+    tree('arctic_tree', 1709 + i * 7, TREE_DIR / 'arctic_tree.ase', ignore_layers='SNOW/*')
+    tree('arctic_tree_snow', 1765 + i * 7, TREE_DIR / 'arctic_tree.ase')
 
 for i in range(18):
-    tree('tropic_tree', 1821 + i * 7, TREE_DIR / 'tropical_tree_2x.ase')
+    tree('tropic_tree', 1821 + i * 7, TREE_DIR / 'tropical_tree.ase')
 
-tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus_2x.ase')
-tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus_2x.ase')
+tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus.ase')
+tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus.ase')
 
 for i in range(7):
-    tree('toyland_tree', 1947 + i * 7, TREE_DIR / 'toyland_tree_2x.ase')
+    tree('toyland_tree', 1947 + i * 7, TREE_DIR / 'toyland_tree.ase')
 
-tree('toyland_tree', 1947 + 7 * 7, TREE_DIR / 'battery_tree_2x.ase')
-tree('toyland_tree', 1947 + 7 * 8, TREE_DIR / 'cottoncandy_tree_2x.ase')
+tree('toyland_tree', 1947 + 7 * 7, TREE_DIR / 'battery_tree.ase')
+tree('toyland_tree', 1947 + 7 * 8, TREE_DIR / 'cottoncandy_tree.ase')
 
 # ------------------------------ Road Vehicles ------------------------------
 
@@ -368,17 +368,17 @@ def replace_rv_generation(path2x, generation):
     tmpl('rubber_loaded', 1, 13).replace_old(3468 + o)
 
 
-replace_rv_generation(VEHICLE_DIR / 'road_trucks_2x.ase', 1)
-replace_rv_generation(VEHICLE_DIR / 'road_trucks_2x.ase', 2)
-replace_rv_generation(VEHICLE_DIR / 'road_trucks_2x.ase', 3)
+replace_rv_generation(VEHICLE_DIR / 'road_trucks.ase', 1)
+replace_rv_generation(VEHICLE_DIR / 'road_trucks.ase', 2)
+replace_rv_generation(VEHICLE_DIR / 'road_trucks.ase', 3)
 lib.SpriteCollection('bus_gen1') \
-    .add(VEHICLE_DIR / 'road_buses_2x.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 0, 0) \
+    .add(VEHICLE_DIR / 'road_buses.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 0, 0) \
     .replace_old(3284)
 lib.SpriteCollection('bus_gen2') \
-    .add(VEHICLE_DIR / 'road_buses_2x.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 1, 0) \
+    .add(VEHICLE_DIR / 'road_buses.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 1, 0) \
     .replace_old(3284 - 192)
 lib.SpriteCollection('bus_gen2') \
-    .add(VEHICLE_DIR / 'road_buses_2x.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 2, 0) \
+    .add(VEHICLE_DIR / 'road_buses.ase', tmpl_vehicle_road_8view, ZOOM_2X, 0, 2, 0) \
     .replace_old(3284 + 192)
 
 
@@ -415,7 +415,7 @@ def tmpl_vehicle_rail_8view(func, z, y, frame, **kw):
 
 def wagon(name, sprite_id, y, *, frame):
     lib.SpriteCollection('wagon_' + name) \
-        .add(VEHICLE_DIR / 'rail_wagons_2x.ase', tmpl_vehicle_rail_4view, ZOOM_2X, y, frame) \
+        .add(VEHICLE_DIR / 'rail_wagons.ase', tmpl_vehicle_rail_4view, ZOOM_2X, y, frame) \
         .replace_old(sprite_id)
 
 
@@ -447,7 +447,7 @@ wagon('rubber_full', 2825, 14, frame=2)  # tropical rail rubber wagon (full)
 
 def engine(name, sprite_id, tmpl, y):
     lib.SpriteCollection(name) \
-        .add(VEHICLE_DIR / 'rail_engines_temperate_2x.ase', tmpl, ZOOM_2X, y, 0) \
+        .add(VEHICLE_DIR / 'rail_engines_temperate.ase', tmpl, ZOOM_2X, y, 0) \
         .replace_old(sprite_id)
 
 
@@ -504,13 +504,13 @@ def tmpl_roadtiles(func, z, frame, **kw):
 
 
 road_town = lib.SpriteCollection('road_town') \
-    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase'),
+    .add(lib.aseidx(INFRA_DIR / 'roads.ase'),
          tmpl_roadtiles, ZOOM_2X, 2)
 
 road = lib.SpriteCollection('road') \
-    .add(lib.aseidx(INFRA_DIR / 'roads_2x.ase'),
+    .add(lib.aseidx(INFRA_DIR / 'roads.ase'),
          tmpl_roadtiles, ZOOM_2X, 1) \
-    .add(INFRA_DIR / 'roads_2x.ase',
+    .add(INFRA_DIR / 'roads.ase',
          tmpl_roadtiles, ZOOM_2X, 3, climate=TROPICAL)
 
 ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
@@ -538,7 +538,7 @@ def tmpl_road_depot(func, z):
 
 
 lib.SpriteCollection('road_depot') \
-    .add(STATION_DIR / 'roaddepots_2x.ase',
+    .add(STATION_DIR / 'roaddepots.ase',
          tmpl_road_depot, ZOOM_2X) \
     .replace_old(1408)
 
@@ -577,7 +577,7 @@ def tmpl_truck_stop(func, z):
     ]
 
 truck_stops = lib.SpriteCollection('truck_stop') \
-    .add(STATION_DIR / 'truckstop_2x.ase', tmpl_truck_stop, ZOOM_2X)
+    .add(STATION_DIR / 'truckstop.ase', tmpl_truck_stop, ZOOM_2X)
 truck_stops[:16].replace_old(2708)
 truck_stops[16:].replace_new(0x11, 4)
 
@@ -618,7 +618,7 @@ def tmpl_bus_stop(func, z):
 
 
 bus_stops = lib.SpriteCollection('bus_stop') \
-    .add(STATION_DIR / 'busstop_2x.ase', tmpl_bus_stop, ZOOM_2X)
+    .add(STATION_DIR / 'busstop.ase', tmpl_bus_stop, ZOOM_2X)
 bus_stops[:16].replace_old(2692)
 bus_stops[16:].replace_new(0x11, 0)
 
@@ -668,15 +668,15 @@ def replace_climate_rail_sprites(rails, slope_rails, ballast, ground, first_id):
 
 def replace_rail_type(name, frame, first_id):
     rails = lib.SpriteCollection(name) \
-        .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'), frame)
+        .add(INFRA_DIR / 'rail.ase', tmpl_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'), frame)
     rail_overlays = lib.SpriteCollection(f'{name}_overlay') \
-        .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, ('RAILS/*',), frame)
+        .add(INFRA_DIR / 'rail.ase', tmpl_rails, ZOOM_2X, ('RAILS/*',), frame)
     slope_rails = lib.SpriteCollection(f'{name}_slope') \
-        .add(INFRA_DIR / 'rail_2x.ase', tmpl_slope_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'), frame)
+        .add(INFRA_DIR / 'rail.ase', tmpl_slope_rails, ZOOM_2X, ('RAILS/*','SLEEPERS/*'), frame)
     # sleepers = lib.SpriteCollection('rail_overlays') \
-    #     .add(INFRA_DIR / 'rail_2x.ase', tmpl_rails, ZOOM_2X, (SLEEPERS/*'))
+    #     .add(INFRA_DIR / 'rail.ase', tmpl_rails, ZOOM_2X, (SLEEPERS/*'))
     ballast = lib.SpriteCollection(f'{name}_ballast') \
-        .add(INFRA_DIR / 'rail_2x.ase', tmpl_ballast, ZOOM_2X, ('BALLAST/*',), frame)
+        .add(INFRA_DIR / 'rail.ase', tmpl_ballast, ZOOM_2X, ('BALLAST/*',), frame)
 
     rail_overlays.pick(1, 0, 2, 3, 4, 5).replace_old(first_id)
 
@@ -710,7 +710,7 @@ def tmpl_rail_fences(func, z):
 
 
 lib.SpriteCollection('rail_fence') \
-    .add(INFRA_DIR / 'rail_fences_2x.ase', tmpl_rail_fences, ZOOM_2X) \
+    .add(INFRA_DIR / 'rail_fences.ase', tmpl_rail_fences, ZOOM_2X) \
     .replace_old(1301)
 
 
@@ -745,7 +745,7 @@ def tmpl_water_full(func, z):
 
 
 water = lib.SpriteCollection('water') \
-    .add(TERRAIN_DIR / 'shorelines_2x.ase',
+    .add(TERRAIN_DIR / 'shorelines.ase',
          tmpl_water_full, ZOOM_2X)
 water[0].replace_old(4061)
 
@@ -767,10 +767,10 @@ def tmpl_street_lights(func, z, frame):
 
 
 lib.SpriteCollection('street_lights') \
-    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 1, climate=TEMPERATE) \
-    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 2, climate=ARCTIC) \
-    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 3, climate=TROPICAL) \
-    .add(TOWN_DIR / 'streetlights_2x.ase', tmpl_street_lights, ZOOM_2X, 4, climate=TOYLAND) \
+    .add(TOWN_DIR / 'streetlights.ase', tmpl_street_lights, ZOOM_2X, 1, climate=TEMPERATE) \
+    .add(TOWN_DIR / 'streetlights.ase', tmpl_street_lights, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(TOWN_DIR / 'streetlights.ase', tmpl_street_lights, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(TOWN_DIR / 'streetlights.ase', tmpl_street_lights, ZOOM_2X, 4, climate=TOYLAND) \
     .pick(1, 0) \
     .replace_old(1406)
 
@@ -786,7 +786,7 @@ def tmpl_statues(func, z):
     ]
 
 statues = lib.SpriteCollection('house') \
-    .add(TOWN_DIR / 'statues_2x.ase', tmpl_statues, ZOOM_2X)
+    .add(TOWN_DIR / 'statues.ase', tmpl_statues, ZOOM_2X)
 statues[:2].replace_old(1454)
 statues[2].replace_old(2632)
 statues[3].replace_old(4694) # TODO Amateur code. Toyland statue 4694 (needs y offset)
@@ -822,7 +822,7 @@ def tmpl_shops_and_offices(func, z):
     ]
 
 houses = lib.SpriteCollection('house') \
-    .add(TOWN_DIR / 'shopsandoffices_2x.ase', tmpl_shops_and_offices, ZOOM_2X) \
+    .add(TOWN_DIR / 'shopsandoffices.ase', tmpl_shops_and_offices, ZOOM_2X) \
 
 houses[0:4].replace_old(1536)  # 29
 houses[4:7].replace_old(1467)  # 16
@@ -911,7 +911,7 @@ def tmpl_houses_toyland(func, z):
 
 # TODO Amateur Code
 houses_toyland = lib.SpriteCollection('toyhouse') \
-    .add(TOWN_DIR / 'houses_toyland_2x.ase', tmpl_houses_toyland, ZOOM_2X) \
+    .add(TOWN_DIR / 'houses_toyland.ase', tmpl_houses_toyland, ZOOM_2X) \
     #.replace_old(4627)
 houses_toyland[:48].replace_old(4627)
 houses_toyland[48:51].replace_old(4695)
@@ -924,7 +924,7 @@ def tmpl_transmitter(func, z):
 
 
 lib.SpriteCollection('transmitter') \
-    .add(TOWN_DIR / 'transmitter_2x.ase', tmpl_transmitter, ZOOM_2X) \
+    .add(TOWN_DIR / 'transmitter.ase', tmpl_transmitter, ZOOM_2X) \
     .replace_old(2601)
 
 
@@ -935,7 +935,7 @@ def tmpl_lighthouse(func, z):
 
 
 lib.SpriteCollection('lighthouse') \
-    .add(TOWN_DIR / 'lighthouse_2x.ase', tmpl_lighthouse, ZOOM_2X) \
+    .add(TOWN_DIR / 'lighthouse.ase', tmpl_lighthouse, ZOOM_2X) \
     .replace_old(2602)
 
 
@@ -946,9 +946,9 @@ def tmpl_town_tree(func, z, x):
 
 
 lib.SpriteCollection('town_tree') \
-    .add(TREE_DIR / 'town_trees_2x.ase', tmpl_town_tree, ZOOM_2X, 0, climate=TEMPERATE) \
-    .add(TREE_DIR / 'town_trees_2x.ase', tmpl_town_tree, ZOOM_2X, 1, climate=ARCTIC) \
-    .add(TREE_DIR / 'town_trees_2x.ase', tmpl_town_tree, ZOOM_2X, 2, climate=TROPICAL) \
+    .add(TREE_DIR / 'town_trees.ase', tmpl_town_tree, ZOOM_2X, 0, climate=TEMPERATE) \
+    .add(TREE_DIR / 'town_trees.ase', tmpl_town_tree, ZOOM_2X, 1, climate=ARCTIC) \
+    .add(TREE_DIR / 'town_trees.ase', tmpl_town_tree, ZOOM_2X, 2, climate=TROPICAL) \
     .replace_old(4626)
 
 
@@ -978,10 +978,10 @@ def tmpl_coal_mine(func, z):
 
 
 lib.SpriteCollection('coal_mine') \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine_2x.ase'), tmpl_coal_mine, ZOOM_2X, climate=TEMPERATE) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine_2x.ase'), tmpl_coal_mine, ZOOM_2X, climate=ARCTIC) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine_2x.ase'), tmpl_coal_mine, ZOOM_2X, climate=TROPICAL) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'marshmallowmine_2x.ase'), tmpl_coal_mine, ZOOM_2X, climate=TOYLAND) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TEMPERATE) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=ARCTIC) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TROPICAL) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'marshmallowmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TOYLAND) \
     .replace_old(2011)
 
 
@@ -1010,7 +1010,7 @@ def tmpl_powerplant(func, z):
 
 
 lib.SpriteCollection('power_plant') \
-    .add(lib.aseidx(INDUSTRY_DIR / 'powerplant_2x.ase'), tmpl_powerplant, ZOOM_2X) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'powerplant.ase'), tmpl_powerplant, ZOOM_2X) \
     .replace_old(2045)
 
 
@@ -1022,7 +1022,7 @@ def tmpl_chimney_smoke(func, z):
     ]
 
 lib.SpriteCollection('chimney_smoke') \
-    .add(lib.aseidx(EFFECT_DIR / 'chimney_smoke_2x.ase'), tmpl_chimney_smoke, ZOOM_2X) \
+    .add(lib.aseidx(EFFECT_DIR / 'chimney_smoke.ase'), tmpl_chimney_smoke, ZOOM_2X) \
     .replace_old(3701)
 
 
@@ -1067,9 +1067,9 @@ def tmpl_forest(func, z):
 # TODO Why are 128/322 forest sprites too?
 # TODO remove climate=TEMPERATE? (but ensure the right order)
 lib.SpriteCollection('forest') \
-    .add(INDUSTRY_DIR / 'forest_temperate_2x.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
-    .add(INDUSTRY_DIR / 'forest_arctic_2x.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
-    .add(INDUSTRY_DIR / 'cottoncandyforest_2x.ase', tmpl_forest, ZOOM_2X, climate=TOYLAND) \
+    .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X, climate=TEMPERATE) \
+    .add(INDUSTRY_DIR / 'forest_arctic.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
+    .add(INDUSTRY_DIR / 'cottoncandyforest.ase', tmpl_forest, ZOOM_2X, climate=TOYLAND) \
     .replace_old(2072)
 
 
@@ -1090,7 +1090,7 @@ def tmpl_batteryfarm(func, z):
 
 
 lib.SpriteCollection('batteryfarm') \
-    .add(INDUSTRY_DIR / 'batteryfarm_2x.ase', tmpl_batteryfarm, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'batteryfarm.ase', tmpl_batteryfarm, ZOOM_2X) \
     .replace_old(4686)
 
 
@@ -1119,7 +1119,7 @@ def tmpl_oil_refinery(func, z):
     ]
 
 lib.SpriteCollection('oil_refinery') \
-    .add(INDUSTRY_DIR / 'oilrefinery_2x.ase', tmpl_oil_refinery, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'oilrefinery.ase', tmpl_oil_refinery, ZOOM_2X) \
     .replace_old(2078)
 
 
@@ -1153,7 +1153,7 @@ def tmpl_oil_rig(func, z):
 
 
 lib.SpriteCollection('oil_rig') \
-    .add(INDUSTRY_DIR / 'oilrig_2x.ase', tmpl_oil_rig, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'oilrig.ase', tmpl_oil_rig, ZOOM_2X) \
     .replace_old(2096)
 
 
@@ -1179,9 +1179,9 @@ def tmpl_farm(func, z):
 
 
 lib.SpriteCollection('farm') \
-    .add(INDUSTRY_DIR / 'farm_temperate_2x.ase', tmpl_farm, ZOOM_2X, climate=TEMPERATE) \
-    .add(INDUSTRY_DIR / 'farm_arctic_2x.ase', tmpl_farm, ZOOM_2X, climate=ARCTIC) \
-    .add(INDUSTRY_DIR / 'farm_tropical_2x.ase', tmpl_farm, ZOOM_2X, climate=TROPICAL) \
+    .add(INDUSTRY_DIR / 'farm_temperate.ase', tmpl_farm, ZOOM_2X, climate=TEMPERATE) \
+    .add(INDUSTRY_DIR / 'farm_arctic.ase', tmpl_farm, ZOOM_2X, climate=ARCTIC) \
+    .add(INDUSTRY_DIR / 'farm_tropical.ase', tmpl_farm, ZOOM_2X, climate=TROPICAL) \
     .replace_old(2106)
 
 
@@ -1202,7 +1202,7 @@ def tmpl_farm_fences(func, z, frame):
 
 for i in range(6):
     lib.SpriteCollection(f'farm_fence{i}') \
-        .add(TERRAIN_DIR / 'farmfences_2x.ase', tmpl_farm_fences, ZOOM_2X, i + 1) \
+        .add(TERRAIN_DIR / 'farmfences.ase', tmpl_farm_fences, ZOOM_2X, i + 1) \
         .replace_old(4090 + i * 6)
 
 
@@ -1252,7 +1252,7 @@ def tmpl_steel_mill(func, z):
 
 
 lib.SpriteCollection('steel_mill') \
-    .add(INDUSTRY_DIR / 'steelmill_2x.ase', tmpl_steel_mill, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'steelmill.ase', tmpl_steel_mill, ZOOM_2X) \
     .replace_old(2118)
 
 
@@ -1280,7 +1280,7 @@ def tmpl_factory(func, z):
 
 
 lib.SpriteCollection('factory') \
-    .add(INDUSTRY_DIR / 'factory_2x.ase', tmpl_factory, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'factory.ase', tmpl_factory, ZOOM_2X) \
     .replace_old(2146)
 
 
@@ -1303,7 +1303,7 @@ def tmpl_candy_factory(func, z):
 
 # TODO Amateur Code
 candy_factory = lib.SpriteCollection('candy_factory') \
-    .add(INDUSTRY_DIR / 'candyfactory_2x.ase', tmpl_candy_factory, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'candyfactory.ase', tmpl_candy_factory, ZOOM_2X) \
     .replace_old(4677)
 
 
@@ -1326,7 +1326,7 @@ def tmpl_toy_shop(func, z):
 
 # TODO Amateur Code
 toy_shop = lib.SpriteCollection('toy_shop') \
-    .add(INDUSTRY_DIR / 'toyshop_2x.ase', tmpl_toy_shop, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'toyshop.ase', tmpl_toy_shop, ZOOM_2X) \
     .replace_old(4699)
 
 
@@ -1350,7 +1350,7 @@ def tmpl_fizzy_drink_factory(func, z):
 
 # TODO Amateur Code
 fizzy_drink_factory = lib.SpriteCollection('fizzy_drink_factory') \
-    .add(INDUSTRY_DIR / 'fizzydrinkfactory_2x.ase', tmpl_fizzy_drink_factory, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'fizzydrinkfactory.ase', tmpl_fizzy_drink_factory, ZOOM_2X) \
     .replace_old(4737)
 
 
@@ -1364,7 +1364,7 @@ def tmpl_oil_wells(func, z):
 
 
 oil_wells = lib.SpriteCollection('oil_wells') \
-    .add(INDUSTRY_DIR / 'oilwells_2x.ase', tmpl_oil_wells, ZOOM_2X)
+    .add(INDUSTRY_DIR / 'oilwells.ase', tmpl_oil_wells, ZOOM_2X)
 oil_wells[0].compose_on(ground[0]).replace_old(2173)
 oil_wells[1:].replace_old(2174)
 
@@ -1383,7 +1383,7 @@ def tmpl_plastic_fountains(func, z):
 
 # TODO Check amateur code, Plastic Fountain
 plastic_fountain = lib.SpriteCollection('plastic_fountain') \
-    .add(INDUSTRY_DIR / 'plasticfountain_2x.ase', tmpl_plastic_fountains, ZOOM_2X)
+    .add(INDUSTRY_DIR / 'plasticfountain.ase', tmpl_plastic_fountains, ZOOM_2X)
 plastic_fountain[0].compose_on(ground[0]).replace_old(4721)
 plastic_fountain[0].compose_on(ground[0]).replace_old(4722)
 plastic_fountain[0].compose_on(ground[0]).replace_old(4723)
@@ -1405,7 +1405,7 @@ def tmpl_cola_wells(func, z):
 
 # TODO Check amateur code, Cola Wells
 cola_wells = lib.SpriteCollection('cola_wells') \
-    .add(INDUSTRY_DIR / 'colawells_2x.ase', tmpl_cola_wells, ZOOM_2X)
+    .add(INDUSTRY_DIR / 'colawells.ase', tmpl_cola_wells, ZOOM_2X)
 cola_wells.replace_old(4691)
 
 
@@ -1422,12 +1422,12 @@ def tmpl_bank(func, z, frame):
 
 
 lib.SpriteCollection('bank') \
-    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X, 1) \
+    .add(INDUSTRY_DIR / 'bank.ase', tmpl_bank, ZOOM_2X, 1) \
     .replace_old(2180)
 
 lib.SpriteCollection('bank') \
-    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X, 2, climate=ARCTIC) \
-    .add(INDUSTRY_DIR / 'bank_2x.ase', tmpl_bank, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(INDUSTRY_DIR / 'bank.ase', tmpl_bank, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(INDUSTRY_DIR / 'bank.ase', tmpl_bank, ZOOM_2X, 3, climate=TROPICAL) \
     .pick(3, 2, 0, 1) \
     .replace_old(2184)
 
@@ -1444,7 +1444,7 @@ def tmpl_iron_mine(func, z, frame):
 
 for i in range(0, 3):
     lib.SpriteCollection('iron_mine') \
-        .add(INDUSTRY_DIR / 'ironoremine_2x.ase', tmpl_iron_mine, ZOOM_2X, i + 1, name=f'stage{i + 1}') \
+        .add(INDUSTRY_DIR / 'ironoremine.ase', tmpl_iron_mine, ZOOM_2X, i + 1, name=f'stage{i + 1}') \
         .replace_old(2293 + 16 * i)
 
 
@@ -1474,7 +1474,7 @@ def tmpl_toy_factory(func, z):
     ]
 
 lib.SpriteCollection('toy_factory') \
-    .add(INDUSTRY_DIR / 'toyfactory_2x.ase', tmpl_toy_factory, ZOOM_2X, name='toy_factory') \
+    .add(INDUSTRY_DIR / 'toyfactory.ase', tmpl_toy_factory, ZOOM_2X, name='toy_factory') \
     .replace_old(4712)
 
 
@@ -1488,10 +1488,10 @@ def tmpl_cargo_icons(func, z, frame):
 
 
 lib.SpriteCollection('cargo_icon') \
-    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 1, climate=TEMPERATE) \
-    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 2, climate=ARCTIC) \
-    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 3, climate=TROPICAL) \
-    .add(ICON_DIR / 'cargo_2x.ase', tmpl_cargo_icons, ZOOM_2X, 4, climate=TOYLAND) \
+    .add(ICON_DIR / 'cargo.ase', tmpl_cargo_icons, ZOOM_2X, 1, climate=TEMPERATE) \
+    .add(ICON_DIR / 'cargo.ase', tmpl_cargo_icons, ZOOM_2X, 2, climate=ARCTIC) \
+    .add(ICON_DIR / 'cargo.ase', tmpl_cargo_icons, ZOOM_2X, 3, climate=TROPICAL) \
+    .add(ICON_DIR / 'cargo.ase', tmpl_cargo_icons, ZOOM_2X, 4, climate=TOYLAND) \
     .replace_old(4297)
 
 
@@ -1535,7 +1535,7 @@ ICON_WIDTH = {2594: 43, 1298: 40, 744: 39}
 ANIMATED_SRPITES = (4085, 4086)  # TODO
 COPY_ICONS = {4993: 5014, 4994: 5015, 4995: 5016, 4996: 5017}
 
-ase = lib.aseidx(ICON_DIR / 'icons_2x.ase')
+ase = lib.aseidx(ICON_DIR / 'icons.ase')
 func = lambda name, *args, **kw: grf.FileSprite(ase, *args, **kw, name=name, ignore_layers='REF Numbers')
 z = 2
 grid = lib.RectGrid(func=func, width=20 * z, height=20 * z, padding=z)
