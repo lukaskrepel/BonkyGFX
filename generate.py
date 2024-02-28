@@ -13,12 +13,20 @@ import lib
 cc = lib.MagentaToCC
 struct = lib.MagentaToStruct
 
-def animated(name, grid, *args, layers=None, ignore_layers=(), **kw):
+def animated(name, grid, *args, layers=None, ignore_layers=None, **kw):
     grid_args = {}
     if isinstance(grid, lib.BaseGrid):
         grid_args = {'keep_state': True}
+
+    if ignore_layers is None:
+        ignore_layers = ()
+    elif isinstance(ignore_layers, tuple):
+        ignore_layers = ignore_layers
+    else:
+        ignore_layers = (ignore_layers,)
+
     return lib.AlphaAndMask(
-        grid(name + '_rgb', *args, **kw, layers=layers, ignore_layers=tuple(ignore_layers) + ('ANIMATED',), **grid_args),
+        grid(name + '_rgb', *args, **kw, layers=layers, ignore_layers=ignore_layers + ('ANIMATED',), **grid_args),
         grid(name + '_anim', *args, **kw, layers=('ANIMATED',)),
         name=name,
     )
