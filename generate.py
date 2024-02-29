@@ -1160,6 +1160,31 @@ lib.SpriteCollection('water_supply') \
 
 
 @lib.template(grf.FileSprite)
+def tmpl_food_processing_plant(func, z):
+    grid = lib.HouseGrid(func=func, height=75, z=z)
+    ground_layers = ('TILE/*', 'Spriteborder')
+    return [
+        grid('building1_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
+        cc(grid('building1_stage2', (0, 0), frame=2, ignore_layers=ground_layers)),
+        cc(animated('building1_stage3', grid, (0, 0), frame=3, ignore_layers=ground_layers)),
+        grid('building2_stage1', (1, 0), frame=1, ignore_layers=ground_layers),
+        cc(grid('building2_stage2', (1, 0), frame=2, ignore_layers=ground_layers)),
+        cc(animated('building2_stage3', grid, (1, 0), frame=3, ignore_layers=ground_layers)),
+        grid('building3_stage1', (2, 0), frame=1, ignore_layers=ground_layers),
+        cc(grid('building3_stage2', (2, 0), frame=2, ignore_layers=ground_layers)),
+        cc(animated('building3_stage3', grid, (2, 0), frame=3, ignore_layers=ground_layers)),
+        grid('building4_stage1', (3, 0), frame=1, ignore_layers=ground_layers),
+        cc(grid('building4_stage2', (3, 0), frame=2, ignore_layers=ground_layers)),
+        cc(animated('building4_stage3', grid, (3, 0), frame=3, ignore_layers=ground_layers)),
+    ]
+
+
+lib.SpriteCollection('food_processing_plant') \
+    .add(INDUSTRY_DIR / 'food_processing_plant.ase', tmpl_food_processing_plant, ZOOM_2X) \
+    .replace_old(2188)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_oil_refinery(func, z):
     grid = lib.HouseGrid(func=func, height=128, z=z)
     return [
