@@ -396,6 +396,33 @@ lib.SpriteCollection('bus_gen2') \
     .replace_old(3284 + 192)
 
 
+def replace_rv_toyland(path2x):
+    def tmpl(suffix, x, y, frame):
+        return lib.SpriteCollection(f'rv_toyland_{suffix}') \
+            .add(path2x, tmpl_vehicle_road_8view, ZOOM_2X, x, y, frame, climate=TOYLAND)
+    tmpl('passengers', 0, 0, 1).replace_old(3092)
+    tmpl('sugar_empty', 0, 1, 1).replace_old(3100)
+    tmpl('sugar_loaded', 0, 1, 2).replace_old(3108)
+    tmpl('cola_empty', 0, 2, 1).replace_old(3116)
+    tmpl('cola_loaded', 0, 2, 2).replace_old(3124)
+    tmpl('cotton_candy_empty', 0, 3, 1).replace_old(3132)
+    tmpl('cotton_candy_loaded', 0, 3, 2).replace_old(3140)
+    tmpl('toffee_empty', 0, 4, 1).replace_old(3148)
+    tmpl('toffee_loaded', 0, 4, 2).replace_old(3156)
+    tmpl('toys', 0, 5, 1).replace_old(3164)
+    tmpl('mail', 0, 6, 1).replace_old(3172)
+    tmpl('candy', 0, 7, 1).replace_old(3180)
+    tmpl('batteries_empty', 0, 8, 1).replace_old(3188)
+    tmpl('batteries_loaded', 0, 8, 2).replace_old(3196)
+    tmpl('fizzy_drinks_empty', 0, 9, 1).replace_old(3204)
+    tmpl('fizzy_drinks_loaded', 0, 9, 2).replace_old(3212)
+    tmpl('plastic_empty', 0, 10, 1).replace_old(3220)
+    tmpl('plastic_loaded', 0, 10, 2).replace_old(3228)
+    tmpl('bubbles_empty', 0, 11, 1).replace_old(3236)
+    tmpl('bubbles_loaded', 0, 11, 2).replace_old(3244)
+replace_rv_toyland(VEHICLE_DIR / 'road_trucks_toyland.ase')
+
+
 # ------------------------------ Rail Vehicles ------------------------------
 
 @lib.template(lib.CCReplacingFileSprite)
