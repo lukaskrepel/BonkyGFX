@@ -1123,6 +1123,42 @@ lib.SpriteCollection('plantation') \
     .add(INDUSTRY_DIR / 'plantation.ase', tmpl_plantation, ZOOM_2X) \
     .replace_old(2341)
 
+
+@lib.template(grf.FileSprite)
+def tmpl_water_tower(func, z):
+    grid = lib.HouseGrid(func=func, height=128, z=z)
+    ground_layers = ('TILE/*', 'Spriteborder')
+    return [
+        grid('water_tower_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
+        cc(grid('water_tower_stage2', (0, 0), frame=2, ignore_layers=ground_layers)),
+        cc(animated('water_tower_stage3', grid, (0, 0), frame=3, ignore_layers=ground_layers)),
+    ]
+
+
+lib.SpriteCollection('water_tower') \
+    .add(INDUSTRY_DIR / 'water_tower.ase', tmpl_water_tower, ZOOM_2X) \
+    .replace_old(2344)
+
+
+@lib.template(grf.FileSprite)
+def tmpl_water_supply(func, z):
+    grid = lib.HouseGrid(func=func, height=128, z=z)
+    ground_layers = ('TILE/*', 'Spriteborder')
+    return [
+        grid('building1_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
+        cc(grid('building1_stage2', (0, 0), frame=2, ignore_layers=ground_layers)),
+        cc(animated('building1_stage3', grid, (0, 0), frame=3, ignore_layers=ground_layers)),
+        grid('building2_stage1', (1, 0), frame=1, ignore_layers=ground_layers),
+        cc(grid('building2_stage2', (1, 0), frame=2, ignore_layers=ground_layers)),
+        cc(animated('building2_stage3', grid, (1, 0), frame=3, ignore_layers=ground_layers)),
+    ]
+
+
+lib.SpriteCollection('water_supply') \
+    .add(INDUSTRY_DIR / 'water_supply.ase', tmpl_water_supply, ZOOM_2X) \
+    .replace_old(2347)
+
+
 @lib.template(grf.FileSprite)
 def tmpl_oil_refinery(func, z):
     grid = lib.HouseGrid(func=func, height=128, z=z)
