@@ -320,6 +320,8 @@ for i in range(8):
 for i in range(18):
     tree('tropic_tree', 1821 + i * 7, TREE_DIR / 'tropical_tree.ase')
 
+tree('fruit_tree', 1821 + 7 * 11, TREE_DIR / 'fruit_tree.ase')
+tree('rubber_tree', 1821 + 7 * 12, TREE_DIR / 'rubber_tree.ase')
 tree('cactus', 1821 + 7 * 13, TREE_DIR / 'cactus.ase')
 tree('cactus', 1821 + 7 * 14, TREE_DIR / 'cactus.ase')
 
@@ -1105,6 +1107,21 @@ lib.SpriteCollection('batteryfarm') \
     .add(INDUSTRY_DIR / 'batteryfarm.ase', tmpl_batteryfarm, ZOOM_2X) \
     .replace_old(4686)
 
+
+@lib.template(grf.FileSprite)
+def tmpl_plantation(func, z):
+    grid = lib.HouseGrid(func=func, height=75, z=z)
+    ground_layers = ('TILE/*', 'Spriteborder')
+    return [
+        grid('plantation_ground', (0, 0), frame=1, layers=ground_layers),
+        grid('trees_fruit', (0, 0), frame=1, ignore_layers=ground_layers),
+        grid('trees_rubber', (0, 0), frame=2, ignore_layers=ground_layers),
+    ]
+
+
+lib.SpriteCollection('plantation') \
+    .add(INDUSTRY_DIR / 'plantation.ase', tmpl_plantation, ZOOM_2X) \
+    .replace_old(2341)
 
 @lib.template(grf.FileSprite)
 def tmpl_oil_refinery(func, z):
