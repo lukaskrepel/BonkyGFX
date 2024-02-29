@@ -1185,6 +1185,41 @@ lib.SpriteCollection('food_processing_plant') \
 
 
 @lib.template(grf.FileSprite)
+def tmpl_paper_mill(func, z):
+    grid = lib.HouseGrid(func=func, height=75, z=z)
+    ground_layers = ('TILE/*', 'Spriteborder')
+    return [
+        grid('building1_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
+        grid('building1_stage2', (0, 0), frame=2, ignore_layers=ground_layers),
+        grid('building1_stage3', (0, 0), frame=3, ignore_layers=ground_layers),
+
+        grid('building2_stage1', (1, 0), frame=1, ignore_layers=ground_layers),
+        grid('building2_stage2', (1, 0), frame=2, ignore_layers=ground_layers),
+        grid('building2_stage3', (1, 0), frame=3, ignore_layers=ground_layers),
+        animated('building2_animated', grid, (1, 0), frame=4),
+
+        grid('building3_stage1', (2, 0), frame=1, ignore_layers=ground_layers),
+        grid('building3_stage2', (2, 0), frame=1, ignore_layers=ground_layers),
+        grid('building3_stage3', (2, 0), frame=1, ignore_layers=ground_layers),
+        
+        grf.EMPTY_SPRITE,
+
+        grid('building4_stage1', (3, 0), frame=1, ignore_layers=ground_layers),
+        grid('building4_stage2', (3, 0), frame=1, ignore_layers=ground_layers),
+        grid('building4_stage3', (3, 0), frame=1, ignore_layers=ground_layers),
+
+        grid('building5', (4, 0), frame=1, ignore_layers=ground_layers),
+    ]
+
+
+lib.SpriteCollection('paper_mill') \
+    .add(INDUSTRY_DIR / 'paper_mill.ase', tmpl_paper_mill, ZOOM_2X) \
+    .replace_old(2200)
+    # 123 # 1234 # 123 #empty # 123 # afdakje
+    # 2206 heeft anim
+
+
+@lib.template(grf.FileSprite)
 def tmpl_oil_refinery(func, z):
     grid = lib.HouseGrid(func=func, height=128, z=z)
     return [
@@ -1374,6 +1409,32 @@ lib.SpriteCollection('factory') \
     .replace_old(2146)
 
 
+@lib.template(grf.FileSprite)
+def tmpl_printing_works(func, z):
+    assert z == 2
+    return [
+        grf.EMPTY_SPRITE,
+        func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
+
+        grf.EMPTY_SPRITE,
+        cc(func('building2_stage2', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2)),
+        cc(func('building3_stage2', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2)),
+        cc(func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2)),
+        
+        grf.EMPTY_SPRITE,
+        cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        cc(func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        cc(func('building4_stage3', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=3)),
+    ]
+
+
+lib.SpriteCollection('printing_works') \
+    .add(INDUSTRY_DIR / 'printing_works.ase', tmpl_printing_works, ZOOM_2X) \
+    .replace_old(2161)
+
+
 # TODO Amateur Code
 @lib.template(grf.FileSprite)
 def tmpl_candy_factory(func, z):
@@ -1418,6 +1479,32 @@ def tmpl_toy_shop(func, z):
 toy_shop = lib.SpriteCollection('toy_shop') \
     .add(INDUSTRY_DIR / 'toyshop.ase', tmpl_toy_shop, ZOOM_2X) \
     .replace_old(4699)
+
+
+# TODO Amateur Code
+@lib.template(grf.FileSprite)
+def tmpl_lumber_mill(func, z):
+    assert z == 2
+    return [
+        grf.EMPTY_SPRITE,
+        func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
+        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
+        grf.EMPTY_SPRITE,
+        func('building2_stage2', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building3_stage2', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2),
+        grf.EMPTY_SPRITE,
+        cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        cc(func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        grf.EMPTY_SPRITE,
+    ]
+
+
+# TODO Amateur Code
+lumber_mill = lib.SpriteCollection('lumber_mill') \
+    .add(INDUSTRY_DIR / 'lumber_mill.ase', tmpl_lumber_mill, ZOOM_2X) \
+    .replace_old(2353)
 
 
 # TODO Amateur Code
