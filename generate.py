@@ -512,9 +512,9 @@ wagon('fizzy_drinks_empty', 2801, 10, frame=1)
 wagon('fizzy_drinks_loaded', 2805, 10, frame=2)
 wagon('plastic_empty', 2809, 11, frame=1)
 wagon('plastic_loaded', 2813, 11, frame=2)
+wagon('passengers_gen2+3', 2829, 0, frame=2)
+wagon('mail_gen2+3', 2837, 1, frame=2)
 
-# wagon('sugar_loaded', 2745, 1, frame=2)  # toyland rail sugar wagon (full)
-##
 
 def engine(name, sprite_id, tmpl, y):
     lib.SpriteCollection(name) \
