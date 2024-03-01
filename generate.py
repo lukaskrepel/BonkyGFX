@@ -486,6 +486,36 @@ wagon('rubber_empty', 2821, 14, frame=1)  # tropical rail rubber wagon (empty)
 wagon('rubber_full', 2825, 14, frame=2)  # tropical rail rubber wagon (full)
 
 
+def wagon(name, sprite_id, y, *, frame):
+    lib.SpriteCollection('wagon_' + name) \
+        .add(VEHICLE_DIR / 'rail_wagons_toyland.ase', tmpl_vehicle_rail_4view, ZOOM_2X, y, frame) \
+        .replace_old(sprite_id)
+
+wagon('passengers', 2733, 0, frame=1)
+# wagon('-unused-', 2737, 0, frame=1) # Unused wagon in Toyland.
+wagon('mail', 2741, 1, frame=1)
+wagon('sugar_empty', 2745, 2, frame=1)
+wagon('sugar_loaded', 2749, 2, frame=2)
+wagon('cotton_candy_empty', 2753, 3, frame=1)
+wagon('cotton_candy_loaded', 2757, 3, frame=2)
+wagon('toffee_empty', 2761, 4, frame=1)
+wagon('toffee_loaded', 2765, 4, frame=2)
+wagon('bubbles_empty', 2769, 5, frame=1)
+wagon('bubbles_loaded', 2773, 5, frame=2)
+wagon('cola_empty', 2777, 6, frame=1)
+wagon('cola_loaded', 2781, 6, frame=2)
+wagon('candy', 2785, 7, frame=1)
+wagon('toys', 2789, 8, frame=1)
+wagon('batteries_empty', 2793, 9, frame=1)
+wagon('batteries_loaded', 2797, 9, frame=2)
+wagon('fizzy_drinks_empty', 2801, 10, frame=1)
+wagon('fizzy_drinks_loaded', 2805, 10, frame=2)
+wagon('plastic_empty', 2809, 11, frame=1)
+wagon('plastic_loaded', 2813, 11, frame=2)
+
+# wagon('sugar_loaded', 2745, 1, frame=2)  # toyland rail sugar wagon (full)
+##
+
 def engine(name, sprite_id, tmpl, y):
     lib.SpriteCollection(name) \
         .add(VEHICLE_DIR / 'rail_engines_temperate.ase', tmpl, ZOOM_2X, y, 0) \
