@@ -546,15 +546,10 @@ engine('tim', 2973, tmpl_vehicle_rail_8view, 10)  # T.I.M. (Electric)
 # ------------------------------ Water Vehicles ------------------------------
 
 
-# class HouseGrid(BaseGrid):
-#     def __init__(self, *, func, height, width=64, padding=1, z=2, offset=(0, 0), **kw):
-
-# class RectGrid(BaseGrid):
-#     def __init__(self, *, func, width, height, padding=0, **kw):
-
 @lib.template(grf.FileSprite)
 def tmpl_water_ships(func, z):
-    grid = lib.RectGrid(func=func, height=(75 * z)+1, width=96 * z, padding=z)
+    grid = lib.RectGrid(func=func, width=96 * z, height=(75 * z)+1, padding=z)
+    grid.set_default(xofs=-20 * z, yofs=-39 * z) # TODO not great
     return [
         cc(grid('ship1_n',  (0, 0))),
         cc(grid('ship1_ne', (1, 0))),
@@ -603,7 +598,8 @@ water_ships = lib.SpriteCollection('water_ships') \
 
 @lib.template(grf.FileSprite)
 def tmpl_air_planes(func, z):
-    grid = lib.RectGrid(func=func, height=(60 * z)+1, width=80 * z, padding=z)
+    grid = lib.RectGrid(func=func, width=80 * z, height=(60 * z)+1, padding=z)
+    grid.set_default(xofs=-40 * z, yofs=-30 * z)
     return [
         cc(grid('small_plane1_n',  (0, 0), frame=1)),
         cc(grid('small_plane1_ne', (1, 0), frame=1)),
@@ -1110,31 +1106,31 @@ def tmpl_houses_toyland(func, z):
 
         grid('tall_office2_stage1', (0, 0), frame=1),
         grid('tall_office2_stage2', (0, 0), frame=2),
-        grid('tall_office2_stage3', (1, 1), frame=3),
+        grid('tall_office2_stage3', (0, 1), frame=3),
 
         grid('igloo_stage1', (0, 0), frame=1),
         grid('igloo_stage2', (0, 0), frame=2),
-        grid('igloo_stage3', (2, 1), frame=3),
+        grid('igloo_stage3', (1, 1), frame=3),
 
         grid('tepees_stage1', (0, 0), frame=1),
         grid('tepees_stage2', (0, 0), frame=2),
-        grid('tepees_stage3', (3, 1), frame=3),
+        grid('tepees_stage3', (2, 1), frame=3),
 
         grid('shops_and_offices1_stage1', (0, 0), frame=1),
         grid('shops_and_offices1_stage2', (0, 0), frame=2),
-        animated('shops_and_offices2_stage3', grid, (4, 1), frame=3),
+        animated('shops_and_offices2_stage3', grid, (3, 1), frame=3),
 
         grid('shops_and_offices2_stage1', (0, 0), frame=1),
         grid('shops_and_offices2_stage2', (0, 0), frame=2),
-        animated('shops_and_offices2_stage3', grid, (5, 1), frame=3),
+        animated('shops_and_offices2_stage3', grid, (4, 1), frame=3),
 
         grid('tall_office3_stage1', (0, 0), frame=1),
         grid('tall_office3_stage2', (0, 0), frame=2),
-        grid('tall_office3_stage3', (6, 1), frame=3),
+        grid('tall_office3_stage3', (5, 1), frame=3),
 
         grid('teapot_stage1', (0, 0), frame=1),
         grid('teapot_stage2', (0, 0), frame=2),
-        grid('teapot_stage3', (7, 1), frame=3),
+        grid('teapot_stage3', (6, 1), frame=3),
     ]
 
 
