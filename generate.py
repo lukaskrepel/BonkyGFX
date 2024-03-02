@@ -1775,18 +1775,19 @@ plastic_fountain[:8].compose_on(ground[0]).replace_old(4721)
 plastic_fountain[8:].replace_old(4729)
 
 
-# TODO Check amateur code, Cola Wells template
 @lib.template(grf.FileSprite)
 def tmpl_cola_wells(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    f = lambda frame: animated('frame{i}', grid, (0, 0), bb=(0, 0), frame=frame)
-    return [f(i + 1) for i in range(3)]
+    return [
+        grid('stage1', (0, 0), frame=1),
+        grid('stage2', (0, 0), frame=2),
+        animated('stage3', grid, (0, 0), frame=3),
+    ]
 
 
-# TODO Check amateur code, Cola Wells
-cola_wells = lib.SpriteCollection('cola_wells') \
-    .add(INDUSTRY_DIR / 'colawells.ase', tmpl_cola_wells, ZOOM_2X)
-cola_wells.replace_old(4691)
+lib.SpriteCollection('cola_wells') \
+    .add(INDUSTRY_DIR / 'colawells.ase', tmpl_cola_wells, ZOOM_2X) \
+    .replace_old(4691)
 
 
 @lib.template(grf.FileSprite)
