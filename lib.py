@@ -172,7 +172,7 @@ class HouseGrid(BaseGrid):
         super().__init__(func=func, **kw)
         self.z = z
 
-        assert width == 64  # TODO width should participate in xofs if not 64
+        # assert width == 64  # TODO width should participate in xofs if not 64
         self.zwidth = width * z
         self.zheight = height * z + z - 1
 

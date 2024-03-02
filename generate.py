@@ -1301,24 +1301,21 @@ lib.SpriteCollection('forest') \
     .replace_old(2072)
 
 
-# TODO This is basically a copy of the forest template except for the tile sprite,
-# not sure if that's the proper way to do this or to manipulate the forest template to be able to...
-# skip the ground sprite for the battery farm.
 @lib.template(grf.FileSprite)
-def tmpl_batteryfarm(func, z):
+def tmpl_battery_farm(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    ground_layers = ('TILE/*', 'Spriteborder')
+    grid.set_default(ignore_layers=('TILE/*', 'Spriteborder'))
     return [
-        grid('growth1', (0, 0), frame=1, ignore_layers=ground_layers),
-        grid('growth2', (0, 0), frame=2, ignore_layers=ground_layers),
-        grid('growth3', (0, 0), frame=3, ignore_layers=ground_layers),
-        grid('grown', (0, 0), frame=4, ignore_layers=ground_layers),
-        grid('logs', (0, 0), frame=5, ignore_layers=ground_layers),
+        grid('growth1', (0, 0), frame=1),
+        grid('growth2', (0, 0), frame=2),
+        grid('growth3', (0, 0), frame=3),
+        grid('grown', (0, 0), frame=4),
+        grid('logs', (0, 0), frame=5),
     ]
 
 
-lib.SpriteCollection('batteryfarm') \
-    .add(INDUSTRY_DIR / 'batteryfarm.ase', tmpl_batteryfarm, ZOOM_2X) \
+lib.SpriteCollection('battery_farm') \
+    .add(INDUSTRY_DIR / 'batteryfarm.ase', tmpl_battery_farm, ZOOM_2X) \
     .replace_old(4686)
 
 
