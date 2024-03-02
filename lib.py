@@ -778,9 +778,9 @@ class MagentaToLight(grf.Sprite):
 
 
 class MagentaAndMask(grf.Sprite):
-    def __init__(self, sprite, mask):
+    def __init__(self, sprite, mask, name=None):
         self.sprite = sprite
-        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=self.sprite.name)
+        super().__init__(w=sprite.w, h=sprite.h, xofs=sprite.xofs, yofs=sprite.yofs, zoom=sprite.zoom, bpp=sprite.bpp, name=name or self.sprite.name)
         self.mask = mask  # TODO sprite mask has a special meaning
 
     def prepare_files(self):
@@ -788,8 +788,7 @@ class MagentaAndMask(grf.Sprite):
         self.mask.prepare_files()
 
     def get_data_layers(self, context):
-        w, h, npimg, npalpha, npmask = self.sprite.get_data_layers(context)
-        assert npmask is None
+        w, h, rgb, alpha, mask = self.sprite.get_data_layers(context)
         ow, oh, ni, na, nm = self.mask.get_data_layers(context)
         assert nm is None
         assert w == ow and h == oh
@@ -797,20 +796,20 @@ class MagentaAndMask(grf.Sprite):
         timer = context.start_timer()
 
         magenta_mask = (
-            (npimg[:, :, 0] == npimg[:, :, 2]) &
+            (rgb[:, :, 0] == rgb[:, :, 2]) &
             (
-                ((npimg[:, :, 0] == 255) & (npimg[:, :, 1] != 255)) |
-                ((npimg[:, :, 1] == 0) & (npimg[:, :, 0] != 0))
+                ((rgb[:, :, 0] == 255) & (rgb[:, :, 1] != 255)) |
+                ((rgb[:, :, 1] == 0) & (rgb[:, :, 0] != 0))
             )
         )
 
-        mask = (na > 0) & magenta_mask
-        if np.any(magenta_mask != mask):
-            raise ValueError(f'Not all magenta pixels of sprite {self.sprite.name} have a defined mask in {self.mask.name}')
+        anim_mask = (na > 0)
+        pal_mask = (na > 0) & magenta_mask
+        if np.any(anim_mask != pal_mask):
+            context.warning('animated-missing-magenta', self, f'Not all pixels of animation sprite {self.mask.name} have a magenta in {self.sprite.name}')
 
-        masked = ni[mask]
+        masked = ni[pal_mask]
         colours = set(map(tuple, masked))
-        npmask = np.zeros((h, w), dtype=np.uint8)
         new_masked = np.zeros(masked.shape[0], dtype=np.uint8)
 
         for c in colours:
@@ -819,11 +818,17 @@ class MagentaAndMask(grf.Sprite):
                 raise ValueError(f'Color {c} is not in the palette in sprite {self.mask.name}')
             new_masked[(masked == c).all(axis=1)] = m
 
-        npmask[mask] = new_masked
+        mask = np.zeros((h, w), dtype=np.uint8) if mask is None else grf.np_make_writable(mask)
+        mask[pal_mask] = new_masked
+        brightness = (rgb[pal_mask,:2].sum(axis=1, dtype=np.uint16) + 1) // 2
+        rgb = grf.np_make_writable(rgb)
+        rgb[pal_mask, 0] = brightness
+        rgb[pal_mask, 1] = 0
+        rgb[pal_mask, 2] = 0
 
         timer.count_custom('Magenta and mask processing')
 
-        return w, h, npimg, npalpha, npmask
+        return w, h, rgb, alpha, mask
 
 
     def get_image_files(self):
