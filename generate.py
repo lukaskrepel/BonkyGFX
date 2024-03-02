@@ -545,9 +545,16 @@ engine('tim', 2973, tmpl_vehicle_rail_8view, 10)  # T.I.M. (Electric)
 
 # ------------------------------ Water Vehicles ------------------------------
 
+
+# class HouseGrid(BaseGrid):
+#     def __init__(self, *, func, height, width=64, padding=1, z=2, offset=(0, 0), **kw):
+
+# class RectGrid(BaseGrid):
+#     def __init__(self, *, func, width, height, padding=0, **kw):
+
 @lib.template(grf.FileSprite)
 def tmpl_water_ships(func, z):
-    grid = lib.HouseGrid(func=func, height=75, width=96, z=z)
+    grid = lib.RectGrid(func=func, height=(75 * z)+1, width=96 * z, padding=z)
     return [
         cc(grid('ship1_n',  (0, 0))),
         cc(grid('ship1_ne', (1, 0))),
@@ -586,13 +593,6 @@ def tmpl_water_ships(func, z):
         cc(grid('ship4_nw', (7, 3))),
     ]
 
-# TODO simplify template above? Not sure if aligning them is something that needs to be fixed per sprite. Also use RectGrid instead of HouseGrid.
-# @lib.template(grf.FileSprite)
-# def tmpl_water_ships(func, z):
-#     grid = lib.HouseGrid(func=func, height=75, width=96, z=z)
-#     ship_positions = [(i, j) for j in range(4) for i in range(8)]
-#     return [grid(f'ship{i+1}_{dir}', pos) for i, dir in enumerate(['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']) for pos in ship_positions]
-
 
 water_ships = lib.SpriteCollection('water_ships') \
     .add(VEHICLE_DIR / 'water_ships.ase', tmpl_water_ships, ZOOM_2X) \
@@ -603,7 +603,7 @@ water_ships = lib.SpriteCollection('water_ships') \
 
 @lib.template(grf.FileSprite)
 def tmpl_air_planes(func, z):
-    grid = lib.HouseGrid(func=func, height=60, width=80, z=z)
+    grid = lib.RectGrid(func=func, height=(60 * z)+1, width=80 * z, padding=z)
     return [
         cc(grid('small_plane1_n',  (0, 0), frame=1)),
         cc(grid('small_plane1_ne', (1, 0), frame=1)),
