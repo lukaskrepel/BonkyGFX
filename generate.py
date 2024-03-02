@@ -1749,6 +1749,7 @@ fizzy_drink_factory = lib.SpriteCollection('fizzy_drink_factory') \
 def tmpl_oil_wells(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
     f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
+    # TODO use grid.ground
     return [
         func('ground', 2, 90, 128, 63, xofs=-31 * z, yofs=0, layers=('TILE/*', 'Spriteborder'), frame=1)
     ] + [f(i + 1) for i in range(6)]
@@ -1760,30 +1761,21 @@ oil_wells[0].compose_on(ground[0]).replace_old(2173)
 oil_wells[1:].replace_old(2174)
 
 
-# TODO Check amateur code, Plastic Fountain template
-# Even though the current TILE is not animated,
-# it would be nice to use the frames anyway in case it changes into animation later.
 @lib.template(grf.FileSprite)
 def tmpl_plastic_fountains(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
     return [
-        func('ground', 2, 90, 128, 63, xofs=-31 * z, yofs=0, layers=('TILE/*', 'Spriteborder'), frame=1)
-    ] + [f(i + 1) for i in range(8)]
+        grid.ground(f'ground{frame}', (0, 0), layers=('TILE/*', 'Spriteborder'), frame=frame)
+        for frame in range(1, 9)
+    ] + [
+        grid(f'frame{frame}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
+        for frame in range(1, 9)
+    ]
 
-
-# TODO Check amateur code, Plastic Fountain
 plastic_fountain = lib.SpriteCollection('plastic_fountain') \
     .add(INDUSTRY_DIR / 'plasticfountain.ase', tmpl_plastic_fountains, ZOOM_2X)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4721)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4722)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4723)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4724)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4725)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4726)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4727)
-plastic_fountain[0].compose_on(ground[0]).replace_old(4728)
-plastic_fountain[1:].replace_old(4729)
+plastic_fountain[:8].compose_on(ground[0]).replace_old(4721)
+plastic_fountain[8:].replace_old(4729)
 
 
 # TODO Check amateur code, Cola Wells template

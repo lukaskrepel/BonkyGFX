@@ -172,6 +172,7 @@ class HouseGrid(BaseGrid):
         super().__init__(func=func, **kw)
         self.z = z
 
+        assert width == 64  # TODO width should participate in xofs if not 64
         self.zwidth = width * z
         self.zheight = height * z + z - 1
 
@@ -196,6 +197,17 @@ class HouseGrid(BaseGrid):
                 zxofs -= self.z * (bb[1] - bb[0]) * 2
                 zyofs -= self.z * (bb[0] + bb[1])
         return super().__call__(name, fx, fy, width=self.zwidth, height=self.zheight, xofs=zxofs, yofs=zyofs, **kw)
+
+    def ground(self, name, grid_pos, **kw):
+        x, y = grid_pos
+        width = 64 * self.z
+        height = 32 * self.z -1
+        fx = x * self.zwidth + self.zpadding * (x + 1) + self.offset[0]
+        fy = y * self.zheight + self.zpadding * (y + 1) + self.offset[1]
+        zxofs = -31 * self.z
+        zyofs = - self.z // 2  # ground sprite offset to align foundations
+        kw = {**self.kw, **kw}
+        return super().__call__(name, fx, fy + self.zheight - height, width=width, height=height, xofs=zxofs, yofs=zyofs, **kw)
 
 
 class BuildingSlicesGrid(BaseGrid):
