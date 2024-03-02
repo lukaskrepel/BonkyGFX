@@ -543,6 +543,163 @@ engine('tim', 2973, tmpl_vehicle_rail_8view, 10)  # T.I.M. (Electric)
 # engine('', 3013, tmpl_vehicle_rail_4view, 0, 1)  # Lev2 Cyclops
 
 
+# ------------------------------ Water Vehicles ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_water_ships(func, z):
+    grid = lib.HouseGrid(func=func, height=75, width=96, z=z)
+    return [
+        cc(grid('ship1_n',  (0, 0))),
+        cc(grid('ship1_ne', (1, 0))),
+        cc(grid('ship1_e',  (2, 0))),
+        cc(grid('ship1_se', (3, 0))),
+        cc(grid('ship1_s',  (4, 0))),
+        cc(grid('ship1_sw', (5, 0))),
+        cc(grid('ship1_w',  (6, 0))),
+        cc(grid('ship1_nw', (7, 0))),
+
+        cc(grid('ship2_n',  (0, 1))),
+        cc(grid('ship2_ne', (1, 1))),
+        cc(grid('ship2_e',  (2, 1))),
+        cc(grid('ship2_se', (3, 1))),
+        cc(grid('ship2_s',  (4, 1))),
+        cc(grid('ship2_sw', (5, 1))),
+        cc(grid('ship2_w',  (6, 1))),
+        cc(grid('ship2_nw', (7, 1))),
+
+        cc(grid('ship3_n',  (0, 2))),
+        cc(grid('ship3_ne', (1, 2))),
+        cc(grid('ship3_e',  (2, 2))),
+        cc(grid('ship3_se', (3, 2))),
+        cc(grid('ship3_s',  (4, 2))),
+        cc(grid('ship3_sw', (5, 2))),
+        cc(grid('ship3_w',  (6, 2))),
+        cc(grid('ship3_nw', (7, 2))),
+
+        cc(grid('ship4_n',  (0, 3))),
+        cc(grid('ship4_ne', (1, 3))),
+        cc(grid('ship4_e',  (2, 3))),
+        cc(grid('ship4_se', (3, 3))),
+        cc(grid('ship4_s',  (4, 3))),
+        cc(grid('ship4_sw', (5, 3))),
+        cc(grid('ship4_w',  (6, 3))),
+        cc(grid('ship4_nw', (7, 3))),
+    ]
+
+# TODO simplify template above? Not sure if aligning them is something that needs to be fixed per sprite. Also use RectGrid instead of HouseGrid.
+# @lib.template(grf.FileSprite)
+# def tmpl_water_ships(func, z):
+#     grid = lib.HouseGrid(func=func, height=75, width=96, z=z)
+#     ship_positions = [(i, j) for j in range(4) for i in range(8)]
+#     return [grid(f'ship{i+1}_{dir}', pos) for i, dir in enumerate(['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']) for pos in ship_positions]
+
+
+water_ships = lib.SpriteCollection('water_ships') \
+    .add(VEHICLE_DIR / 'water_ships.ase', tmpl_water_ships, ZOOM_2X) \
+    .replace_old(3669)
+
+
+# ------------------------------ Air Vehicles ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_air_planes(func, z):
+    grid = lib.HouseGrid(func=func, height=60, width=80, z=z)
+    return [
+        cc(grid('small_plane1_n',  (0, 0), frame=1)),
+        cc(grid('small_plane1_ne', (1, 0), frame=1)),
+        cc(grid('small_plane1_e',  (2, 0), frame=1)),
+        cc(grid('small_plane1_se', (3, 0), frame=1)),
+        cc(grid('small_plane1_s',  (4, 0), frame=1)),
+        cc(grid('small_plane1_sw', (5, 0), frame=1)),
+        cc(grid('small_plane1_w',  (6, 0), frame=1)),
+        cc(grid('small_plane1_nw', (7, 0), frame=1)),
+
+        cc(grid('small_plane2_n',  (0, 0), frame=2)),
+        cc(grid('small_plane2_ne', (1, 0), frame=2)),
+        cc(grid('small_plane2_e',  (2, 0), frame=2)),
+        cc(grid('small_plane2_se', (3, 0), frame=2)),
+        cc(grid('small_plane2_s',  (4, 0), frame=2)),
+        cc(grid('small_plane2_sw', (5, 0), frame=2)),
+        cc(grid('small_plane2_w',  (6, 0), frame=2)),
+        cc(grid('small_plane2_nw', (7, 0), frame=2)),
+
+        cc(grid('concorde_n',  (0, 0), frame=3)),
+        cc(grid('concorde_ne', (1, 0), frame=3)),
+        cc(grid('concorde_e',  (2, 0), frame=3)),
+        cc(grid('concorde_se', (3, 0), frame=3)),
+        cc(grid('concorde_s',  (4, 0), frame=3)),
+        cc(grid('concorde_sw', (5, 0), frame=3)),
+        cc(grid('concorde_w',  (6, 0), frame=3)),
+        cc(grid('concorde_nw', (7, 0), frame=3)),
+
+        cc(grid('medium_plane1_n',  (0, 1), frame=1)),
+        cc(grid('medium_plane1_ne', (1, 1), frame=1)),
+        cc(grid('medium_plane1_e',  (2, 1), frame=1)),
+        cc(grid('medium_plane1_se', (3, 1), frame=1)),
+        cc(grid('medium_plane1_s',  (4, 1), frame=1)),
+        cc(grid('medium_plane1_sw', (5, 1), frame=1)),
+        cc(grid('medium_plane1_w',  (6, 1), frame=1)),
+        cc(grid('medium_plane1_nw', (7, 1), frame=1)),
+
+        cc(grid('medium_plane2_n',  (0, 1), frame=2)),
+        cc(grid('medium_plane2_ne', (1, 1), frame=2)),
+        cc(grid('medium_plane2_e',  (2, 1), frame=2)),
+        cc(grid('medium_plane2_se', (3, 1), frame=2)),
+        cc(grid('medium_plane2_s',  (4, 1), frame=2)),
+        cc(grid('medium_plane2_sw', (5, 1), frame=2)),
+        cc(grid('medium_plane2_w',  (6, 1), frame=2)),
+        cc(grid('medium_plane2_nw', (7, 1), frame=2)),
+
+        cc(grid('medium_plane3_n',  (0, 1), frame=3)),
+        cc(grid('medium_plane3_ne', (1, 1), frame=3)),
+        cc(grid('medium_plane3_e',  (2, 1), frame=3)),
+        cc(grid('medium_plane3_se', (3, 1), frame=3)),
+        cc(grid('medium_plane3_s',  (4, 1), frame=3)),
+        cc(grid('medium_plane3_sw', (5, 1), frame=3)),
+        cc(grid('medium_plane3_w',  (6, 1), frame=3)),
+        cc(grid('medium_plane3_nw', (7, 1), frame=3)),
+
+        cc(grid('big_plane1_n',  (0, 2), frame=1)),
+        cc(grid('big_plane1_ne', (1, 2), frame=1)),
+        cc(grid('big_plane1_e',  (2, 2), frame=1)),
+        cc(grid('big_plane1_se', (3, 2), frame=1)),
+        cc(grid('big_plane1_s',  (4, 2), frame=1)),
+        cc(grid('big_plane1_sw', (5, 2), frame=1)),
+        cc(grid('big_plane1_w',  (6, 2), frame=1)),
+        cc(grid('big_plane1_nw', (7, 2), frame=1)),
+
+        cc(grid('big_plane2_n',  (0, 2), frame=2)),
+        cc(grid('big_plane2_ne', (1, 2), frame=2)),
+        cc(grid('big_plane2_e',  (2, 2), frame=2)),
+        cc(grid('big_plane2_se', (3, 2), frame=2)),
+        cc(grid('big_plane2_s',  (4, 2), frame=2)),
+        cc(grid('big_plane2_sw', (5, 2), frame=2)),
+        cc(grid('big_plane2_w',  (6, 2), frame=2)),
+        cc(grid('big_plane2_nw', (7, 2), frame=2)),
+
+        cc(grid('big_plane3_n',  (0, 2), frame=3)),
+        cc(grid('big_plane3_ne', (1, 2), frame=3)),
+        cc(grid('big_plane3_e',  (2, 2), frame=3)),
+        cc(grid('big_plane3_se', (3, 2), frame=3)),
+        cc(grid('big_plane3_s',  (4, 2), frame=3)),
+        cc(grid('big_plane3_sw', (5, 2), frame=3)),
+        cc(grid('big_plane3_w',  (6, 2), frame=3)),
+        cc(grid('big_plane3_nw', (7, 2), frame=3)),
+    ]
+
+air_planes = lib.SpriteCollection('air_planes') \
+    .add(VEHICLE_DIR / 'air_planes.ase', tmpl_air_planes, ZOOM_2X)
+air_planes[:8].replace_old(3773)    # small
+air_planes[8:16].replace_old(3805)  # small
+air_planes[16:24].replace_old(3757) # concorde
+air_planes[24:32].replace_old(3741) # medium
+air_planes[32:40].replace_old(3765) # medium
+air_planes[40:48].replace_old(3781) # medium
+air_planes[48:56].replace_old(3749) # big
+air_planes[56:64].replace_old(3789) # big
+air_planes[64:72].replace_old(3797) # big
+
+
 # ------------------------------ Road Infrastructure ------------------------------
 
 @lib.template(grf.FileSprite)
