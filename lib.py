@@ -236,7 +236,7 @@ class BuildingSlicesGrid(BaseGrid):
         kw = {**self.kw, **kw}
         return super().__call__(
             name,
-            x + tile_ws * (not has_left),
+            x + tile_ws * (not has_left) + self.offset[0],
             y - h,
             width=tile_ws * (has_left + has_right),
             height=2 * tile_hs - 1 + h,

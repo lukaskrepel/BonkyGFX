@@ -1003,6 +1003,7 @@ lib.SpriteCollection('street_lights') \
     .pick(1, 0) \
     .replace_old(1406)
 
+
 @lib.template(grf.FileSprite)
 def tmpl_statues(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
@@ -1020,6 +1021,7 @@ statues[:2].replace_old(1454)
 statues[2].replace_old(2632)
 statues[3].replace_old(4694)
 statues[4].replace_old(4698)
+
 
 @lib.template(grf.FileSprite)
 def tmpl_shops_and_offices(func, z):
@@ -1060,88 +1062,84 @@ houses[10:13].replace_old(1466)  # 15
 houses[13:19].replace_old(1540)  # 30
 
 
-# TODO Amateur code, toyhouses
-# 4627 first stage of first toy house
-# 4628
-# 4629 final stage of first toy house
-# --
-# 4674 final stage of last toy house
 @lib.template(grf.FileSprite)
 def tmpl_houses_toyland(func, z):
     grid = lib.HouseGrid(func=func, height=100, z=z)
+    grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
+    shoe = lib.BuildingSlicesGrid(func=func, offset=(1042, 2), z=z, tile_size=(1, 2), xofs=-62, yofs=-140)
+    shoe.set_default(layers=('BUILDING/*', 'Spriteborder'))
     return [
-        grid('church_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('church_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('church_stage3', (0, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('church_stage1', (0, 0), frame=1),
+        grid('church_stage2', (0, 0), frame=2),
+        grid('church_stage3', (0, 0), frame=3),
 
-        grid('house1_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house1_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house1_stage3', (1, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('house1_stage1', (0, 0), frame=1),
+        grid('house1_stage2', (0, 0), frame=2),
+        grid('house1_stage3', (1, 0), frame=3),
 
-        grid('house2_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house2_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house2_stage3', (2, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('house2_stage1', (0, 0), frame=1),
+        grid('house2_stage2', (0, 0), frame=2),
+        grid('house2_stage3', (2, 0), frame=3),
 
-        grid('house3_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house3_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house3_stage3', (3, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('house3_stage1', (0, 0), frame=1),
+        grid('house3_stage2', (0, 0), frame=2),
+        grid('house3_stage3', (3, 0), frame=3),
 
-        grid('house4_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house4_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house4_stage3', (4, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('house4_stage1', (0, 0), frame=1),
+        grid('house4_stage2', (0, 0), frame=2),
+        grid('house4_stage3', (4, 0), frame=3),
 
-        grid('house5_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house5_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house5_stage3', (5, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('house5_stage1', (0, 0), frame=1),
+        grid('house5_stage2', (0, 0), frame=2),
+        grid('house5_stage3', (5, 0), frame=3),
 
-        grid('house6_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house6_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('house6_stage3', (6, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('house6_stage1', (0, 0), frame=1),
+        grid('house6_stage2', (0, 0), frame=2),
+        grid('house6_stage3', (6, 0), frame=3),
 
-        grid('tall-office1_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tall-office1_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tall-office1_stage3', (7, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('tall_office1_stage1', (0, 0), frame=1),
+        grid('tall_office1_stage2', (0, 0), frame=2),
+        grid('tall_office1_stage3', (7, 0), frame=3),
 
-        grid('shoe-left_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shoe-right_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shoe-left_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shoe-right_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shoe-left_stage3', (8, 0), frame=3, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shoe-right_stage3', (0, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('shoe_left_stage1', (0, 0), frame=1),
+        grid('shoe_right_stage1', (0, 0), frame=1),
+        grid('shoe_left_stage2', (0, 0), frame=2),
+        grid('shoe_right_stage2', (0, 0), frame=2),
+        shoe('shoe_left_stage3', (0, 0), frame=3),
+        shoe('shoe_right_stage3', (0, 1), frame=3),
 
-        grid('tall-office2_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tall-office2_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tall-office2_stage3', (1, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('tall_office2_stage1', (0, 0), frame=1),
+        grid('tall_office2_stage2', (0, 0), frame=2),
+        grid('tall_office2_stage3', (1, 1), frame=3),
 
-        grid('igloo_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('igloo_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('igloo_stage3', (2, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('igloo_stage1', (0, 0), frame=1),
+        grid('igloo_stage2', (0, 0), frame=2),
+        grid('igloo_stage3', (2, 1), frame=3),
 
-        grid('tepees_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tepees_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tepees_stage3', (3, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('tepees_stage1', (0, 0), frame=1),
+        grid('tepees_stage2', (0, 0), frame=2),
+        grid('tepees_stage3', (3, 1), frame=3),
 
-        grid('shops-and-offices1_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shops-and-offices1_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        animated('shops-and-offices2_stage3', grid, (4, 1), frame=3),
+        grid('shops_and_offices1_stage1', (0, 0), frame=1),
+        grid('shops_and_offices1_stage2', (0, 0), frame=2),
+        animated('shops_and_offices2_stage3', grid, (4, 1), frame=3),
 
-        grid('shops-and-offices2_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('shops-and-offices2_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        animated('shops-and-offices2_stage3', grid, (5, 1), frame=3),
+        grid('shops_and_offices2_stage1', (0, 0), frame=1),
+        grid('shops_and_offices2_stage2', (0, 0), frame=2),
+        animated('shops_and_offices2_stage3', grid, (5, 1), frame=3),
 
-        grid('tall-office3_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tall-office3_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('tall-office3_stage3', (6, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('tall_office3_stage1', (0, 0), frame=1),
+        grid('tall_office3_stage2', (0, 0), frame=2),
+        grid('tall_office3_stage3', (6, 1), frame=3),
 
-        grid('teapot_stage1', (0, 0), frame=1, layers=('BUILDING/*', 'Spriteborder')),
-        grid('teapot_stage2', (0, 0), frame=2, layers=('BUILDING/*', 'Spriteborder')),
-        grid('teapot_stage3', (7, 1), frame=3, layers=('BUILDING/*', 'Spriteborder')),
+        grid('teapot_stage1', (0, 0), frame=1),
+        grid('teapot_stage2', (0, 0), frame=2),
+        grid('teapot_stage3', (7, 1), frame=3),
     ]
 
-# TODO Amateur Code
-houses_toyland = lib.SpriteCollection('toyhouse') \
-    .add(TOWN_DIR / 'houses_toyland.ase', tmpl_houses_toyland, ZOOM_2X) \
-    #.replace_old(4627)
+
+houses_toyland = lib.SpriteCollection('toy_house') \
+    .add(TOWN_DIR / 'houses_toyland.ase', tmpl_houses_toyland, ZOOM_2X)
 houses_toyland[:48].replace_old(4627)
 houses_toyland[48:51].replace_old(4695)
 
