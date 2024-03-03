@@ -1111,7 +1111,7 @@ def tmpl_houses_toyland(func, z):
 
         grid('igloo_stage1', (0, 0), frame=1),
         grid('igloo_stage2', (0, 0), frame=2),
-        grid('igloo_stage3', (1, 1), frame=3),
+        animated('igloo_stage3', grid, (1, 1), frame=3),
 
         grid('tepees_stage1', (0, 0), frame=1),
         grid('tepees_stage2', (0, 0), frame=2),
