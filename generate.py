@@ -43,6 +43,7 @@ STATION_DIR = SPRITE_DIR / 'stations'
 TREE_DIR = SPRITE_DIR / 'trees'
 EFFECT_DIR = SPRITE_DIR / 'effects'
 ICON_DIR = SPRITE_DIR / 'icons'
+FACES_DIR = SPRITE_DIR / 'faces'
 
 
 g = grf.NewGRF(
@@ -1946,6 +1947,29 @@ for i, row in enumerate(ICON_SHEET):
         replace_by_global_id(sid, [sprite])
         if sid in COPY_ICONS:
             replace_by_global_id(COPY_ICONS[sid], [sprite])
+
+
+# ------------------------------ Faces ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_faces(func, z):
+    grid = lib.RectGrid(func=func, width=92 * z, height=119 * z, padding=z)
+    frames = range(1, 29)
+    return [
+        grid('BALD_W', (0, 0), layers='BALD_W', frame=frame) for frame in frames[:2]
+    ] + [
+        grid('CHIN_W', (0, 0), layers='CHIN_W', frame=frame) for frame in frames[:4]
+    ] + [
+        grid('EYES_W', (0, 0), layers='EYES_W', frame=frame) for frame in frames[:28]
+    ] + [
+        grid('GLASSES', (0, 0), layers='GLASSES', frame=frame) for frame in frames[:2]
+    ]
+
+
+faces = lib.SpriteCollection('faces') \
+    .add(FACES_DIR / 'faces.ase', tmpl_faces, ZOOM_2X) \
+    .replace_old(805)
+
 
 # ------------------------------ Sprite Replacement Magic ------------------------------
 
