@@ -1102,7 +1102,7 @@ def tmpl_houses_toyland(func, z):
         grid('shoe_left_stage1', (0, 0), frame=1),
         grid('shoe_right_stage1', (0, 0), frame=1),
         grid('shoe_left_stage2', (0, 0), frame=2),
-        grid('shoe_right_stage2', (0, 0), frame=2),
+        grid('shoe_right_stage2', (0, 0), frame=1),
         shoe('shoe_left_stage3', (0, 0), frame=3),
         shoe('shoe_right_stage3', (0, 1), frame=3),
 
