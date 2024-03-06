@@ -490,7 +490,7 @@ wagon('rubber_full', 2825, 14, frame=2)  # tropical rail rubber wagon (full)
 
 def wagon(name, sprite_id, y, *, frame):
     lib.SpriteCollection('wagon_' + name) \
-        .add(VEHICLE_DIR / 'rail_wagons_toyland.ase', tmpl_vehicle_rail_4view, ZOOM_2X, y, frame) \
+        .add(VEHICLE_DIR / 'rail_wagons_toyland.ase', tmpl_vehicle_rail_4view, ZOOM_2X, y, frame, climate=TOYLAND) \
         .replace_old(sprite_id)
 
 wagon('passengers', 2733, 0, frame=1)
@@ -1960,7 +1960,9 @@ def tmpl_faces(func, z):
     ] + [
         grid('CHIN_W', (0, 0), layers='CHIN_W', frame=frame) for frame in frames[:4]
     ] + [
-        grid('EYES_W', (0, 0), layers='EYES_W', frame=frame) for frame in frames[:28]
+        grid('EYES_W_M', (0, 0), layers='EYES_W_M', frame=frame) for frame in frames[:12]
+    ] + [
+        grid('EYES_W_F', (0, 0), layers='EYES_W_F', frame=frame) for frame in frames[:16]
     ] + [
         grid('GLASSES_W', (0, 0), layers='GLASSES_W', frame=frame) for frame in frames[:2]
     ] + [
