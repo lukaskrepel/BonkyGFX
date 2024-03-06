@@ -1955,67 +1955,42 @@ for i, row in enumerate(ICON_SHEET):
 def tmpl_faces(func, z):
     grid = lib.RectGrid(func=func, width=92 * z, height=119 * z, padding=z)
     frames = range(1, 29)
-    return [
-        grid('BALD_W', (0, 0), layers='BALD_W', frame=frame) for frame in frames[:2]
-    ] + [
-        grid('CHIN_W', (0, 0), layers='CHIN_W', frame=frame) for frame in frames[:4]
-    ] + [
-        grid('EYES_W_M', (0, 0), layers='EYES_W_M', frame=frame) for frame in frames[:12]
-    ] + [
-        grid('EYES_W_F', (0, 0), layers='EYES_W_F', frame=frame) for frame in frames[:16]
-    ] + [
-        grid('GLASSES_W', (0, 0), layers='GLASSES_W', frame=frame) for frame in frames[:2]
-    ] + [
-        grid('NOSE_W', (0, 0), layers='NOSE_W', frame=frame) for frame in frames[:8]
-    ] + [
-        grid('MOUTH_W', (0, 0), layers='MOUTH_W', frame=frame) for frame in frames[:22]
-    ] + [
-        grid('MOUSTACHE_W', (0, 0), layers='MOUSTACHE_W', frame=frame) for frame in frames[:3]
-    ] + [
-        grid('BG', (0, 0), layers='BG', frame=frame) for frame in frames[:1]
-    ] + [
-        grid('COLLAR', (0, 0), layers='COLLAR', frame=frame) for frame in frames[:4]
-    ] + [
-        grid('JACKET', (0, 0), layers='JACKET', frame=frame) for frame in frames[:3]
-    ] + [
-        grid('TIE', (0, 0), layers='TIE', frame=frame) for frame in frames[:6]
-    ] + [
-        grid('SHIRT', (0, 0), layers='SHIRT', frame=frame) for frame in frames[:3]
-    ] + [
-        grid('NECKLACE_W', (0, 0), layers='NECKLACE_W', frame=frame) for frame in frames[:4]
-    ] + [
-        grid('EARRINGS_W', (0, 0), layers='EARRINGS_W', frame=frame) for frame in frames[:3]
-    ] + [
-        grid('HAIR_W', (0, 0), layers='HAIR_W', frame=frame) for frame in frames[:14]
-    ] + [
-        grid('BALD_B', (0, 0), layers='BALD_B', frame=frame) for frame in frames[:1]
-    ] + [
-        grid('CHIN_B_M', (0, 0), layers='CHIN_B_M', frame=frame) for frame in frames[:2]
-    ] + [
-        grid('NOSE_B_M', (0, 0), layers='NOSE_B_M', frame=frame) for frame in frames[:4]
-    ] + [
-        grid('MOUSTACHE_B', (0, 0), layers='MOUSTACHE_B', frame=frame) for frame in frames[:3]
-    ] + [
-        grid('EYES_B', (0, 0), layers='EYES_B', frame=frame) for frame in frames[:11]
-    ] + [
-        grid('MOUTH_B', (0, 0), layers='MOUTH_B', frame=frame) for frame in frames[:9]
-    ] + [
-        grid('GLASSES_B', (0, 0), layers='GLASSES_B', frame=frame) for frame in frames[:2]
-    ] + [
-        grid('BALD_B_F', (0, 0), layers='BALD_B_F', frame=frame) for frame in frames[:1]
-    ] + [
-        grid('CHIN_B_F', (0, 0), layers='CHIN_B_F', frame=frame) for frame in frames[:2]
-    ] + [
-        grid('NOSE_B_F', (0, 0), layers='NOSE_B_F', frame=frame) for frame in frames[:5]
-    ] + [
-        grid('EYES_B_F', (0, 0), layers='EYES_B_F', frame=frame) for frame in frames[:16]
-    ] + [
-        grid('MOUTH_B_F', (0, 0), layers='MOUTH_B_F', frame=frame) for frame in frames[:9]
-    ] + [
-        grid('EARRINGS_B', (0, 0), layers='EARRINGS_B', frame=frame) for frame in frames[:2]
-    ] + [
-        grid('HAIR_B', (0, 0), layers='HAIR_B', frame=frame) for frame in frames[:10]
+    layers = [
+        ('BALD_W', 2), 
+        ('CHIN_W', 4), 
+        ('EYES_W_M', 12), 
+        ('EYES_W_F', 16), 
+        ('GLASSES_W', 2), 
+        ('NOSE_W', 8), 
+        ('MOUTH_W_F', 10), 
+        ('MOUTH_W_M', 12), 
+        ('MOUSTACHE_W', 3),
+        ('BG', 1), 
+        ('JACKET', 3), 
+        ('COLLAR', 4), 
+        ('TIE', 6), 
+        ('SHIRT', 3),
+        ('NECKLACE_W', 4), 
+        ('EARRINGS_W', 3), 
+        ('HAIR_W_M', 9), 
+        ('HAIR_W_F', 5),
+        ('BALD_B', 1), 
+        ('CHIN_B_M', 2), 
+        ('NOSE_B_M', 4), 
+        ('MOUSTACHE_B', 3),
+        ('EYES_B', 11), 
+        ('MOUTH_B', 9), 
+        ('GLASSES_B', 2), 
+        ('BALD_B_F', 1),
+        ('CHIN_B_F', 2), 
+        ('NOSE_B_F', 5), 
+        ('EYES_B_F', 16), 
+        ('MOUTH_B_F', 9),
+        ('EARRINGS_B', 2), 
+        ('HAIR_B', 10)
     ]
+    return [grid('faces', (0, 0), layers=layer, frame=frame) 
+            for layer, limit in layers for frame in frames[:limit]]
 
 
 faces = lib.SpriteCollection('faces') \
