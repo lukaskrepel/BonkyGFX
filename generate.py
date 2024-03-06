@@ -1951,6 +1951,7 @@ for i, row in enumerate(ICON_SHEET):
 
 # ------------------------------ Faces ------------------------------
 
+
 @lib.template(grf.FileSprite)
 def tmpl_faces(func, z):
     grid = lib.RectGrid(func=func, width=92 * z, height=119 * z, padding=z)
@@ -1960,7 +1961,7 @@ def tmpl_faces(func, z):
         ('CHIN_W', 4), 
         ('EYES_W_M', 12), 
         ('EYES_W_F', 16), 
-        ('GLASSES_W', 2), 
+        ('GLASSES', 2), 
         ('NOSE_W', 8), 
         ('MOUTH_W_F', 10), 
         ('MOUTH_W_M', 12), 
@@ -1970,26 +1971,27 @@ def tmpl_faces(func, z):
         ('COLLAR', 4), 
         ('TIE', 6), 
         ('SHIRT', 3),
-        ('NECKLACE_W', 4), 
-        ('EARRINGS_W', 3), 
+        ('NECKLACE', 4), 
+        ('EARRINGS', 3), 
         ('HAIR_W_M', 9), 
         ('HAIR_W_F', 5),
         ('BALD_B', 1), 
-        ('CHIN_B_M', 2), 
-        ('NOSE_B_M', 4), 
+        ('CHIN_B', 2), 
+        ('NOSE_B', 4), 
         ('MOUSTACHE_B', 3),
-        ('EYES_B', 11), 
-        ('MOUTH_B', 9), 
-        ('GLASSES_B', 2), 
-        ('BALD_B_F', 1),
-        ('CHIN_B_F', 2), 
-        ('NOSE_B_F', 5), 
+        ('EYES_B_M', 11), 
+        ('MOUTH_B_M', 9), 
+        ('GLASSES', 2), 
+        ('BALD_B', 1),
+        ('CHIN_B', 2), 
+        ('NOSE_B', 5), 
         ('EYES_B_F', 16), 
         ('MOUTH_B_F', 9),
-        ('EARRINGS_B', 2), 
-        ('HAIR_B', 10)
+        ('EARRINGS', 2), 
+        ('HAIR_B_M', 5),
+        ('HAIR_B_F', 5),
     ]
-    return [grid('faces', (0, 0), layers=layer, frame=frame) 
+    return [cc(grid('faces', (0, 0), layers=layer, frame=frame)) 
             for layer, limit in layers for frame in frames[:limit]]
 
 
