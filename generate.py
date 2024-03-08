@@ -1626,14 +1626,14 @@ def tmpl_printing_works(func, z):
         func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
 
         grf.EMPTY_SPRITE,
-        cc(func('building2_stage2', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2)),
-        cc(func('building3_stage2', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2)),
-        cc(func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2)),
+        func('building2_stage2', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building3_stage2', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
+        func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2),
         
         grf.EMPTY_SPRITE,
-        cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
-        cc(func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
-        cc(func('building4_stage3', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=3)),
+        func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3),
+        func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3),
+        func('building4_stage3', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=3),
     ]
 
 
