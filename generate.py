@@ -1954,18 +1954,19 @@ for i, row in enumerate(ICON_SHEET):
 
 @lib.template(grf.FileSprite)
 def tmpl_faces(func, z):
-    grid = lib.RectGrid(func=func, width=92 * z, height=119 * z, padding=z)
-    frames = range(1, 29)
-    layers = [
-        ('BALD', 2), 
-        ('CHIN', 4), 
-        (('EYES/EYEWHITE', 'EYES/PUPILS'), 12), 
-        ('EYES/*', 16), 
+    WHITE_SKIN = (255, 255, 0)
+    BLACK_SKIN = (40, 40, 40)
+    AFRICAN_EYE = (0, 255, 0)
+    SPRITE_DATA = [
+        ('BALD', 2, WHITE_SKIN),
+        ('CHIN', 4, WHITE_SKIN),
+        (('EYES/EYEWHITE', 'EYES/PUPILS'), 12, True),
+        ('EYES/*', 16, True),
         ('GLASSES', 2), 
-        ('NOSE', 8), 
+        ('NOSE', 8, WHITE_SKIN),
         ('MOUTH/*', 10), 
         ('MOUTH/MOUTH', 12), 
-        ('MOUSTACHE_W', 3),
+        ('MOUSTACHE_W', 3, WHITE_SKIN),
         ('BG', 1), 
         ('JACKET', 3), 
         ('COLLAR', 4), 
@@ -1973,26 +1974,37 @@ def tmpl_faces(func, z):
         ('SHIRT', 3),
         ('NECKLACE', 4), 
         ('EARRINGS', 3), 
-        ('HAIR_W_M', 9), 
-        ('HAIR_W_F', 5),
-        ('BALD', 1), 
-        ('CHIN', 2), 
-        ('NOSE', 4), 
-        ('MOUSTACHE_B', 3),
-        (('EYES/EYEWHITE', 'EYES/PUPILS'), 11),
+        ('HAIR_W_M', 9, WHITE_SKIN),
+        ('HAIR_W_F', 5, WHITE_SKIN),
+        ('BALD', 1, BLACK_SKIN),
+        ('CHIN', 2, BLACK_SKIN),
+        ('NOSE', 4, BLACK_SKIN),
+        ('MOUSTACHE_B', 3, BLACK_SKIN),
+        (('EYES/EYEWHITE', 'EYES/PUPILS'), 11, AFRICAN_EYE),
         ('MOUTH/MOUTH', 9), 
         ('GLASSES', 2), 
-        ('BALD', 1),
-        ('CHIN', 2), 
-        ('NOSE', 5), 
-        ('EYES/*', 16), 
+        ('BALD', 1, BLACK_SKIN),
+        ('CHIN', 2, BLACK_SKIN),
+        ('NOSE', 5, BLACK_SKIN),
+        ('EYES/*', 16, AFRICAN_EYE),
         ('MOUTH/*', 9),
         ('EARRINGS', 3), 
         ('HAIR_B_M', 5),
         ('HAIR_B_F', 5),
     ]
-    return [cc(grid('faces', (0, 0), layers=layer, frame=frame)) 
-            for layer, limit in layers for frame in frames[:limit]]
+    grid = lib.RectGrid(func=func, width=92 * z, height=119 * z, padding=z)
+    res = []
+    for j, p in enumerate(SPRITE_DATA):
+        layers, limit = p[:2]
+        colour = p[2] if len(p) > 2 else None
+        for i in range(limit):
+            sprite = grid(f'face_{j}_{i}', (0, 0), layers=layers, frame=i + 1)
+            if colour is True:
+                sprite = cc(sprite)
+            elif colour is not None:
+                sprite = lib.MagentaToColour(sprite, colour)
+            res.append(sprite)
+    return res
 
 
 faces = lib.SpriteCollection('faces') \

@@ -651,6 +651,53 @@ class DebugSprite(SpriteWrapper):
         )
 
 
+def make_magenta_mask(rgb):
+    return (
+        (rgb[:, :, 0] == rgb[:, :, 2]) &
+        (
+            ((rgb[:, :, 0] == 255) & (rgb[:, :, 1] != 255)) |
+            ((rgb[:, :, 1] == 0) & (rgb[:, :, 0] != 0))
+        )
+    )
+
+
+class MagentaToColour(SpriteWrapper):
+    def __init__(self, sprite, colour):
+        self.colour = colour
+        self._oklab_colour = grf.srgb_to_oklab(colour)
+        super().__init__((sprite, ))
+
+    def get_data_layers(self, context):
+        w, h, rgb, alpha, mask = self.sprites[0].get_data_layers(context)
+
+        timer = context.start_timer()
+
+        magenta_mask = make_magenta_mask(rgb)
+        value = rgb[magenta_mask][:, 0].astype(np.uint16) + rgb[magenta_mask][:, 1]
+        value_map = np.zeros((255 * 2, 3), dtype=np.uint8)
+        BLACK = grf.srgb_to_oklab((0, 0, 0))
+        WHITE = grf.srgb_to_oklab((255, 255, 255))
+        for v in set(value):
+            if v < 255:
+                value_map[v] = grf.oklab_to_srgb(grf.oklab_blend(BLACK, self._oklab_colour, v / 255.))
+            elif v > 255:
+                value_map[v] = grf.oklab_to_srgb(grf.oklab_blend(self._oklab_colour, WHITE, (v - 255) / 255.))
+            else:
+                value_map[v] = self.colour
+        rgb = grf.np_make_writable(rgb)
+        rgb[magenta_mask, :] = value_map[value]
+
+        timer.count_custom('Magenta and mask processing')
+
+        return w, h, rgb, alpha, mask
+
+    def get_fingerprint(self):
+        return grf.combine_fingerprint(
+            super().get_fingerprint(),
+            colour=self.colour,
+        )
+
+
 class MagentaRecolour(SpriteWrapper):
     def __init__(self, sprite, magenta_map):
         self.magenta_map = magenta_map
@@ -663,13 +710,7 @@ class MagentaRecolour(SpriteWrapper):
         timer = context.start_timer()
 
         rgb = grf.np_make_writable(rgb)
-        magenta_mask = (
-            (rgb[:, :, 0] == rgb[:, :, 2]) &
-            (
-                ((rgb[:, :, 0] == 255) & (rgb[:, :, 1] != 255)) |
-                ((rgb[:, :, 1] == 0) & (rgb[:, :, 0] != 0))
-            )
-        )
+        magenta_mask = make_magenta_mask(rgb)
 
         if mask is not None:
             magenta_mask &= (mask == 0)
@@ -734,13 +775,7 @@ class MagentaToLight(grf.Sprite):
 
         timer = context.start_timer()
 
-        magenta_mask = (
-            (npimg[:, :, 0] == npimg[:, :, 2]) &
-            (
-                ((npimg[:, :, 0] == 255) & (npimg[:, :, 1] != 255)) |
-                ((npimg[:, :, 1] == 0) & (npimg[:, :, 0] != 0))
-            )
-        )
+        magenta_mask = make_magenta_mask(rgb)
 
         order_mask = (na > 0)
         colours = list(set(map(tuple, ni[order_mask])))
@@ -795,13 +830,7 @@ class MagentaAndMask(grf.Sprite):
 
         timer = context.start_timer()
 
-        magenta_mask = (
-            (rgb[:, :, 0] == rgb[:, :, 2]) &
-            (
-                ((rgb[:, :, 0] == 255) & (rgb[:, :, 1] != 255)) |
-                ((rgb[:, :, 1] == 0) & (rgb[:, :, 0] != 0))
-            )
-        )
+        magenta_mask = make_magenta_mask(rgb)
 
         anim_mask = (na > 0)
         pal_mask = (na > 0) & magenta_mask
