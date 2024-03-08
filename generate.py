@@ -1987,7 +1987,7 @@ def tmpl_faces(func, z):
         ('NOSE', 5), 
         ('EYES/*', 16), 
         ('MOUTH/*', 9),
-        ('EARRINGS', 2), 
+        ('EARRINGS', 3), 
         ('HAIR_B_M', 5),
         ('HAIR_B_F', 5),
     ]
