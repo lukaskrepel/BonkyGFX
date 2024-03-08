@@ -1954,9 +1954,9 @@ for i, row in enumerate(ICON_SHEET):
 
 @lib.template(grf.FileSprite)
 def tmpl_faces(func, z):
-    WHITE_SKIN = (255, 255, 0)
-    BLACK_SKIN = (40, 40, 40)
-    AFRICAN_EYE = (0, 255, 0)
+    WHITE_SKIN = (255, 176, 112)
+    BLACK_SKIN = (128, 88, 56)
+    AFRICAN_EYE = (105, 64, 37)
     SPRITE_DATA = [
         ('BALD', 2, WHITE_SKIN),
         ('CHIN', 4, WHITE_SKIN),
@@ -1964,8 +1964,8 @@ def tmpl_faces(func, z):
         ('EYES/*', 16, True),
         ('GLASSES', 2), 
         ('NOSE', 8, WHITE_SKIN),
-        ('MOUTH/*', 10), 
-        ('MOUTH/MOUTH', 12), 
+        ('MOUTH/*', 10, WHITE_SKIN), 
+        ('MOUTH/MOUTH', 12, WHITE_SKIN), 
         ('MOUSTACHE_W', 3, WHITE_SKIN),
         ('BG', 1), 
         ('JACKET', 3), 
@@ -1981,16 +1981,16 @@ def tmpl_faces(func, z):
         ('NOSE', 4, BLACK_SKIN),
         ('MOUSTACHE_B', 3, BLACK_SKIN),
         (('EYES/EYEWHITE', 'EYES/PUPILS'), 11, AFRICAN_EYE),
-        ('MOUTH/MOUTH', 9), 
+        ('MOUTH/MOUTH', 9, WHITE_SKIN), 
         ('GLASSES', 2), 
         ('BALD', 1, BLACK_SKIN),
         ('CHIN', 2, BLACK_SKIN),
         ('NOSE', 5, BLACK_SKIN),
         ('EYES/*', 16, AFRICAN_EYE),
-        ('MOUTH/*', 9),
+        ('MOUTH/*', 9, BLACK_SKIN),
         ('EARRINGS', 3), 
-        ('HAIR_B_M', 5),
-        ('HAIR_B_F', 5),
+        ('HAIR_B_M', 5, BLACK_SKIN),
+        ('HAIR_B_F', 5, BLACK_SKIN),
     ]
     grid = lib.RectGrid(func=func, width=92 * z, height=119 * z, padding=z)
     res = []
