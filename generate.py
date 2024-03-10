@@ -331,7 +331,7 @@ for i in range(7):
     tree('toyland_tree', 1947 + i * 7, TREE_DIR / 'toyland_tree.ase')
 
 tree('toyland_tree', 1947 + 7 * 7, TREE_DIR / 'battery_tree.ase')
-tree('toyland_tree', 1947 + 7 * 8, TREE_DIR / 'cottoncandy_tree.ase')
+tree('toyland_tree', 1947 + 7 * 8, TREE_DIR / 'cotton_candy_tree.ase')
 
 # ------------------------------ Road Vehicles ------------------------------
 
@@ -765,7 +765,7 @@ def tmpl_road_depot(func, z):
 
 
 lib.SpriteCollection('road_depot') \
-    .add(STATION_DIR / 'roaddepots.ase',
+    .add(STATION_DIR / 'road_depots.ase',
          tmpl_road_depot, ZOOM_2X) \
     .replace_old(1408)
 
@@ -804,7 +804,7 @@ def tmpl_truck_stop(func, z):
     ]
 
 truck_stops = lib.SpriteCollection('truck_stop') \
-    .add(STATION_DIR / 'truckstop.ase', tmpl_truck_stop, ZOOM_2X)
+    .add(STATION_DIR / 'truck_stop.ase', tmpl_truck_stop, ZOOM_2X)
 truck_stops[:16].replace_old(2708)
 truck_stops[16:].replace_new(0x11, 4)
 
@@ -845,7 +845,7 @@ def tmpl_bus_stop(func, z):
 
 
 bus_stops = lib.SpriteCollection('bus_stop') \
-    .add(STATION_DIR / 'busstop.ase', tmpl_bus_stop, ZOOM_2X)
+    .add(STATION_DIR / 'bus_stop.ase', tmpl_bus_stop, ZOOM_2X)
 bus_stops[:16].replace_old(2692)
 bus_stops[16:].replace_new(0x11, 0)
 
@@ -1051,7 +1051,7 @@ def tmpl_shops_and_offices(func, z):
     ]
 
 houses = lib.SpriteCollection('house') \
-    .add(TOWN_DIR / 'shopsandoffices.ase', tmpl_shops_and_offices, ZOOM_2X) \
+    .add(TOWN_DIR / 'shops_and_offices.ase', tmpl_shops_and_offices, ZOOM_2X) \
 
 houses[0:4].replace_old(1536)  # 29
 houses[4:7].replace_old(1467)  # 16
@@ -1203,15 +1203,15 @@ def tmpl_coal_mine(func, z):
 
 
 lib.SpriteCollection('coal_mine') \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TEMPERATE) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=ARCTIC) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coalmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TROPICAL) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'marshmallowmine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TOYLAND) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coal_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TEMPERATE) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coal_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=ARCTIC) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coal_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TROPICAL) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'marshmallow_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TOYLAND) \
     .replace_old(2011)
 
 
 @lib.template(grf.FileSprite)
-def tmpl_powerplant(func, z):
+def tmpl_power_plant(func, z):
     # bb values are (sx, sy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/industry_land.h
     grid = lib.HouseGrid(func=func, height=75, z=z)
     return [
@@ -1235,7 +1235,7 @@ def tmpl_powerplant(func, z):
 
 
 lib.SpriteCollection('power_plant') \
-    .add(lib.aseidx(INDUSTRY_DIR / 'powerplant.ase'), tmpl_powerplant, ZOOM_2X) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'power_plant.ase'), tmpl_power_plant, ZOOM_2X) \
     .replace_old(2045)
 
 
@@ -1293,7 +1293,7 @@ def tmpl_forest(func, z):
 lib.SpriteCollection('forest') \
     .add(INDUSTRY_DIR / 'forest_temperate.ase', tmpl_forest, ZOOM_2X) \
     .add(INDUSTRY_DIR / 'forest_arctic.ase', tmpl_forest, ZOOM_2X, climate=ARCTIC) \
-    .add(INDUSTRY_DIR / 'cottoncandyforest.ase', tmpl_forest, ZOOM_2X, climate=TOYLAND) \
+    .add(INDUSTRY_DIR / 'cotton_candy_forest.ase', tmpl_forest, ZOOM_2X, climate=TOYLAND) \
     .replace_old(2072)
 
 
@@ -1311,7 +1311,7 @@ def tmpl_battery_farm(func, z):
 
 
 lib.SpriteCollection('battery_farm') \
-    .add(INDUSTRY_DIR / 'batteryfarm.ase', tmpl_battery_farm, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'battery_farm.ase', tmpl_battery_farm, ZOOM_2X) \
     .replace_old(4686)
 
 
@@ -1451,7 +1451,7 @@ def tmpl_oil_refinery(func, z):
     ]
 
 lib.SpriteCollection('oil_refinery') \
-    .add(INDUSTRY_DIR / 'oilrefinery.ase', tmpl_oil_refinery, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'oil_refinery.ase', tmpl_oil_refinery, ZOOM_2X) \
     .replace_old(2078)
 
 
@@ -1485,7 +1485,7 @@ def tmpl_oil_rig(func, z):
 
 
 lib.SpriteCollection('oil_rig') \
-    .add(INDUSTRY_DIR / 'oilrig.ase', tmpl_oil_rig, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'oil_rig.ase', tmpl_oil_rig, ZOOM_2X) \
     .replace_old(2096)
 
 
@@ -1584,7 +1584,7 @@ def tmpl_steel_mill(func, z):
 
 
 lib.SpriteCollection('steel_mill') \
-    .add(INDUSTRY_DIR / 'steelmill.ase', tmpl_steel_mill, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'steel_mill.ase', tmpl_steel_mill, ZOOM_2X) \
     .replace_old(2118)
 
 
@@ -1661,7 +1661,7 @@ def tmpl_candy_factory(func, z):
 
 # TODO Amateur Code
 candy_factory = lib.SpriteCollection('candy_factory') \
-    .add(INDUSTRY_DIR / 'candyfactory.ase', tmpl_candy_factory, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'candy_factory.ase', tmpl_candy_factory, ZOOM_2X) \
     .replace_old(4677)
 
 
@@ -1684,7 +1684,7 @@ def tmpl_toy_shop(func, z):
 
 # TODO Amateur Code
 toy_shop = lib.SpriteCollection('toy_shop') \
-    .add(INDUSTRY_DIR / 'toyshop.ase', tmpl_toy_shop, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'toy_shop.ase', tmpl_toy_shop, ZOOM_2X) \
     .replace_old(4699)
 
 
@@ -1734,7 +1734,7 @@ def tmpl_fizzy_drink_factory(func, z):
 
 # TODO Amateur Code
 fizzy_drink_factory = lib.SpriteCollection('fizzy_drink_factory') \
-    .add(INDUSTRY_DIR / 'fizzydrinkfactory.ase', tmpl_fizzy_drink_factory, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'fizzy_drink_factory.ase', tmpl_fizzy_drink_factory, ZOOM_2X) \
     .replace_old(4737)
 
 
@@ -1749,7 +1749,7 @@ def tmpl_oil_wells(func, z):
 
 
 oil_wells = lib.SpriteCollection('oil_wells') \
-    .add(INDUSTRY_DIR / 'oilwells.ase', tmpl_oil_wells, ZOOM_2X)
+    .add(INDUSTRY_DIR / 'oil_wells.ase', tmpl_oil_wells, ZOOM_2X)
 oil_wells[0].compose_on(ground[0]).replace_old(2173)
 oil_wells[1:].replace_old(2174)
 
@@ -1766,7 +1766,7 @@ def tmpl_plastic_fountains(func, z):
     ]
 
 plastic_fountain = lib.SpriteCollection('plastic_fountain') \
-    .add(INDUSTRY_DIR / 'plasticfountain.ase', tmpl_plastic_fountains, ZOOM_2X)
+    .add(INDUSTRY_DIR / 'plastic_fountain.ase', tmpl_plastic_fountains, ZOOM_2X)
 plastic_fountain[:8].compose_on(ground[0]).replace_old(4721)
 plastic_fountain[8:].replace_old(4729)
 
@@ -1782,7 +1782,7 @@ def tmpl_cola_wells(func, z):
 
 
 lib.SpriteCollection('cola_wells') \
-    .add(INDUSTRY_DIR / 'colawells.ase', tmpl_cola_wells, ZOOM_2X) \
+    .add(INDUSTRY_DIR / 'cola_wells.ase', tmpl_cola_wells, ZOOM_2X) \
     .replace_old(4691)
 
 
@@ -1810,7 +1810,7 @@ lib.SpriteCollection('bank') \
 
 
 @lib.template(grf.FileSprite)
-def tmpl_iron_mine(func, z, frame):
+def tmpl_iron_ore_mine(func, z, frame):
     ground = func('ground', 2, 2, 512, 294, xofs=-254, yofs=-39, frame=frame)
     return [
         lib.CutGround(ground, (x, y), name=f'{x}_{y}', above=((0, 10)[y == 0], (0, 10)[x == 0]))
@@ -1820,8 +1820,8 @@ def tmpl_iron_mine(func, z, frame):
 
 
 for i in range(0, 3):
-    lib.SpriteCollection('iron_mine') \
-        .add(INDUSTRY_DIR / 'ironoremine.ase', tmpl_iron_mine, ZOOM_2X, i + 1, name=f'stage{i + 1}') \
+    lib.SpriteCollection('iron_ore_mine') \
+        .add(INDUSTRY_DIR / 'iron_ore_mine.ase', tmpl_iron_ore_mine, ZOOM_2X, i + 1, name=f'stage{i + 1}') \
         .replace_old(2293 + 16 * i)
 
 
@@ -1851,7 +1851,7 @@ def tmpl_toy_factory(func, z):
     ]
 
 lib.SpriteCollection('toy_factory') \
-    .add(INDUSTRY_DIR / 'toyfactory.ase', tmpl_toy_factory, ZOOM_2X, name='toy_factory') \
+    .add(INDUSTRY_DIR / 'toy_factory.ase', tmpl_toy_factory, ZOOM_2X, name='toy_factory') \
     .replace_old(4712)
 
 
