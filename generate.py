@@ -1157,6 +1157,7 @@ lib.SpriteCollection('transmitter') \
 @lib.template(grf.FileSprite)
 def tmpl_lighthouse(func, z):
     grid = lib.HouseGrid(func=func, height=123, z=z)
+    grid.set_default(layers=('BUILDING/*', 'Spriteborder'), ignore_layers='REF/*')
     return [animated('', grid, (0, 0), bb=(4, 4))]
 
 
