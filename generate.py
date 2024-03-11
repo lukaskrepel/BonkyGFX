@@ -750,6 +750,7 @@ desert_and_snow_road.replace_old(1351, climate=TROPICAL)  # in tropic - desert r
 
 @lib.template(grf.FileSprite)
 def tmpl_road_ramps(func, z, **kw):
+    assert z == 2
     grid = lib.RectGrid(func=func, width=64 * z, height=40 * z - 1, padding=z)
     grid.set_default(xofs=-31 * z, yofs=-9 * z, layers=('ASPHALT/*', 'MARKINGS/*', 'RAMPS/*'), **kw)
     return [
