@@ -229,7 +229,7 @@ class BuildingSlicesGrid(BaseGrid):
         tile_hs = 16 * self.z
         x = -self.xofs - 31 * self.z + (gy - gx) * tile_ws
         y = -self.yofs + (gx + gy) * tile_hs
-        MAX_HEIGHT = 200  # above ground
+        MAX_HEIGHT = 200 * self.z  # above ground
         h = min(MAX_HEIGHT, y - self.offset[1])
         xofs = kw.pop('xofs', None)
         yofs = kw.pop('yofs', None)

@@ -1847,7 +1847,7 @@ for i in range(0, 3):
 
 @lib.template(grf.FileSprite)
 def tmpl_toy_factory(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(4, 2), xofs=-256, yofs=-135)
+    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(4, 2), xofs=-254, yofs=-135)
     grid.set_default(layers=('BUILDING', 'BUILDING_INSIDE', 'Spriteborder'))
     # building stage 4708
     # grid('', (0, 1)),
@@ -1864,10 +1864,10 @@ def tmpl_toy_factory(func, z):
         grid('2_1', (2, 1)),
         grid('3_1', (3, 1)),
         grid('3_0', (3, 0)),
-        grid('1_1_front', (1, 1), xofs=0, yofs=-221+22, layers=('BUILDING', 'Spriteborder')),  # WARNING relative offset nonsense
-        func('stomper', 198, 2, 54, 196, xofs=-9, yofs=-158+22, layers='STOMPER'),  # NOTE positioned randomly
-        toy_grid('plastic', (0, 0), xofs=-11, yofs=-205+22),  # NOTE positioned randomly
-        toy_grid('toy', (1, 0), xofs=-15, yofs=-178+22),  # NOTE positioned randomly
+        grid('1_1_front', (1, 1), xofs=0, yofs=-221 + 21, layers=('BUILDING', 'Spriteborder')),  # WARNING relative offset nonsense
+        func('stomper', 198, 2, 54, 196, xofs=-9, yofs=-158 + 22, layers='STOMPER'),  # NOTE positioned randomly
+        toy_grid('plastic', (0, 0), xofs=-11, yofs=-205 + 22),  # NOTE positioned randomly
+        toy_grid('toy', (1, 0), xofs=-15, yofs=-178 + 22),  # NOTE positioned randomly
     ]
 
 lib.SpriteCollection('toy_factory') \
