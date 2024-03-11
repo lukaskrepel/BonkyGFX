@@ -1739,25 +1739,20 @@ lumber_mill = lib.SpriteCollection('lumber_mill') \
     .replace_old(2353)
 
 
-# TODO Amateur Code
-# building1 = north
-# building2 = east
-# building3 = west
-# building4 = south
 @lib.template(grf.FileSprite)
 def tmpl_fizzy_drink_factory(func, z):
-    assert z == 2
+    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(2, 2), xofs=-126, yofs=-76)
+    grid.set_default(ignore_layers='TILE/*')
     return [
-        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
-        func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2),
-        func('building2_stage2', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=2),
-        cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
-        grf.EMPTY_SPRITE, # Center. Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
-        cc(func('building3_stage3', 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
+        grid('s_stage1', (1, 1), frame=1),
+        grid('s_stage2', (1, 1), frame=2),
+        grid('e_stage2', (0, 1), frame=2),
+        cc(grid('e_stage3', (0, 1), frame=3)),
+        grid('s_stage3', (1, 1), frame=3),
+        cc(grid('w_stage3', (1, 0), frame=3)),
     ]
 
 
-# TODO Amateur Code
 fizzy_drink_factory = lib.SpriteCollection('fizzy_drink_factory') \
     .add(INDUSTRY_DIR / 'fizzy_drink_factory.ase', tmpl_fizzy_drink_factory, ZOOM_2X) \
     .replace_old(4737)
