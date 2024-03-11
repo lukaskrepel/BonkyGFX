@@ -752,7 +752,7 @@ desert_and_snow_road.replace_old(1351, climate=TROPICAL)  # in tropic - desert r
 def tmpl_road_ramps(func, z, **kw):
     assert z == 2
     grid = lib.RectGrid(func=func, width=64 * z, height=40 * z - 1, padding=z)
-    grid.set_default(xofs=-31 * z, yofs=-9 * z, layers=('ASPHALT/*', 'MARKINGS/*', 'RAMPS/*'), **kw)
+    grid.set_default(xofs=-31 * z, yofs=-17, layers=('ASPHALT/*', 'MARKINGS/*', 'RAMPS/*'), **kw)
     return [
         struct(grid('y_slope_sw', (1, 0), frame=1)),
         struct(grid('y_slope_ne', (1, 0), frame=2)),
