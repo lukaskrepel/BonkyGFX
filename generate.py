@@ -703,7 +703,7 @@ air_planes[64:72].replace_old(3797) # big
 @lib.template(grf.FileSprite)
 def tmpl_roadtiles(func, z, frame, **kw):
     grid = lib.FlexGrid(func=func, padding=2, add_yofs=-(z // 2))
-    grid.set_default(frame=frame, width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, **kw)
+    grid.set_default(frame=frame, width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, ignore_layers='RAMPS/*', **kw)
     return [
         grid('y'),
         grid('x'),
@@ -746,6 +746,28 @@ desert_and_snow_road = road.compose_on(desert_and_snow, ROAD_COMPOSITION)
 
 desert_and_snow_road.unspecify(climate=ARCTIC).replace_old(1351)  # default sprite - snowy road
 desert_and_snow_road.replace_old(1351, climate=TROPICAL)  # in tropic - desert road
+
+
+@lib.template(grf.FileSprite)
+def tmpl_road_ramps(func, z, **kw):
+    grid = lib.RectGrid(func=func, width=64 * z, height=40 * z - 1, padding=z)
+    grid.set_default(xofs=-31 * z, yofs=-9 * z, layers=('ASPHALT/*', 'MARKINGS/*', 'RAMPS/*'), **kw)
+    return [
+        struct(grid('y_slope_sw', (1, 0), frame=1)),
+        struct(grid('y_slope_ne', (1, 0), frame=2)),
+        struct(grid('x_slope_se', (0, 0), frame=1)),
+        struct(grid('x_slope_nw', (0, 0), frame=2)),
+        struct(grid('ramp_slope_ne', (15, 0), yofs=-17, frame=1)),
+        struct(grid('ramp_slope_sw', (17, 0), yofs=-1, frame=1)),
+        struct(grid('ramp_slope_nw', (18, 0), yofs=-17, frame=1)),
+        struct(grid('ramp_slope_se', (16, 0), yofs=-1, frame=1)),
+    ]
+
+
+lib.SpriteCollection('road_ramps') \
+    .add(INFRA_DIR / 'roads.ase',
+         tmpl_road_ramps, ZOOM_2X) \
+    .replace_old(2445)
 
 
 @lib.template(lib.CCReplacingFileSprite)
