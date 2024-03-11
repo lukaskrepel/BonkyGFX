@@ -1869,10 +1869,10 @@ def tmpl_toy_factory(func, z):
         grid('2_1', (2, 1)),
         grid('3_1', (3, 1)),
         grid('3_0', (3, 0)),
-        grid('1_1_front', (1, 1), xofs=0, yofs=-110, layers=('BUILDING', 'Spriteborder')),  # WARNING relative offset nonsense
-        func('stomper', 198, 2, 54, 196, xofs=-32, yofs=-64, layers='STOMPER'),  # NOTE positioned randomly
-        toy_grid('lump', (0, 0), xofs=-32, yofs=-100 + 16 - 32),  # NOTE positioned randomly
-        toy_grid('duck', (1, 0), xofs=-32, yofs=-100 + 16),  # NOTE positioned randomly
+        grid('1_1_front', (1, 1), xofs=0, yofs=-221+22, layers=('BUILDING', 'Spriteborder')),  # WARNING relative offset nonsense
+        func('stomper', 198, 2, 54, 196, xofs=-9, yofs=-158+22, layers='STOMPER'),  # NOTE positioned randomly
+        toy_grid('plastic', (0, 0), xofs=-11, yofs=-205+22),  # NOTE positioned randomly
+        toy_grid('toy', (1, 0), xofs=-15, yofs=-178+22),  # NOTE positioned randomly
     ]
 
 lib.SpriteCollection('toy_factory') \
