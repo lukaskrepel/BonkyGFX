@@ -1759,6 +1759,24 @@ fizzy_drink_factory = lib.SpriteCollection('fizzy_drink_factory') \
 
 
 @lib.template(grf.FileSprite)
+def tmpl_toffee_quarry(func, z):
+    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(3, 1), xofs=-62, yofs=-263)
+    grid.set_default(ignore_layers='REF/*')
+    return [
+        grid('toffee_quarry3', (-2, 0), frame=1),
+        grid('toffee_quarry2', (-1, 0), frame=1),
+        grid('toffee_quarry1', (0, 0), frame=1),
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+    ]
+
+
+toffee_quarry = lib.SpriteCollection('toffee_quarry') \
+    .add(INDUSTRY_DIR / 'toffee_quarry.ase', tmpl_toffee_quarry, ZOOM_2X) \
+    .replace_old(4763)
+
+
+@lib.template(grf.FileSprite)
 def tmpl_oil_wells(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
     f = lambda frame: grid('frame{i}', (0, 0), layers=('BUILDING/*', 'Spriteborder'), frame=frame)
