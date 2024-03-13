@@ -19,15 +19,17 @@ def animated(name, grid, *args, layers=None, ignore_layers=None, **kw):
         grid_args = {'keep_state': True}
 
     if ignore_layers is None:
-        ignore_layers = ()
+        if layers is None:
+            ignore_layers = ('ANIMATED',)
     elif isinstance(ignore_layers, tuple):
-        ignore_layers = ignore_layers
+        ignore_layers = ignore_layers + ('ANIMATED',)
     else:
-        ignore_layers = (ignore_layers,)
+        ignore_layers = (ignore_layers, 'ANIMATED')
 
-    # return lib.AlphaAndMask(
+    assert layers is None or ignore_layers is None
+
     return lib.MagentaAndMask(
-        grid(name + '_rgb', *args, **kw, layers=layers, ignore_layers=ignore_layers + ('ANIMATED',), **grid_args),
+        grid(name + '_rgb', *args, **kw, layers=layers, ignore_layers=ignore_layers, **grid_args),
         grid(name + '_anim', *args, **kw, layers=('ANIMATED',)),
         name=name,
     )
@@ -1765,7 +1767,7 @@ def tmpl_toffee_quarry(func, z):
     return [
         grid('0_0', (0, 0)),
         grid('1_0', (1, 0)),
-        animated('2_0', grid, (2, 0)),
+        animated('2_0', grid, (2, 0), layers='BUILDING/*'),
         grf.EMPTY_SPRITE,
         grid('box', (2, 0), layers='CHISEL/*', xofs=-155, yofs=-146),
     ]
