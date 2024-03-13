@@ -1763,9 +1763,9 @@ def tmpl_toffee_quarry(func, z):
     grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(3, 1), xofs=-62, yofs=-263)
     grid.set_default(ignore_layers='REF/*')
     return [
-        grid('toffee_quarry3', (-2, 0), frame=1),
-        grid('toffee_quarry2', (-1, 0), frame=1),
-        grid('toffee_quarry1', (0, 0), frame=1),
+        animated('toffee_quarry3', grid, (-2, 0), frame=1),
+        animated('toffee_quarry2', grid, (-1, 0), frame=1),
+        animated('toffee_quarry1', grid, (0, 0), frame=1),
         grf.EMPTY_SPRITE,
         grf.EMPTY_SPRITE,
     ]
