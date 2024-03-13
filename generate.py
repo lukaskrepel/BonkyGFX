@@ -1765,7 +1765,7 @@ def tmpl_toffee_quarry(func, z):
     return [
         grid('0_0', (0, 0)),
         grid('1_0', (1, 0)),
-        grid('2_0', (2, 0)),
+        animated('2_0', grid, (2, 0)),
         grf.EMPTY_SPRITE,
         grid('box', (2, 0), layers='CHISEL/*', xofs=-155, yofs=-146),
     ]
