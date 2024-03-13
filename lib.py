@@ -240,8 +240,8 @@ class BuildingSlicesGrid(BaseGrid):
             y - h,
             width=tile_ws * (has_left + has_right),
             height=2 * tile_hs - 1 + h,
-            xofs=-31 * self.z if has_left else self.z if xofs is None else xofs,
-            yofs=-h - (self.z // 2) if yofs is None else yofs,
+            xofs=(-31 * self.z if has_left else self.z) if xofs is None else xofs,
+            yofs=(-h - (self.z // 2)) if yofs is None else yofs,
             **kw
         )
 
