@@ -1761,13 +1761,13 @@ fizzy_drink_factory = lib.SpriteCollection('fizzy_drink_factory') \
 @lib.template(grf.FileSprite)
 def tmpl_toffee_quarry(func, z):
     grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(3, 1), xofs=-62, yofs=-263)
-    grid.set_default(ignore_layers='REF/*')
+    grid.set_default(layers='BUILDING/*', ignore_layers=('REF/*', 'CHISEL/*'), frame=1)
     return [
-        animated('toffee_quarry3', grid, (-2, 0), frame=1),
-        animated('toffee_quarry2', grid, (-1, 0), frame=1),
-        animated('toffee_quarry1', grid, (0, 0), frame=1),
+        grid('toffee_quarry3', (-2, 0)),
+        animated('toffee_quarry2', grid, (-1, 0)),
+        grid('toffee_quarry1', (0, 0)),
         grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
+        grid('toffee_quarry1', (0, 0), layers='CHISEL/*', ignore_layers='REF/*', xofs=-108, yofs=-146),
     ]
 
 
