@@ -1074,6 +1074,7 @@ class AseImageFile(grf.ImageFile):
 
     @staticmethod
     def _make_kw_key(frame=1, layers=None, ignore_layers=None):
+        assert layers is None or ignore_layers is None, (layers, ignore_layers)
         if isinstance(layers, str):
             layers = (layers,)
         if isinstance(ignore_layers, str):
