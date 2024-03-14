@@ -1919,23 +1919,23 @@ def tmpl_sugar_mine(func, z):
         grid('3_1', (3, 1), layers=('BUILDING', 'Spriteborder')),
         grid('3_0', (3, 0), layers=('BUILDING', 'Spriteborder')),
 
-        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=1),
-        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=2),
-        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=3),
-        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=4),
-        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=5),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137-7, frame=1),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137-7, frame=2),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137-7, frame=3),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137-7, frame=4),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137-7, frame=5),
 
-        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-44, yofs=-283, frame=1),
-        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-34, yofs=-277, frame=2),
-        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-28, yofs=-275, frame=3),
-        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-20, yofs=-269, frame=4),
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-44, yofs=-283-7, frame=1),
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-34, yofs=-277-7, frame=2),
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-28, yofs=-275-7, frame=3),
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-20, yofs=-269-7, frame=4),
 
-        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=1),
-        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=2),
-        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=3),
-        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=4),
-        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=5),
-        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=6),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-219-7, frame=1),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-219-7, frame=2),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-219-7, frame=3),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-219-7, frame=4),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-219-7, frame=5),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-219-7, frame=6),
     ]
 
 
