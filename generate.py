@@ -1895,6 +1895,58 @@ lib.SpriteCollection('toy_factory') \
     .replace_old(4712)
 
 
+@lib.template(grf.FileSprite)
+def tmpl_sugar_mine(func, z):
+    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(4, 2), xofs=-254, yofs=-135)
+    grid.set_default(layers=('BUILDING', 'Spriteborder'))
+    assert z == 2
+    return [
+        # [4768
+        # 4 TILES
+        # 3 BUILDING (r c l) 2_1 - 2_0/3_1? - 3_0
+        # 5 SIEVE
+        # 4 PILE
+        # 6 SPRINKLE
+        # 4789]
+
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+        # grid('0_0', (0, 0), layers=('TILES', 'Spriteborder')),
+        # grid('0_1', (0, 1), layers=('TILES', 'Spriteborder')),
+        # grid('1_0', (1, 0), layers=('TILES', 'Spriteborder')),
+        # grid('1_1', (1, 1), layers=('TILES', 'Spriteborder')),
+
+        grid('2_1', (2, 1), layers=('BUILDING', 'Spriteborder')),
+        grid('3_1', (3, 1), layers=('BUILDING', 'Spriteborder')),
+        grid('3_0', (3, 0), layers=('BUILDING', 'Spriteborder')),
+
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=1),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=2),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=3),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=4),
+        grid('3_1', (3, 1), layers=('SIEVE', 'Spriteborder'), xofs=-16, yofs=-137, frame=5),
+
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-44, yofs=-283, frame=1),
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-34, yofs=-277, frame=2),
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-28, yofs=-275, frame=3),
+        grid('3_1', (3, 1), layers=('PILE', 'Spriteborder'), xofs=-20, yofs=-269, frame=4),
+
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=1),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=2),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=3),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=4),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=5),
+        grid('3_1', (3, 1), layers=('SPRINKLE', 'Spriteborder'), xofs=-16, yofs=-218, frame=6),
+    ]
+
+
+lib.SpriteCollection('sugar_mine') \
+    .add(INDUSTRY_DIR / 'sugar_mine.ase', tmpl_sugar_mine, ZOOM_2X, name='sugar_mine') \
+    .replace_old(4768)
+
+
 # ------------------------------ User Interface ------------------------------
 
 @lib.template(grf.FileSprite)
