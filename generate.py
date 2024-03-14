@@ -1903,7 +1903,7 @@ def tmpl_sugar_mine(func, z):
     return [
         # [4768
         # 4 TILES
-        # 3 BUILDING (r c l) 2_1 - 2_0/3_1? - 3_0
+        # 3 BUILDING [2_1, 3_1, 3_0]
         # 5 SIEVE
         # 4 PILE
         # 6 SPRINKLE
@@ -1942,6 +1942,25 @@ def tmpl_sugar_mine(func, z):
 lib.SpriteCollection('sugar_mine') \
     .add(INDUSTRY_DIR / 'sugar_mine.ase', tmpl_sugar_mine, ZOOM_2X, name='sugar_mine') \
     .replace_old(4768+4) # TODO currently skipping the first 4 sprites
+
+
+@lib.template(grf.FileSprite)
+def tmpl_bubble_generator(func, z):
+    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(3, 2), xofs=-190, yofs=-167)
+    grid.set_default(layers=('BUILDING', 'Spriteborder'))
+    assert z == 2
+    return [
+        grid('0_1', (0, 1), layers=('BUILDING', 'Spriteborder')),
+        grid('1_1', (1, 1), layers=('BUILDING', 'Spriteborder')),
+        grid('2_1', (2, 1), layers=('BUILDING', 'Spriteborder')),
+        grf.EMPTY_SPRITE,
+        grf.EMPTY_SPRITE,
+    ]
+
+
+lib.SpriteCollection('bubble_generator') \
+    .add(INDUSTRY_DIR / 'bubble_generator.ase', tmpl_bubble_generator, ZOOM_2X, name='bubble_generator') \
+    .replace_old(4743)
 
 
 # ------------------------------ User Interface ------------------------------
