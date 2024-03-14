@@ -1909,10 +1909,7 @@ def tmpl_sugar_mine(func, z):
         # 6 SPRINKLE
         # 4789]
 
-        grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
-        grf.EMPTY_SPRITE,
+        # TODO Add first 4 sprites
         # grid('0_0', (0, 0), layers=('TILES', 'Spriteborder')),
         # grid('0_1', (0, 1), layers=('TILES', 'Spriteborder')),
         # grid('1_0', (1, 0), layers=('TILES', 'Spriteborder')),
@@ -1944,7 +1941,7 @@ def tmpl_sugar_mine(func, z):
 
 lib.SpriteCollection('sugar_mine') \
     .add(INDUSTRY_DIR / 'sugar_mine.ase', tmpl_sugar_mine, ZOOM_2X, name='sugar_mine') \
-    .replace_old(4768)
+    .replace_old(4768+4) # TODO currently skipping the first 4 sprites
 
 
 # ------------------------------ User Interface ------------------------------
