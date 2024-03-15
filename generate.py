@@ -1963,15 +1963,11 @@ lib.SpriteCollection('bubble_generator') \
     .replace_old(4743)
 
 
-# bubble particle (88 x 88 @ 2X)
-# 3 frames bubble
-# 4 frames appear
-# 3 frames pop
-# 5 frames slurped
 @lib.template(grf.FileSprite)
 def tmpl_bubble_particle(func, z):
     return [
-        func(f'{i}', x=2, y=2, w=44, h=44, xofs=0, yofs=-44 - (z // 2), frame=i + 1)
+        # func(f'{i}', x=2, y=2, w=44, h=44, xofs=-22, yofs=(-44 - (z // 2))+37, frame=i + 1)
+        func(f'{i}', x=2, y=2, w=44, h=44, xofs=-10 * z, yofs=-6 * z, frame=i + 1)
         for i in range(15)
     ]
 
