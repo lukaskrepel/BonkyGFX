@@ -235,6 +235,25 @@ foundations = lib.SpriteCollection('foundations') \
 foundations[:14].replace_old(990)
 foundations[14:].replace_new(0x06, 0)
 
+
+@lib.template(grf.FileSprite)
+def tmpl_water_slopes(func, z, frame=1, above=0):
+    grid = lib.FlexGrid(func=func, padding=z, start=(0, 0), add_yofs=-(z // 2) - above * z, add_height=above * z)
+    grid.set_default(width=64 * z, height=32 * z - 1, xofs=-31 * z, yofs=0, frame=frame)
+    return [
+        grid('se', height=24 * z - 1),
+        grid('ne', height=40 * z - 1, yofs=-8 * z),
+        grid('sw', height=24 * z - 1),
+        grid('nw', height=40 * z - 1, yofs=-8 * z),
+    ]
+
+# TODO water_slopes, starts at 7206 (20x4)
+# for i in range(1):
+#     lib.SpriteCollection(f'water_slopes{i}') \
+#         .add(TERRAIN_DIR / 'water_slopes.ase', tmpl_water_slopes, ZOOM_2X, i + 1, 4) \
+#         .replace_old(7270) # <-- This doesn't work because the sprite ID is too high.
+
+
 # ------------------------------ Airport Tiles ------------------------------
 
 @lib.template(grf.FileSprite)
