@@ -1950,9 +1950,9 @@ def tmpl_bubble_generator(func, z):
     grid.set_default(layers=('BUILDING', 'Spriteborder'))
     assert z == 2
     return [
-        cc(grid('0_1', (0, 1), layers=('BUILDING', 'Spriteborder'))),
-        cc(grid('1_1', (1, 1), layers=('BUILDING', 'Spriteborder'))),
-        cc(grid('2_1', (2, 1), layers=('BUILDING', 'Spriteborder'))),
+        cc(animated('0_1', grid, (0, 1), layers=('BUILDING', 'Spriteborder'))),
+        cc(animated('1_1', grid, (1, 1), layers=('BUILDING', 'Spriteborder'))),
+        cc(animated('2_1', grid, (2, 1), layers=('BUILDING', 'Spriteborder'))),
         grf.EMPTY_SPRITE,
         grf.EMPTY_SPRITE,
     ]
@@ -1961,6 +1961,24 @@ def tmpl_bubble_generator(func, z):
 lib.SpriteCollection('bubble_generator') \
     .add(INDUSTRY_DIR / 'bubble_generator.ase', tmpl_bubble_generator, ZOOM_2X, name='bubble_generator') \
     .replace_old(4743)
+
+
+# bubble particle (88 x 88 @ 2X)
+# 3 frames bubble
+# 4 frames appear
+# 3 frames pop
+# 5 frames slurped
+@lib.template(grf.FileSprite)
+def tmpl_bubble_particle(func, z):
+    return [
+        func(f'{i}', x=2, y=2, w=44, h=44, xofs=0, yofs=-44 - (z // 2), frame=i + 1)
+        for i in range(15)
+    ]
+
+
+lib.SpriteCollection('bubble_particle') \
+    .add(lib.aseidx(EFFECT_DIR / 'bubble_particle.ase'), tmpl_bubble_particle, ZOOM_2X) \
+    .replace_old(4748)
 
 
 # ------------------------------ User Interface ------------------------------
