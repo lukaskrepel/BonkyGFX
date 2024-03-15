@@ -1950,9 +1950,9 @@ def tmpl_bubble_generator(func, z):
     grid.set_default(layers=('BUILDING', 'Spriteborder'))
     assert z == 2
     return [
-        grid('0_1', (0, 1), layers=('BUILDING', 'Spriteborder')),
-        grid('1_1', (1, 1), layers=('BUILDING', 'Spriteborder')),
-        grid('2_1', (2, 1), layers=('BUILDING', 'Spriteborder')),
+        cc(grid('0_1', (0, 1), layers=('BUILDING', 'Spriteborder'))),
+        cc(grid('1_1', (1, 1), layers=('BUILDING', 'Spriteborder'))),
+        cc(grid('2_1', (2, 1), layers=('BUILDING', 'Spriteborder'))),
         grf.EMPTY_SPRITE,
         grf.EMPTY_SPRITE,
     ]
