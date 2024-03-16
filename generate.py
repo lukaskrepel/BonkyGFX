@@ -1554,11 +1554,10 @@ lib.SpriteCollection('battery_farm') \
 @lib.template(grf.FileSprite)
 def tmpl_plantation(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    ground_layers = ('TILE/*', 'Spriteborder')
     return [
-        grid('plantation_ground', (0, 0), frame=1, layers=ground_layers),
-        grid('trees_fruit', (0, 0), frame=1, ignore_layers=ground_layers),
-        grid('trees_rubber', (0, 0), frame=2, ignore_layers=ground_layers),
+        grid('plantation_ground', (0, 0), frame=1, layers=('TILE/*', 'Spriteborder')),
+        grid('trees_fruit', (0, 0), frame=1, ignore_layers='TILE/*'),
+        grid('trees_rubber', (0, 0), frame=2, ignore_layers='TILE/*'),
     ]
 
 
