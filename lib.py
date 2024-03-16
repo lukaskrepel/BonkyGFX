@@ -124,6 +124,9 @@ class BaseGrid:
         self.kw.update(kw)
         return self
 
+    def get_default(self, key):
+        return self.kw.get(key)
+
     def __call__(self, name, x, y, *, width, height, keep_state=None, **kw):
         if self.add_xofs is not None:
             kw['xofs'] = self.add_xofs + kw.get('xofs', 0)

@@ -18,6 +18,12 @@ def animated(name, grid, *args, layers=None, ignore_layers=None, **kw):
     if isinstance(grid, lib.BaseGrid):
         grid_args = {'keep_state': True}
 
+    if isinstance(grid, lib.BaseGrid):
+        if ignore_layers is None:
+            ignore_layers = grid.get_default('ignore_layers')
+        if layers is None:
+            layers = grid.get_default('layers')
+
     if ignore_layers is None:
         if layers is None:
             ignore_layers = ('ANIMATED',)
@@ -1564,11 +1570,11 @@ lib.SpriteCollection('plantation') \
 @lib.template(grf.FileSprite)
 def tmpl_water_tower(func, z):
     grid = lib.HouseGrid(func=func, height=128, z=z)
-    ground_layers = ('TILE/*', 'Spriteborder')
+    grid.set_default(ignore_layers=('TILE/*', 'Spriteborder'))
     return [
-        grid('water_tower_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
-        cc(grid('water_tower_stage2', (0, 0), frame=2, ignore_layers=ground_layers)),
-        cc(animated('water_tower_stage3', grid, (0, 0), frame=3, ignore_layers=ground_layers)),
+        grid('water_tower_stage1', (0, 0), frame=1),
+        cc(grid('water_tower_stage2', (0, 0), frame=2)),
+        cc(animated('water_tower_stage3', grid, (0, 0), frame=3)),
     ]
 
 
@@ -1580,14 +1586,14 @@ lib.SpriteCollection('water_tower') \
 @lib.template(grf.FileSprite)
 def tmpl_water_supply(func, z):
     grid = lib.HouseGrid(func=func, height=128, z=z)
-    ground_layers = ('TILE/*', 'Spriteborder')
+    grid.set_default(ignore_layers=('TILE/*', 'Spriteborder'))
     return [
-        grid('building1_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
-        cc(grid('building1_stage2', (0, 0), frame=2, ignore_layers=ground_layers)),
-        cc(animated('building1_stage3', grid, (0, 0), frame=3, ignore_layers=ground_layers)),
-        grid('building2_stage1', (1, 0), frame=1, ignore_layers=ground_layers),
-        cc(grid('building2_stage2', (1, 0), frame=2, ignore_layers=ground_layers)),
-        cc(animated('building2_stage3', grid, (1, 0), frame=3, ignore_layers=ground_layers)),
+        grid('building1_stage1', (0, 0), frame=1),
+        cc(grid('building1_stage2', (0, 0), frame=2)),
+        cc(animated('building1_stage3', grid, (0, 0), frame=3)),
+        grid('building2_stage1', (1, 0), frame=1),
+        cc(grid('building2_stage2', (1, 0), frame=2)),
+        cc(animated('building2_stage3', grid, (1, 0), frame=3)),
     ]
 
 
@@ -1599,20 +1605,20 @@ lib.SpriteCollection('water_supply') \
 @lib.template(grf.FileSprite)
 def tmpl_food_processing_plant(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    ground_layers = ('TILE/*', 'Spriteborder')
+    grid.set_default(ignore_layers=('TILE/*', 'Spriteborder'))
     return [
-        grid('building1_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
-        cc(grid('building1_stage2', (0, 0), frame=2, ignore_layers=ground_layers)),
-        cc(animated('building1_stage3', grid, (0, 0), frame=3, ignore_layers=ground_layers)),
-        grid('building2_stage1', (1, 0), frame=1, ignore_layers=ground_layers),
-        cc(grid('building2_stage2', (1, 0), frame=2, ignore_layers=ground_layers)),
-        cc(animated('building2_stage3', grid, (1, 0), frame=3, ignore_layers=ground_layers)),
-        grid('building3_stage1', (2, 0), frame=1, ignore_layers=ground_layers),
-        cc(grid('building3_stage2', (2, 0), frame=2, ignore_layers=ground_layers)),
-        cc(animated('building3_stage3', grid, (2, 0), frame=3, ignore_layers=ground_layers)),
-        grid('building4_stage1', (3, 0), frame=1, ignore_layers=ground_layers),
-        cc(grid('building4_stage2', (3, 0), frame=2, ignore_layers=ground_layers)),
-        cc(animated('building4_stage3', grid, (3, 0), frame=3, ignore_layers=ground_layers)),
+        grid('building1_stage1', (0, 0), frame=1),
+        cc(grid('building1_stage2', (0, 0), frame=2)),
+        cc(animated('building1_stage3', grid, (0, 0), frame=3)),
+        grid('building2_stage1', (1, 0), frame=1),
+        cc(grid('building2_stage2', (1, 0), frame=2)),
+        cc(animated('building2_stage3', grid, (1, 0), frame=3)),
+        grid('building3_stage1', (2, 0), frame=1),
+        cc(grid('building3_stage2', (2, 0), frame=2)),
+        cc(animated('building3_stage3', grid, (2, 0), frame=3)),
+        grid('building4_stage1', (3, 0), frame=1),
+        cc(grid('building4_stage2', (3, 0), frame=2)),
+        cc(animated('building4_stage3', grid, (3, 0), frame=3)),
     ]
 
 
@@ -1908,8 +1914,8 @@ def tmpl_toy_shop(func, z):
         grid('left_stage2', (1, 0), frame=2),
         grid('mid_stage2', (1, 1), frame=2),
         cc(grid('right_stage3', (0, 1), frame=3)),
-        cc(animated('left_stage3', grid, (1, 0), frame=3, ignore_layers='TILE/*')),  # animated needs a repeat of ignore_layers
-        cc(animated('mid_stage3', grid, (1, 1), frame=3, ignore_layers='TILE/*')),
+        cc(animated('left_stage3', grid, (1, 0), frame=3)),
+        cc(animated('mid_stage3', grid, (1, 1), frame=3)),
     ]
 
 
@@ -1970,7 +1976,7 @@ def tmpl_toffee_quarry(func, z):
     return [
         grid('0_0', (0, 0)),
         grid('1_0', (1, 0)),
-        animated('2_0', grid, (2, 0), layers='BUILDING/*'),
+        animated('2_0', grid, (2, 0)),
         grf.EMPTY_SPRITE,
         grid('box', (2, 0), layers='CHISEL/*', xofs=-155, yofs=-146),
     ]
@@ -2153,9 +2159,9 @@ def tmpl_bubble_generator(func, z):
     grid.set_default(layers=('BUILDING', 'Spriteborder'))
     assert z == 2
     return [
-        cc(animated('0_1', grid, (0, 1), layers=('BUILDING', 'Spriteborder'))),
-        cc(animated('1_1', grid, (1, 1), layers=('BUILDING', 'Spriteborder'))),
-        cc(animated('2_1', grid, (2, 1), layers=('BUILDING', 'Spriteborder'))),
+        cc(animated('0_1', grid, (0, 1))),
+        cc(animated('1_1', grid, (1, 1))),
+        cc(animated('2_1', grid, (2, 1))),
         grf.EMPTY_SPRITE,
         grf.EMPTY_SPRITE,
     ]
