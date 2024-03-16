@@ -1436,10 +1436,7 @@ def tmpl_coal_mine(func, z):
 
 
 lib.SpriteCollection('coal_mine') \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coal_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TEMPERATE) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coal_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=ARCTIC) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'coal_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TROPICAL) \
-    .add(lib.aseidx(INDUSTRY_DIR / 'marshmallow_mine.ase'), tmpl_coal_mine, ZOOM_2X, climate=TOYLAND) \
+    .add(lib.aseidx(INDUSTRY_DIR / 'coal_mine.ase'), tmpl_coal_mine, ZOOM_2X) \
     .replace_old(2011)
 
 
