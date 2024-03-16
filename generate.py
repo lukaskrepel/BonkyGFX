@@ -1996,6 +1996,20 @@ lib.SpriteCollection('bubble_particle') \
     .replace_old(4748)
 
 
+#TODO what category and folder should this sprite be in?
+# ------------------------------ Other? ------------------------------
+
+@lib.template(grf.FileSprite)
+def tmpl_land_ownership_sign(func, z):
+    grid = lib.RectGrid(func=func, width=20 * z, height=20 * z, padding=z)
+    return [cc(grid('', (0, 0), xofs=-9 * z, yofs=-20 * z))]
+
+
+lib.SpriteCollection('land_ownership_sign') \
+    .add(TERRAIN_DIR / 'land_ownership_sign.ase', tmpl_land_ownership_sign, ZOOM_2X) \
+    .replace_old(4790)
+
+
 # ------------------------------ User Interface ------------------------------
 
 @lib.template(grf.FileSprite)
