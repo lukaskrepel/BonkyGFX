@@ -1604,7 +1604,7 @@ lib.SpriteCollection('water_supply') \
 @lib.template(grf.FileSprite)
 def tmpl_food_processing_plant(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    grid.set_default(ignore_layers=('TILE/*', 'Spriteborder'))
+    grid.set_default(ignore_layers='TILE/*')
     return [
         grid('building1_stage1', (0, 0), frame=1),
         cc(grid('building1_stage2', (0, 0), frame=2)),
@@ -1629,7 +1629,7 @@ lib.SpriteCollection('food_processing_plant') \
 @lib.template(grf.FileSprite)
 def tmpl_paper_mill(func, z):
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    ground_layers = ('TILE/*', 'Spriteborder')
+    ground_layers = 'TILE/*'
     return [
         grid('building1_stage1', (0, 0), frame=1, ignore_layers=ground_layers),
         grid('building1_stage2', (0, 0), frame=2, ignore_layers=ground_layers),
