@@ -30,7 +30,7 @@ def animated(name, grid, *args, layers=None, ignore_layers=None, **kw):
 
     return lib.MagentaAndMask(
         grid(name + '_rgb', *args, **kw, layers=layers, ignore_layers=ignore_layers, **grid_args),
-        grid(name + '_anim', *args, **kw, layers=('ANIMATED',)),
+        grid(name + '_anim', *args, **kw, layers=('ANIMATED',), ignore_layers=None),
         name=name,
     )
 
@@ -1895,24 +1895,24 @@ candy_factory = lib.SpriteCollection('candy_factory') \
     .replace_old(4677)
 
 
-# TODO Amateur Code
 @lib.template(grf.FileSprite)
 def tmpl_toy_shop(func, z):
+    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(2, 2), xofs=-126, yofs=-76)
+    grid.set_default(ignore_layers='TILE/*')
     assert z == 2
     return [
-        func('building2_stage1', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=1),
-        func('building3_stage1', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=1),
-        func('building4_stage1', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=1),
-        func('building2_stage2', 130 + 64, 2, 64, 169, xofs=2, yofs=-106, ignore_layers='TILE/*', frame=2),
-        func('building3_stage2', 2, 2, 64, 169, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=2),
-        func('building4_stage2', 66, 2, 128, 169 + 32, xofs=-62, yofs=-106-32, ignore_layers='TILE/*', frame=2),
-        cc(func('building2_stage3', 130, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
-        cc(animated('building3_stage3', func, 2, 2, 128, 169 + 32, xofs=-62, yofs=-106, ignore_layers='TILE/*', frame=3)),
-        grf.EMPTY_SPRITE, # Left and right buildings cover this one completely and also closest one that doesn't have a sprite (possible glitchy though)
+        grid('right_stage1', (0, 1), frame=1),
+        grid('left_stage1', (1, 0), frame=1),
+        grid('mid_stage1', (1, 1), frame=1),
+        grid('right_stage2', (0, 1), frame=2),
+        grid('left_stage2', (1, 0), frame=2),
+        grid('mid_stage2', (1, 1), frame=2),
+        cc(grid('right_stage3', (0, 1), frame=3)),
+        cc(animated('left_stage3', grid, (1, 0), frame=3, ignore_layers='TILE/*')),  # animated needs a repeat of ignore_layers
+        cc(animated('mid_stage3', grid, (1, 1), frame=3, ignore_layers='TILE/*')),
     ]
 
 
-# TODO Amateur Code
 toy_shop = lib.SpriteCollection('toy_shop') \
     .add(INDUSTRY_DIR / 'toy_shop.ase', tmpl_toy_shop, ZOOM_2X) \
     .replace_old(4699)
