@@ -1065,43 +1065,130 @@ statues[3].replace_old(4694)
 statues[4].replace_old(4698)
 
 
+# @lib.template(grf.FileSprite)
+# def tmpl_shops_and_offices(func, z):
+#     grid = lib.HouseGrid(func=func, height=100, z=z)
+#     return [
+#         struct(grid('29a_ground', (0, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
+#         struct(grid('29a', (0, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
+#         struct(grid('29b_ground', (1, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
+#         struct(grid('29b', (1, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
+
+#         struct(grid('16_stage1', (2, 0), bb=(2, 0), frame=1, ignore_layers='TILE/*')),
+#         struct(grid('16_stage2', (2, 0), bb=(2, 0), frame=2, ignore_layers='TILE/*')),
+#         struct(grid('16_stage3', (2, 0), bb=(2, 0), frame=3, ignore_layers='TILE/*')),
+
+#         grid('14_stage1', (3, 0), bb=(1, 3), frame=1, ignore_layers='TILE/*'),
+#         grid('14_stage2', (3, 0), bb=(1, 3), frame=2, ignore_layers='TILE/*'),
+#         grid('14_stage3', (3, 0), bb=(1, 3), frame=3, ignore_layers='TILE/*'),
+
+#         grid('15_stage1', (4, 0), bb=(3, 1), frame=1, ignore_layers='TILE/*'),
+#         grid('15_stage2', (4, 0), bb=(3, 1), frame=2, ignore_layers='TILE/*'),
+#         grid('15_stage3', (4, 0), bb=(3, 1), frame=3, ignore_layers='TILE/*'),
+
+#         grid('30_ground1', (5, 0), bb=(0, 0), frame=1, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
+#         grid('30_stage1', (5, 0), bb=(0, 0), frame=1, ignore_layers=('TILE/*', 'FOUNDATION/*')),
+#         grid('30_ground2', (5, 0), bb=(0, 0), frame=2, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
+#         grid('30_stage2', (5, 0), bb=(0, 0), frame=2, ignore_layers=('TILE/*', 'FOUNDATION/*')),
+#         grid('30_ground3', (5, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
+#         grid('30_stage3', (5, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*')),
+#     ]
+
+# houses = lib.SpriteCollection('house') \
+#     .add(TOWN_DIR / 'shops_and_offices.ase', tmpl_shops_and_offices, ZOOM_2X) \
+
+# houses[0:4].replace_old(1536)  # 29
+# houses[4:7].replace_old(1467)  # 16
+# houses[7:10].replace_old(1461)  # 14
+# houses[10:13].replace_old(1466)  # 15
+# houses[13:19].replace_old(1540)  # 30
+
+
 @lib.template(grf.FileSprite)
-def tmpl_shops_and_offices(func, z):
+def tmpl_houses_temperate(func, z):
     grid = lib.HouseGrid(func=func, height=100, z=z)
+    grid.set_default(layers=('BUILDING', 'Spriteborder'), frame=1)
     return [
-        struct(grid('29a_ground', (0, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
-        struct(grid('29a', (0, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
-        struct(grid('29b_ground', (1, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder'))),
-        struct(grid('29b', (1, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*'))),
+        struct(grid('0_stage1', (8, 4))),
+        struct(grid('0_stage2', (9, 4))),
+        grid('0_stage3', (0, 0)),
+        grid('0_ground', (0, 0), layers=('TILE', 'Spriteborder')), # TODO compose on concrete
 
-        struct(grid('16_stage1', (2, 0), bb=(2, 0), frame=1, ignore_layers='TILE/*')),
-        struct(grid('16_stage2', (2, 0), bb=(2, 0), frame=2, ignore_layers='TILE/*')),
-        struct(grid('16_stage3', (2, 0), bb=(2, 0), frame=3, ignore_layers='TILE/*')),
+        struct(grid('0_stage3_alt', (1, 0))),
 
-        grid('14_stage1', (3, 0), bb=(1, 3), frame=1, ignore_layers='TILE/*'),
-        grid('14_stage2', (3, 0), bb=(1, 3), frame=2, ignore_layers='TILE/*'),
-        grid('14_stage3', (3, 0), bb=(1, 3), frame=3, ignore_layers='TILE/*'),
+        struct(grid('1_stage1', (8, 4))),
+        struct(grid('1_stage2', (9, 4))),
+        struct(grid('1_stage3', (2, 0))),
+        grid('1_ground', (2, 0), layers=('TILE', 'Spriteborder')), # TODO compose on concrete
 
-        grid('15_stage1', (4, 0), bb=(3, 1), frame=1, ignore_layers='TILE/*'),
-        grid('15_stage2', (4, 0), bb=(3, 1), frame=2, ignore_layers='TILE/*'),
-        grid('15_stage3', (4, 0), bb=(3, 1), frame=3, ignore_layers='TILE/*'),
+        grid('2_stage1', (8, 4)),
+        grid('2_stage2', (9, 4)),
+        grid('2_stage3', (3, 0)),
+        grid('2_ground', (3, 0), layers=('TILE', 'Spriteborder')), # TODO compose on concrete
 
-        grid('30_ground1', (5, 0), bb=(0, 0), frame=1, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
-        grid('30_stage1', (5, 0), bb=(0, 0), frame=1, ignore_layers=('TILE/*', 'FOUNDATION/*')),
-        grid('30_ground2', (5, 0), bb=(0, 0), frame=2, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
-        grid('30_stage2', (5, 0), bb=(0, 0), frame=2, ignore_layers=('TILE/*', 'FOUNDATION/*')),
-        grid('30_ground3', (5, 0), bb=(0, 0), frame=3, layers=('TILE/*', 'FOUNDATION/*', 'Spriteborder')),
-        grid('30_stage3', (5, 0), bb=(0, 0), frame=3, ignore_layers=('TILE/*', 'FOUNDATION/*')),
+        struct(grid('3_stage1', (8, 4))),
+        struct(grid('3_stage2', (9, 4))),
+        struct(grid('3_stage3', (4, 0))),
+        struct(grid('3_ground', (4, 0), layers=('TILE', 'Spriteborder'))), # TODO compose on concrete
+
+        grf.EMPTY_SPRITE, # doesn't exist
+        grf.EMPTY_SPRITE, # doesn't exist
+
+        grid('4_stage1', (8, 4)),
+        grid('4_stage2', (9, 4)),
+        grid('4_stage3', (5, 0)),
+        grf.EMPTY_SPRITE, # TODO lift
+
+        # TODO 5 is snow version of 4
+
+        grid('6_stage1', (8, 4)),
+        grid('6_stage2', (9, 4)),
+        grid('6_stage3', (6, 0)),
+        grid('6_ground', (6, 0), layers=('TILE', 'Spriteborder')), # TODO compose on concrete
+        # TODO what's going on with sprites 1502-1506???
+
+        # 7 8 is hotel
+        # 9 statue
+        # 10 fountain
+
+        grid('11_park', (7, 0)),
+
+        grid('12_park', (8, 0)),
+
+        struct(grid('13_stage1', (8, 4))),
+        struct(grid('13_stage2', (9, 4))),
+        struct(grid('13_stage3', (6, 0))),
+
+        grid('14_stage1', (8, 4), bb=(1, 3)),
+        grid('14_stage2', (9, 4), bb=(1, 3)),
+        grid('14_stage3', (1, 1), bb=(1, 3)),
+
+        grid('15_stage1', (8, 4), bb=(1, 3)),
+        grid('15_stage2', (9, 4), bb=(1, 3)),
+        grid('15_stage3', (2, 1), bb=(1, 3)),
+
+        struct(grid('16_stage1', (8, 4), bb=(2, 0))),
+        struct(grid('16_stage2', (9, 4), bb=(2, 0))),
+        struct(grid('16_stage3', (3, 1), bb=(2, 0))),
+
+        # grid('30_ground1', (8, 4), layers=('TILE', 'Spriteborder')),
+        # grid('30_stage1', (8, 4)),
+        # grid('30_ground2', (9, 4), layers=('TILE/*', 'Spriteborder')),
+        # grid('30_stage2', (9, 4)),
+        # grid('30_ground3', (2, 3), layers=('TILE/*', 'Spriteborder')),
+        # grid('30_stage3', (2, 3)),
+
     ]
 
-houses = lib.SpriteCollection('house') \
-    .add(TOWN_DIR / 'shops_and_offices.ase', tmpl_shops_and_offices, ZOOM_2X) \
+houses_temperate = lib.SpriteCollection('houses_temperate') \
+    .add(TOWN_DIR / 'houses_temperate.ase', tmpl_houses_temperate, ZOOM_2X)
+houses_temperate[0:27].replace_old(1421)  # 0
+houses_temperate[27:].replace_old(1456)  # park
 
-houses[0:4].replace_old(1536)  # 29
-houses[4:7].replace_old(1467)  # 16
-houses[7:10].replace_old(1461)  # 14
-houses[10:13].replace_old(1466)  # 15
-houses[13:19].replace_old(1540)  # 30
+# houses_temperate[4+27+8:7+27+8].replace_old(1461)  # 14
+# houses_temperate[7+27+8:10+27+8].replace_old(1467)  # 16
+# houses_temperate[10+27+8:16+27+8].replace_old(1540)  # 30
+
 
 
 @lib.template(grf.FileSprite)
