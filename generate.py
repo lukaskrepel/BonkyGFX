@@ -1139,15 +1139,12 @@ def tmpl_houses_temperate(func, z):
         grid('4_stage3', (5, 0)),
         grf.EMPTY_SPRITE, # TODO lift
 
-        # TODO 5 is snow version of 4
-
         grid('6_stage1', (8, 4)),
         grid('6_stage2', (9, 4)),
         grid('6_stage3', (6, 0)),
         grid('6_ground', (6, 0), layers=('TILE', 'Spriteborder')), # TODO compose on concrete
-        # TODO what's going on with sprites 1502-1506???
 
-        # 7 8 is hotel
+        # 7-8 hotel
         # 9 statue
         # 10 fountain
 
@@ -1171,23 +1168,46 @@ def tmpl_houses_temperate(func, z):
         struct(grid('16_stage2', (9, 4), bb=(2, 0))),
         struct(grid('16_stage3', (3, 1), bb=(2, 0))),
 
+        # 17 tall tokyo flat
+
+        grid('18_stage1', (8, 4), bb=(1, 2)),
+        grid('18_stage2', (9, 4), bb=(1, 2)),
+        grid('18_stage3', (4, 1), bb=(1, 2)),
+
+        grid('19_stage1', (8, 4), bb=(1, 0)),
+        grid('19_stage2', (9, 4), bb=(1, 0)),
+        grid('19_stage3', (5, 1), bb=(1, 0)),
+
+        # 20-23 soccer stadium
+
+        grid('24_house1', (6, 1)),
+        grid('24_house1_ground', (6, 1)),
+        grid('24_house2', (7, 1)),
+        grid('24_house2_ground', (7, 1)),
+        grid('24_house3', (8, 1)),
+        grid('24_house3_ground', (8, 1)),
+        grid('24_house4', (0, 2)),
+        grid('24_house4_ground', (0, 2)),
+
+        grid('25_house', (1, 2)),
+        grid('25_house_ground', (1, 2 )),
+
+        #26 ?
+
         # grid('30_ground1', (8, 4), layers=('TILE', 'Spriteborder')),
         # grid('30_stage1', (8, 4)),
         # grid('30_ground2', (9, 4), layers=('TILE/*', 'Spriteborder')),
         # grid('30_stage2', (9, 4)),
         # grid('30_ground3', (2, 3), layers=('TILE/*', 'Spriteborder')),
         # grid('30_stage3', (2, 3)),
-
     ]
 
 houses_temperate = lib.SpriteCollection('houses_temperate') \
     .add(TOWN_DIR / 'houses_temperate.ase', tmpl_houses_temperate, ZOOM_2X)
-houses_temperate[0:27].replace_old(1421)  # 0
-houses_temperate[27:].replace_old(1456)  # park
-
-# houses_temperate[4+27+8:7+27+8].replace_old(1461)  # 14
-# houses_temperate[7+27+8:10+27+8].replace_old(1467)  # 16
-# houses_temperate[10+27+8:16+27+8].replace_old(1540)  # 30
+houses_temperate[0:27].replace_old(1421)  # 0-6
+houses_temperate[27:41].replace_old(1456)  # 11-16
+houses_temperate[41:47].replace_old(1473)  # 18-19
+houses_temperate[47:].replace_old(1487)  # 24-
 
 
 
