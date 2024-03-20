@@ -1114,28 +1114,29 @@ def tmpl_houses_temperate(func, z):
         grid('7_hotel_right_stage2', (9, 4)),
         hotel('7_hotel_right_stage3', (0, 1)),
 
-        # 9 statue
-        # 10 fountain
+        grid('9_statue', (7, 0), bb=(6, 5)),
 
-        grid('11_park', (7, 0)),
+        animated('fountain', grid, (8, 0), bb=(3, 3), layers=('BUILDING', 'Spriteborder')),
 
-        grid('12_park', (8, 0)),
+        grid('11_park', (0, 1)),
+
+        grid('12_park', (1, 1)),
 
         struct(grid('13_stage1', (8, 4))),
         struct(grid('13_stage2', (9, 4))),
-        struct(grid('13_stage3', (6, 0))),
+        struct(grid('13_stage3', (2, 1))),
 
         grid('14_stage1', (8, 4), bb=(1, 3)),
         grid('14_stage2', (9, 4), bb=(1, 3)),
-        grid('14_stage3', (1, 1), bb=(1, 3)),
+        grid('14_stage3', (3, 1), bb=(1, 3)),
 
         grid('15_stage1', (8, 4), bb=(1, 3)),
         grid('15_stage2', (9, 4), bb=(1, 3)),
-        grid('15_stage3', (2, 1), bb=(1, 3)),
+        grid('15_stage3', (4, 1), bb=(1, 3)),
 
-        struct(grid('16_stage1', (8, 4), bb=(2, 0))),
-        struct(grid('16_stage2', (9, 4), bb=(2, 0))),
-        struct(grid('16_stage3', (3, 1), bb=(2, 0))),
+        struct(grid('16_boogjes_stage1', (8, 4), bb=(2, 0))),
+        struct(grid('16_boogjes_stage2', (9, 4), bb=(2, 0))),
+        struct(grid('16_boogjes_stage3', (5, 1), bb=(2, 0))),
 
         cc(grid('17_tallmodernoffice_stage1', (8, 4), bb=(2, 0))),
         cc(grid('17_tallmodernoffice_stage2', (9, 4), bb=(2, 0))),
@@ -1143,11 +1144,11 @@ def tmpl_houses_temperate(func, z):
 
         grid('18_stage1', (8, 4), bb=(1, 2)),
         grid('18_stage2', (9, 4), bb=(1, 2)),
-        grid('18_stage3', (4, 1), bb=(1, 2)),
+        grid('18_stage3', (6, 1), bb=(1, 2)),
 
         grid('19_stage1', (8, 4), bb=(1, 0)),
         grid('19_stage2', (9, 4), bb=(1, 0)),
-        grid('19_stage3', (5, 1), bb=(1, 0)),
+        grid('19_stage3', (7, 1), bb=(1, 0)),
 
         grid('20-23_stadium1_TODO', (2, 4)),
         grid('20-23_stadium1_TODO', (2, 4)),
@@ -1158,84 +1159,84 @@ def tmpl_houses_temperate(func, z):
         grid('20-23_stadium1_TODO', (2, 4)),
         grid('20-23_stadium1_TODO', (2, 4)),
 
-        grid('24_house1', (6, 1)),
-        grid('24_house1_ground', (6, 1)),
-        grid('24_house2', (7, 1)),
-        grid('24_house2_ground', (7, 1)),
-        grid('24_house3', (8, 1)),
-        grid('24_house3_ground', (8, 1)),
-        grid('24_house4', (0, 2)),
-        grid('24_house4_ground', (0, 2)),
+        grid('24_house1', (8, 1)),
+        grid('24_house1_ground', (8, 1)),
+        grid('24_house2', (0, 2)),
+        grid('24_house2_ground', (0, 2)),
+        grid('24_house3', (1, 2)),
+        grid('24_house3_ground', (1, 2)),
+        grid('24_house4', (2, 2)),
+        grid('24_house4_ground', (2, 2)),
 
-        grid('25_house', (1, 2)),
-        grid('25_house_ground', (1, 2 )),
+        grid('25_house', (3, 2)),
+        grid('25_house_ground', (3, 2 )),
 
         grid('26_house2_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('26_house2_stage2_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
-        grid('26_house2_stage3_ground', (2, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
-        grid('26_house2_stage3', (2, 2)),
+        grid('26_house2_stage3_ground', (4, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('26_house2_stage3', (4, 2)),
 
         grid('6_house2_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('6_house2_stage1', (8, 4)),
         grid('6_house2_stage2_ground', (9, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('6_house2_stage2', (9, 4)),
-        grid('6_house2_stage3_ground', (3, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
-        grid('6_house2_stage3', (3, 2)),
+        grid('6_house2_stage3_ground', (5, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('6_house2_stage3', (5, 2)),
 
         grid('26_house3_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('26_house3_stage1', (8, 4)),
         grid('26_house3_stage2_ground', (9, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('26_house3_stage2', (9, 4)),
-        grid('26_house3_stage3_ground', (4, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
-        grid('26_house3_stage3', (4, 2)),
+        grid('26_house3_stage3_ground', (6, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('26_house3_stage3', (6, 2)),
 
         grid('26_house3_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('26_house3_stage1', (8, 4)),
         grid('26_house3_stage2_ground', (9, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('26_house3_stage2', (9, 4)),
-        grid('26_house3_stage3_ground', (5, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
-        grid('26_house3_stage3', (5, 2)),
+        grid('26_house3_stage3_ground', (7, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('26_house3_stage3', (7, 2)),
 
         grid('27_appartments1_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('27_appartments1_stage2_ground', (9, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('27_appartments1_stage2', (9, 4)),
-        grid('27_appartments1_stage3_ground', (6, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('27_appartments1_stage3_ground', (8, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
         grid('27_appartments1_stage3', (6, 2)),
         grid('27_appartments2_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('27_appartments2_stage1', (8, 4)),
         grid('27_appartments2_stage2_ground', (9, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('27_appartments2_stage2', (9, 4)),
-        grid('27_appartments2_stage3_ground', (7, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
-        grid('27_appartments2_stage3', (7, 2)),
+        grid('27_appartments2_stage3_ground', (0, 3), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('27_appartments2_stage3', (0, 3)),
 
         grid('28_talloffice1_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('28_talloffice1_stage1', (8, 4)),
         grid('28_talloffice1_stage2_ground', (9, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('28_talloffice1_stage2', (9, 4)),
-        grid('28_talloffice1_stage3_ground', (8, 2), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
-        grid('28_talloffice1_stage3', (8, 2)),
+        grid('28_talloffice1_stage3_ground', (1, 3), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('28_talloffice1_stage3', (1, 3)),
 
-        struct(grid('29_appartments1_ground', (0, 3), layers=('TILE', 'Spriteborder'))),
-        struct(grid('29_appartments1', (0, 3))),
-        struct(grid('29_appartments2_ground', (1, 3), layers=('TILE', 'Spriteborder'))),
-        struct(grid('29_appartments2', (1, 3))),
+        struct(grid('29_appartments1_ground', (2, 3), layers=('TILE', 'Spriteborder'))),
+        struct(grid('29_appartments1', (2, 3))),
+        struct(grid('29_appartments2_ground', (3, 3), layers=('TILE', 'Spriteborder'))),
+        struct(grid('29_appartments2', (3, 3))),
 
         grid('30_ground1', (8, 4), layers=('TILE', 'Spriteborder')),
         grid('30_stage1', (8, 4)),
         grid('30_ground2', (9, 4), layers=('TILE/*', 'Spriteborder')),
         grid('30_stage2', (9, 4)),
-        grid('30_ground3', (2, 3), layers=('TILE/*', 'Spriteborder')),
-        grid('30_stage3', (2, 3)),
+        grid('30_ground3', (4, 3), layers=('TILE/*', 'Spriteborder')),
+        grid('30_stage3', (4, 3)),
 
         grid('28_talloffice2_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('28_talloffice2_stage1', (8, 4)),
         grid('28_talloffice2_stage2_ground', (9, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
         grid('28_talloffice2_stage2', (9, 4)),
-        grid('28_talloffice2_stage3_ground', (3, 3), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
-        grid('28_talloffice2_stage3', (3, 3)),
+        grid('28_talloffice2_stage3_ground', (5, 3), layers=('TILE', 'Spriteborder')), # TODO compose on concrete/grass?
+        grid('28_talloffice2_stage3', (5, 3)),
 
         grid('31_theater_ground', (4, 3), layers=('TILE', 'Spriteborder')),
-        grid('31_theater', (4, 3)),
+        grid('31_theater', (6, 3)),
 
         grid('32-35_stadium2_TODO', (4, 4)),
         grid('32-35_stadium2_TODO', (4, 4)),
@@ -1279,11 +1280,12 @@ def tmpl_houses_temperate(func, z):
 
 houses_temperate = lib.SpriteCollection('houses_temperate') \
     .add(TOWN_DIR / 'houses_temperate.ase', tmpl_houses_temperate, ZOOM_2X)
-houses_temperate[0:33].replace_old(1421)  # 0-6
+houses_temperate[0:145].replace_old(1421)  # 0-6
+# houses_temperate[0:33].replace_old(1421)  # 0-6
 # -- skip statue/fountain
-houses_temperate[33:143].replace_old(1456)  # 11-36 (park-tallmodernoffice)
-houses_temperate[143:149].replace_old(1570) # ?_house
-houses_temperate[149:].replace_old(4404) # cinema-mall
+# houses_temperate[33:143].replace_old(1456)  # 11-36 (park-tallmodernoffice)
+houses_temperate[143+2:149+2].replace_old(1570) # ?_house
+houses_temperate[149+2:].replace_old(4404) # cinema-mall
 
 
 
