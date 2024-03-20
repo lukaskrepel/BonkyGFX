@@ -1109,10 +1109,12 @@ def tmpl_houses_temperate(func, z):
 
         grid('7_hotel_left_stage1', (8, 4)),
         grid('7_hotel_left_stage2', (9, 4)),
-        hotel('7_hotel_left_stage3', (0, 0)),
+        # hotel('7_hotel_left_stage3', (0, 0)),
+        grid('7_hotel_left_stage3_TODO', (8, 4)),
         grid('7_hotel_right_stage1', (8, 4)),
         grid('7_hotel_right_stage2', (9, 4)),
-        hotel('7_hotel_right_stage3', (0, 1)),
+        # hotel('7_hotel_right_stage3', (0, 1)),
+        grid('7_hotel_right_stage3_TODO', (8, 4)),
 
         grid('9_statue', (7, 0), bb=(6, 5)),
 
@@ -1150,14 +1152,14 @@ def tmpl_houses_temperate(func, z):
         grid('19_officeblock_stage2', (9, 4), bb=(1, 0)),
         grid('19_officeblock_stage3', (7, 1), bb=(1, 0)),
 
-        grid('20-23_stadium1_TODO', (2, 4)),
-        grid('20-23_stadium1_TODO', (2, 4)),
-        grid('20-23_stadium1_TODO', (2, 4)),
-        grid('20-23_stadium1_TODO', (2, 4)),
-        grid('20-23_stadium1_TODO', (2, 4)),
-        grid('20-23_stadium1_TODO', (2, 4)),
-        grid('20-23_stadium1_TODO', (2, 4)),
-        grid('20-23_stadium1_TODO', (2, 4)),
+        grid('20_stadium1_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('21_stadium1_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('22_stadium1_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('23_stadium1_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('20_stadium1_TODO', (8, 4)),
+        grid('21_stadium1_TODO', (8, 4)),
+        grid('22_stadium1_TODO', (8, 4)),
+        grid('23_stadium1_TODO', (8, 4)),
 
         grid('24_house1_ground', (8, 1), layers=('TILE', 'Spriteborder')),
         grid('24_house1', (8, 1)),
@@ -1238,14 +1240,14 @@ def tmpl_houses_temperate(func, z):
         grid('31_theater_ground', (4, 3), layers=('TILE', 'Spriteborder')),
         grid('31_theater', (6, 3)),
 
-        grid('32-35_stadium2_TODO', (4, 4)),
-        grid('32-35_stadium2_TODO', (4, 4)),
-        grid('32-35_stadium2_TODO', (4, 4)),
-        grid('32-35_stadium2_TODO', (4, 4)),
-        grid('32-35_stadium2_TODO', (4, 4)),
-        grid('32-35_stadium2_TODO', (4, 4)),
-        grid('32-35_stadium2_TODO', (4, 4)),
-        grid('32-35_stadium2_TODO', (4, 4)),
+        grid('32_stadium2_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('33_stadium2_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('34_stadium2_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('35_stadium2_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')),
+        grid('32_stadium2_TODO', (8, 4)),
+        grid('33_stadium2_TODO', (8, 4)),
+        grid('34_stadium2_TODO', (8, 4)),
+        grid('35_stadium2_TODO', (8, 4)),
 
         grid('36_tallmodernoffice_stage1', (9, 4), layers=('TILE', 'Spriteborder')),
         grid('36_tallmodernoffice_stage1_ground', (9, 4)),
@@ -1264,18 +1266,18 @@ def tmpl_houses_temperate(func, z):
         grid('cinema_ground', (8, 3), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
         grid('cinema', (8, 3)),
 
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
-        grid('40-43_mall_TODO', (6, 4)),
+        grid('40_mall_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?§
+        grid('40_mall_TODO', (8, 4)),
+        grid('41_mall_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
+        grid('42_mall_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
+        grid('43_mall_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
+        grid('40_mall_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
+        grid('40_mall_TODO', (8, 4)),
+        grid('41_mall_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
+        grid('41_mall_TODO', (8, 4)),
+        grid('42_mall_ground_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
+        grid('42_mall_TODO', (8, 4)),
+        grid('43_mall_TODO', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on concrete?
     ]
 
 houses_temperate = lib.SpriteCollection('houses_temperate') \
