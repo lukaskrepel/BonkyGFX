@@ -1223,9 +1223,9 @@ def tmpl_houses_temperate(func, z):
 
         grid('30_ground1', (8, 4), layers=('TILE', 'Spriteborder')),
         grid('30_stage1', (8, 4)),
-        grid('30_ground2', (9, 4), layers=('TILE/*', 'Spriteborder')),
+        grid('30_ground2', (9, 4), layers=('TILE', 'Spriteborder')),
         grid('30_stage2', (9, 4)),
-        grid('30_ground3', (4, 3), layers=('TILE/*', 'Spriteborder')),
+        grid('30_ground3', (4, 3), layers=('TILE', 'Spriteborder')),
         grid('30_stage3', (4, 3)),
 
         grid('28_talloffice2_stage1_ground', (8, 4), layers=('TILE', 'Spriteborder')), # TODO compose on dirt?
