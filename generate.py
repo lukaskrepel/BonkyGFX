@@ -1118,7 +1118,7 @@ def tmpl_houses_temperate(func, z):
 
         animated('fountain', grid, (8, 0), bb=(3, 3), layers=('BUILDING', 'Spriteborder')),
 
-        grid('11_park', (0, 1)),
+        animated('11_park', grid, (0, 1), layers=('BUILDING', 'Spriteborder')),
 
         grid('12_park', (1, 1)),
 
