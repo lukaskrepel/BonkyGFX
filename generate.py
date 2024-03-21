@@ -1131,19 +1131,41 @@ def house(name, sprite_id, grid_pos, *, stages, ground_last=False, bb=(0, 0), re
 
         return res
 
-    res = lib.SpriteCollection(f'houses_temperate_{name}') \
+    collection = lib.SpriteCollection(f'houses_temperate_{name}') \
         .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X)
 
     if any(compose_pattern):
         new_pattern = [(0 if p else None, i) for i, p in enumerate(compose_pattern)]
         # Use unspecify to avoid generating climate-specific tiles for temperate-only houses
         target = general_concrete[0].unspecify(climate=TEMPERATE)
-        res = res.compose_on(target, pattern=new_pattern)
-    res.replace_old(sprite_id)
+        collection = collection.compose_on(target, pattern=new_pattern)
+    collection.replace_old(sprite_id)
+
+
+def house1x2(name, sprite_id, *, offset):
+    @lib.template(grf.FileSprite)
+    def tmpl(func, z):
+        # TODO uses common construction sprites for now
+        construction_grid = lib.HouseGrid(func=func, height=100, z=z)
+        construction_grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
+        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=84, z=z, tile_size=(1, 2))
+        grid.set_default(layers=('REF', 'BUILDING/*', 'Spriteborder'))
+        return [
+            construction_grid('left_stage1', (8, 4)),
+            construction_grid('right_stage1', (8, 4)),
+            grid('left_stage3', (0, 0)),
+            construction_grid('left_stage2', (9, 4)),
+            construction_grid('right_stage2', (9, 4)),
+            grid('right_stage3', (0, 1)),
+        ]
+
+    lib.SpriteCollection(f'houses_temperate_{name}') \
+        .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X) \
+        .replace_old(sprite_id)
 
 
 house('1423', 1421, (0, 0), stages=(1, 3), ground_last=True,
-      recolour=STRUCT_BUILDING, recolour_stages=2)
+      recolour=STRUCT_BUILDING, recolour_stages=2)  # NOTE only unfinished building stages are recoloured
 
 house('1425', 1425, (1, 0), stages=(0, 1),
       recolour=STRUCT_BUILDING)  # NOTE uses everything but last stage from house before
@@ -1160,7 +1182,7 @@ house('1442', 1440, (5, 0), stages=(0, 3))  # NOTE tepmerate, arctic, tropic, al
 # TODO 1443 - lift
 house('1446', 1444, (6, 0), stages=(1, 3), ground_last=True)
 
-# TODO hospital (1x2)
+house1x2('hotel_1453', 1448, offset=(0, 812))
 house('statue_1454', 1454, (7, 0), stages=(0, 1), bb=(6, 5))
 house('fountain_1455', 1455, (8, 0), stages=(0, 1), bb=(3, 3), animated=True)
 house('park_1456', 1456, (0, 1), stages=(0, 1))
@@ -1208,8 +1230,8 @@ house('4405', 4404, (8, 3), stages=(1, 1))
 def tmpl_houses_toyland(func, z):
     grid = lib.HouseGrid(func=func, height=100, z=z)
     grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
-    shoe = lib.BuildingSlicesGrid(func=func, offset=(1042, 2), z=z, tile_size=(1, 2), xofs=-62, yofs=-140)
-    shoe.set_default(layers=('BUILDING/*', 'Spriteborder'))
+    shoe = lib.BuildingSlicesGrid(func=func, offset=(1042, 2), z=z, tile_size=(1, 2), xofs=-62, yofs=-139)
+    shoe.set_default(layers=('BUILDING/*', 'Spriteborder', 'REF'))
     return [
         grid('church_stage1', (0, 0), frame=1),
         grid('church_stage2', (0, 0), frame=2),

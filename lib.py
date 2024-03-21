@@ -195,6 +195,7 @@ class HouseGrid(BaseGrid):
         else:
             zxofs = -31 * self.z
             # TODO buildings are aligned to bb so don't need z // 2 but maybe some stuff does
+            # TODO x4 probably needs -1 zyofs
             zyofs = 31 * self.z - self.zheight # - self.z // 2  # z // 2 is a ground sprite offset to align foundations
             if bb is not None:
                 zxofs -= self.z * (bb[1] - bb[0]) * 2
@@ -214,7 +215,7 @@ class HouseGrid(BaseGrid):
 
 
 class BuildingSlicesGrid(BaseGrid):
-    def __init__(self, *, func, offset, z=1, tile_size=(1, 1), xofs=0, yofs=0, **kw):
+    def __init__(self, *, func, z=1, tile_size=(1, 1), xofs=0, yofs=0, offset=(0, 0), **kw):
         super().__init__(func=func, **kw)
         self.offset = offset
         self.tile_size = tile_size
@@ -233,14 +234,14 @@ class BuildingSlicesGrid(BaseGrid):
         x = -self.xofs - 31 * self.z + (gy - gx) * tile_ws
         y = -self.yofs + (gx + gy) * tile_hs
         MAX_HEIGHT = 200 * self.z  # above ground
-        h = min(MAX_HEIGHT, y - self.offset[1])
+        h = min(MAX_HEIGHT, y)
         xofs = kw.pop('xofs', None)
         yofs = kw.pop('yofs', None)
         kw = {**self.kw, **kw}
         return super().__call__(
             name,
             x + tile_ws * (not has_left) + self.offset[0],
-            y - h,
+            y - h + self.offset[1],
             width=tile_ws * (has_left + has_right),
             height=2 * tile_hs - 1 + h,
             xofs=(-31 * self.z if has_left else self.z) if xofs is None else xofs,
@@ -248,6 +249,46 @@ class BuildingSlicesGrid(BaseGrid):
             **kw
         )
 
+
+class BuildingSlicesGrid2(BaseGrid):
+    def __init__(self, *, func, height, z=1, tile_size=(1, 1), offset=(0, 0), border=1, **kw):
+        super().__init__(func=func, **kw)
+        self.height = height
+        self.z = z
+        self.tile_size = tile_size
+        self.offset = offset
+
+        self.zheight = height * z + z - 1
+        self.zborder = border * z
+
+    def __call__(self, name, grid_pos, bb=None, **kw):
+        gx, gy = grid_pos
+        assert gx < self.tile_size[0] and gy < self.tile_size[1]
+        has_left = (gx == self.tile_size[0] - 1)
+        has_right = (gy == self.tile_size[1] - 1)
+        assert has_left or has_right
+
+        tile_ws = 32 * self.z
+        tile_hs = 16 * self.z
+
+        x = (gy - gx + self.tile_size[0] - 1) * tile_ws  # left, relative to border
+        y = self.zheight + (gx + gy) * tile_hs  # bottom, relative to border
+        MAX_HEIGHT = 200 * self.z  # above ground
+        assert self.z < 4  # TODO yofs and h are off by one
+        h = min(MAX_HEIGHT + 31 * self.z, y)
+        xofs = kw.pop('xofs', None)
+        yofs = kw.pop('yofs', None)
+        kw = {**self.kw, **kw}
+        return super().__call__(
+            name,
+            x + tile_ws * (not has_left) + self.offset[0] + self.zborder,
+            y - h + self.offset[1] + self.zborder,
+            width=tile_ws * (has_left + has_right),
+            height=h,
+            xofs=(-31 * self.z if has_left else self.z) if xofs is None else xofs,
+            yofs=(-h + 31 * self.z) if yofs is None else yofs,
+            **kw
+        )
 
 old_sprites = defaultdict(dict)
 new_sprites = defaultdict(lambda: defaultdict(dict))
