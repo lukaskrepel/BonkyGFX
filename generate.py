@@ -1195,10 +1195,10 @@ house('1551', 1546, (5, 3), stages=(3, 3))
 house('1553', 1552, (6, 3), stages=(1, 1))
 # TODO stadium (2x2)# NOTE temperate, arctic, tropic
 house('1565', 1562, (0, 1), stages=(2, 2), tall=True)  # NOTE temperate, arctic, tropic
-# TODO house('1567', 1566, (5, 3), stages=(1, 1), recolour=STRUCT_BOTH)
-# TODO house('1569', 1568, (6, 3), stages=(1, 1), recolour=CREAM_BOTH)
-# TODO house_all_ground('1571', 1570, (?, 3), stages=(1, 1), recolour=STRUCT_BOTH)
-# TODO house_all_ground('1573', 1572, (?, 3), stages=(1, 1), recolour=CREAM_BOTH)
+# TODO arctic house: house('1567', 1566, (5, 3), stages=(1, 1), recolour=STRUCT_BOTH)
+# TODO arctic house: house('1569', 1568, (6, 3), stages=(1, 1), recolour=CREAM_BOTH)
+# TODO arctic house: house_all_ground('4571', 4570, (?, 3), stages=(1, 1), recolour=STRUCT_BOTH)
+# TODO arctic house: house_all_ground('4573', 4572, (?, 3), stages=(1, 1), recolour=CREAM_BOTH)
 house('1575', 1570, (7, 3), stages=(3, 3))
 house('4405', 4404, (8, 3), stages=(1, 1))
 # TODO warehouse
