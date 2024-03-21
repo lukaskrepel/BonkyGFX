@@ -171,7 +171,7 @@ class FlexGrid(BaseGrid):
 
 
 class HouseGrid(BaseGrid):
-    def __init__(self, *, func, height, width=64, padding=1, z=2, offset=(0, 0), **kw):
+    def __init__(self, *, func, height, width=64, padding=2, z=2, offset=(0, 0), **kw):
         super().__init__(func=func, **kw)
         self.z = z
 
@@ -179,7 +179,7 @@ class HouseGrid(BaseGrid):
         self.zwidth = width * z
         self.zheight = height * z + z - 1
 
-        self.zpadding = padding * z
+        self.zpadding = padding
         self.offset = offset
 
     def __call__(self, name, grid_pos, bb=None, rel=None, **kw):
@@ -359,12 +359,15 @@ class SpriteCollection:
                     assert len(dstl) == len(srcl)
                     l = zip(dstl, srcl)
             else:
-                l = ((None if i is None else dstl[i], srcl[j]) for i, j in pattern)
+                l = ((None if i is None else dstl[i], None if j is None else srcl[j]) for i, j in pattern)
 
             res = []
             for i, (d, s) in enumerate(l):
                 if d is None:
                     res.append(s)
+                    continue
+                if s is None:
+                    res.append(d)
                     continue
                 offset = None if offsets is None else offsets[i]
                 res.append(CompositeSprite((d, s), exact_size=exact_size, offset=offset))
