@@ -262,11 +262,13 @@ class BuildingSlicesGrid2(BaseGrid):
         self.zborder = border * z
         self._ground_sprite = None
 
-    def __call__(self, name, grid_pos, **kw):
+    def __call__(self, name, grid_pos, *, has_left=None, has_right=None, below=0, **kw):
         gx, gy = grid_pos
         assert gx < self.tile_size[0] and gy < self.tile_size[1]
-        has_left = (gx == self.tile_size[0] - 1)
-        has_right = (gy == self.tile_size[1] - 1)
+        if has_left is None:
+            has_left = (gx == self.tile_size[0] - 1)
+        if has_right is None:
+            has_right = (gy == self.tile_size[1] - 1)
         assert has_left or has_right
 
         tile_ws = 32 * self.z
@@ -285,7 +287,7 @@ class BuildingSlicesGrid2(BaseGrid):
             x + tile_ws * (not has_left) + self.offset[0] + self.zborder,
             y - h + self.offset[1] + self.zborder,
             width=tile_ws * (has_left + has_right),
-            height=h,
+            height=h + below,
             xofs=(-31 * self.z if has_left else self.z) if xofs is None else xofs,
             yofs=(-h + 31 * self.z) if yofs is None else yofs,
             **kw,

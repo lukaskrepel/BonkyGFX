@@ -1167,9 +1167,6 @@ def house1x2(name, sprite_id, *, offset):
 def house2x2(name, sprite_id, *, offset):
     @lib.template(grf.FileSprite)
     def tmpl(func, z):
-        # TODO uses common construction sprites for now
-        construction_grid = lib.HouseGrid(func=func, height=100, z=z)
-        construction_grid.set_default(layers=('BUILDING', 'Spriteborder'))
         grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=68, z=z, tile_size=(2, 2))
         building_layers = ('BUILDING', 'Spriteborder')
         ground_layers = ('TILE', 'Spriteborder')
@@ -1183,11 +1180,46 @@ def house2x2(name, sprite_id, *, offset):
             grid('west_building', (1, 0), layers=building_layers),
             grid('south_building', (1, 1), layers=building_layers),
         ]
+        return res
 
     # TODO don't generate climate-specific sprites that aren't used
     lib.SpriteCollection(f'houses_temperate_{name}') \
         .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X) \
         .compose_on(general_concrete[0], pattern=((0, 0), (1, 0), (2, 0), (3, 0), (4, None), (5, None), (6, None), (7, None),)) \
+        .replace_old(sprite_id)
+
+
+def mall(name, sprite_id, *, offset):
+    @lib.template(grf.FileSprite)
+    def tmpl(func, z):
+        # TODO uses common construction sprites for now
+        construction_grid = lib.HouseGrid(func=func, height=100, z=z)
+        construction_grid.set_default(layers=('BUILDING', 'Spriteborder'))
+        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=68, z=z, tile_size=(2, 2))
+        building_layers = ('BUILDING', 'Spriteborder')
+        ground_layers = ('TILE', 'Spriteborder')
+
+        # We have no sprite for south building so cover it with east and west ones
+        res = [
+            construction_grid.ground('north_ground_construction', (8, 4)),
+            construction_grid('north_building_construction', (8, 4)),
+            construction_grid.ground('east_ground_construction', (8, 4)),
+            construction_grid.ground('west_ground_construction', (8, 4)),
+            construction_grid.ground('south_ground_construction', (8, 4)),
+            grid.ground('north_ground', (0, 0), layers=ground_layers),
+            grf.EMPTY_SPRITE,  # covered by east and west
+            grid.ground('east_ground', (0, 1), layers=ground_layers),
+            grid('east_building', (0, 1), layers=building_layers, has_left=True, below=32),
+            grid.ground('west_ground', (1, 0), layers=ground_layers),
+            grid('west_building', (1, 0), layers=building_layers, has_right=True, below=32),
+            grid.ground('south_ground', (1, 1), layers=ground_layers),
+        ]
+        return res
+
+    lib.SpriteCollection(f'houses_temperate_{name}') \
+        .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X) \
+        .compose_on(general_concrete[0].unspecify(climate=TEMPERATE),
+            pattern=zip(range(12), (None, None, None, None, None, 0, None, 0, None, 0, None, 0))) \
         .replace_old(sprite_id)
 
 
@@ -1250,7 +1282,7 @@ house('1565', 1562, (0, 1), stages=(2, 2), tall=True)  # NOTE temperate, arctic,
 # TODO arctic house: house_all_ground('4573', 4572, (?, 3), stages=(1, 1), recolour=CREAM_BOTH)
 house('1575', 1570, (7, 3), stages=(3, 3))
 house('4405', 4404, (8, 3), stages=(1, 1))
-# TODO warehouse
+mall('mall_4417', 4406, offset=(780, 812))
 
 
 @lib.template(grf.FileSprite)
