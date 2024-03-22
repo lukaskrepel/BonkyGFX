@@ -298,7 +298,7 @@ def tmpl_airport_tiles(func, z):
     return [sprites[k] for k in (0, 1, 7, 8, 9, 10, 11, 12, 13, 14, 15, 2, 3, 4, 5, 6, 21, 22)]
 
 
-AIRPORT_COMPOSITION = [(None, 0), (None, 1)] + [(0, i) for i in range(2, 11)] + [(None, i) for i in range(11, 18)]
+AIRPORT_COMPOSITION = [(0, None), (1, None)] + [(i, 0) for i in range(2, 11)] + [(i, None) for i in range(11, 18)]
 airport_tiles = lib.SpriteCollection('airport_modern') \
     .add(INFRA_DIR / 'airport_modern.ase',
         tmpl_airport_tiles, ZOOM_2X) \
@@ -766,7 +766,7 @@ road = lib.SpriteCollection('road') \
     .add(INFRA_DIR / 'roads.ase',
          tmpl_roadtiles, ZOOM_2X, 3, climate=TROPICAL)
 
-ROAD_COMPOSITION = list(zip([0] * 11, range(11))) + list(zip((12, 6, 3, 9), range(15, 19))) + list(zip([0] * 4, range(11, 15)))
+ROAD_COMPOSITION = list(zip(range(11), [0] * 11)) + list(zip(range(15, 19), (12, 6, 3, 9))) + list(zip(range(11, 15), [0] * 4))
 road_town.compose_on(general_concrete, ROAD_COMPOSITION).replace_old(1313)
 road.compose_on(ground, ROAD_COMPOSITION).replace_old(1332)
 desert_and_snow_road = road.compose_on(desert_and_snow, ROAD_COMPOSITION)
@@ -1135,7 +1135,7 @@ def house(name, sprite_id, grid_pos, *, stages, ground_last=False, bb=(0, 0), re
         .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X)
 
     if any(compose_pattern):
-        new_pattern = [(0 if p else None, i) for i, p in enumerate(compose_pattern)]
+        new_pattern = [(i, 0 if p else None) for i, p in enumerate(compose_pattern)]
         # Use unspecify to avoid generating climate-specific tiles for temperate-only houses
         target = general_concrete[0].unspecify(climate=TEMPERATE)
         collection = collection.compose_on(target, pattern=new_pattern)
@@ -1187,7 +1187,7 @@ def house2x2(name, sprite_id, *, offset):
     # TODO don't generate climate-specific sprites that aren't used
     lib.SpriteCollection(f'houses_temperate_{name}') \
         .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X) \
-        .compose_on(general_concrete[0], pattern=((0, 0), (0, 1), (0, 2), (0, 3), (None, 4), (None, 5), (None, 6), (None, 7),)) \
+        .compose_on(general_concrete[0], pattern=((0, 0), (1, 0), (2, 0), (3, 0), (4, None), (5, None), (6, None), (7, None),)) \
         .replace_old(sprite_id)
 
 

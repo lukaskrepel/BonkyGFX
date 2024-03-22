@@ -416,17 +416,17 @@ class SpriteCollection:
         def patternzip(dstl, srcl):
             if pattern is None:
                 if len(dstl) == 1:
-                    l = zip([dstl[0]] * len(srcl), srcl)
+                    l = zip(srcl, [dstl[0]] * len(srcl))
                 elif len(srcl) == 1:
-                    l = zip(dstl, [srcl[0]] * len(dstl))
+                    l = zip([srcl[0]] * len(dstl), dstl)
                 else:
                     assert len(dstl) == len(srcl)
-                    l = zip(dstl, srcl)
+                    l = zip(srcl, dstl)
             else:
-                l = ((None if i is None else dstl[i], None if j is None else srcl[j]) for i, j in pattern)
+                l = ((None if i is None else srcl[i], None if j is None else dstl[j]) for i, j in pattern)
 
             res = []
-            for i, (d, s) in enumerate(l):
+            for i, (s, d) in enumerate(l):
                 if d is None:
                     res.append(s)
                     continue
@@ -437,7 +437,7 @@ class SpriteCollection:
                 res.append(CompositeSprite((d, s), exact_size=exact_size, offset=offset))
             return res
 
-            return [s if d is None else CompositeSprite((d, s), exact_size=exact_size) for d, s in l]
+            return [s if d is None else CompositeSprite((d, s), exact_size=exact_size) for s, d in l]
 
         # TODO calculate key combinations for each sprite separately to avoid bloating
         for keys in compose_keys:
