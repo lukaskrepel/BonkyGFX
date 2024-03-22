@@ -1148,7 +1148,7 @@ def house1x2(name, sprite_id, *, offset):
         # TODO uses common construction sprites for now
         construction_grid = lib.HouseGrid(func=func, height=100, z=z)
         construction_grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
-        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=100, z=z, tile_size=(1, 2))
+        grid = lib.BuildingSlicesGrid(func=func, offset=offset, height=100, z=z, tile_size=(1, 2))
         grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
         return [
             construction_grid('left_stage1', (8, 4)),
@@ -1167,7 +1167,7 @@ def house1x2(name, sprite_id, *, offset):
 def house2x2(name, sprite_id, *, offset):
     @lib.template(grf.FileSprite)
     def tmpl(func, z):
-        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=100, z=z, tile_size=(2, 2))
+        grid = lib.BuildingSlicesGrid(func=func, offset=offset, height=100, z=z, tile_size=(2, 2))
         building_layers = ('BUILDING', 'Spriteborder')
         ground_layers = ('TILE', 'Spriteborder')
         return [
@@ -1195,7 +1195,7 @@ def mall(name, sprite_id, *, offset):
         # TODO uses common construction sprites for now
         construction_grid = lib.HouseGrid(func=func, height=100, z=z)
         construction_grid.set_default(layers=('BUILDING', 'Spriteborder'))
-        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=100, z=z, tile_size=(2, 2))
+        grid = lib.BuildingSlicesGrid(func=func, offset=offset, height=100, z=z, tile_size=(2, 2))
         building_layers = ('BUILDING', 'Spriteborder')
         ground_layers = ('TILE', 'Spriteborder')
 
@@ -1289,7 +1289,7 @@ mall('mall_4417', 4406, offset=(780, 812))
 def tmpl_houses_toyland(func, z):
     grid = lib.HouseGrid(func=func, height=100, z=z)
     grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
-    shoe = lib.BuildingSlicesGrid(func=func, offset=(1042, 2), z=z, tile_size=(1, 2), xofs=-62, yofs=-139)
+    shoe = lib.BuildingSlicesGrid(func=func, offset=(1040, 0), z=z, tile_size=(1, 2), height=116)
     shoe.set_default(layers=('BUILDING/*', 'Spriteborder', 'REF'))
     return [
         grid('church_stage1', (0, 0), frame=1),
@@ -1717,7 +1717,7 @@ def tmpl_farm(func, z):
     ground_layers = ('TILE', 'Spriteborder')
     building_layers = ('BUILDING', 'Spriteborder')
     grid = lib.HouseGrid(func=func, height=75, z=z, offset=(194, 0))
-    double_house = lib.BuildingSlicesGrid2(func=func, height=75, tile_size=(1, 2), z=z)
+    double_house = lib.BuildingSlicesGrid(func=func, height=75, tile_size=(1, 2), z=z)
     double_house.set_default(layers=building_layers)
     double_house.ground.set_default(layers=ground_layers)
     return [
@@ -1870,7 +1870,7 @@ lib.SpriteCollection('printing_works') \
 
 @lib.template(grf.FileSprite)
 def tmpl_candy_factory(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(2, 2), xofs=-126, yofs=-76)
+    grid = lib.BuildingSlicesGrid(func=func, z=z, tile_size=(2, 2), height=100)
     grid.set_default(ignore_layers='TILE/*')
     assert z == 2
     return [
@@ -1893,7 +1893,7 @@ candy_factory = lib.SpriteCollection('candy_factory') \
 
 @lib.template(grf.FileSprite)
 def tmpl_toy_shop(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(2, 2), xofs=-126, yofs=-76)
+    grid = lib.BuildingSlicesGrid(func=func, z=z, tile_size=(2, 2), height=100)
     grid.set_default(ignore_layers='TILE/*')
     assert z == 2
     return [
@@ -1942,15 +1942,15 @@ lumber_mill = lib.SpriteCollection('lumber_mill') \
 
 @lib.template(grf.FileSprite)
 def tmpl_fizzy_drink_factory(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(2, 2), xofs=-126, yofs=-76)
+    grid = lib.BuildingSlicesGrid(func=func, z=z, tile_size=(2, 2), height=100)
     grid.set_default(ignore_layers='TILE/*')
     return [
-        grid('s_stage1', (1, 1), frame=1),
-        grid('s_stage2', (1, 1), frame=2),
-        grid('e_stage2', (0, 1), frame=2),
-        cc(grid('e_stage3', (0, 1), frame=3)),
-        grid('s_stage3', (1, 1), frame=3),
-        cc(grid('w_stage3', (1, 0), frame=3)),
+        grid('south_stage1', (1, 1), frame=1),
+        grid('south_stage2', (1, 1), frame=2),
+        grid('east_stage2', (0, 1), frame=2),
+        cc(grid('east_stage3', (0, 1), frame=3)),
+        grid('south_stage3', (1, 1), frame=3),
+        cc(grid('west_stage3', (1, 0), frame=3)),
     ]
 
 
@@ -1961,14 +1961,14 @@ fizzy_drink_factory = lib.SpriteCollection('fizzy_drink_factory') \
 
 @lib.template(grf.FileSprite)
 def tmpl_toffee_quarry(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(3, 1), xofs=-190, yofs=-199)
-    grid.set_default(layers='BUILDING/*', frame=1)
+    grid = lib.BuildingSlicesGrid(func=func, offset=(0, 1), z=z, tile_size=(3, 1), height=161)
+    grid.set_default(layers='BUILDING', frame=1)
     return [
         grid('0_0', (0, 0)),
         grid('1_0', (1, 0)),
         animated('2_0', grid, (2, 0)),
         grf.EMPTY_SPRITE,
-        grid('box', (2, 0), layers='CHISEL/*', xofs=-155, yofs=-146),
+        grid('box', (2, 0), layers='CHISEL', xofs=-155, yofs=-146),
     ]
 
 
@@ -2066,9 +2066,9 @@ for i in range(0, 3):
 
 @lib.template(grf.FileSprite)
 def tmpl_toy_factory(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(4, 2), xofs=-254, yofs=-135)
+    grid = lib.BuildingSlicesGrid(func=func, offset=(0, 1), z=z, tile_size=(4, 2), height=161)
     grid.set_default(layers=('BUILDING', 'BUILDING_INSIDE', 'Spriteborder'))
-    # building stage 4708
+    # TODO building stage 4708
     # grid('', (0, 1)),
     # grid('', (1, 1)), # back
     # grid('', (2, 1)),
@@ -2083,7 +2083,7 @@ def tmpl_toy_factory(func, z):
         grid('2_1', (2, 1)),
         grid('3_1', (3, 1)),
         grid('3_0', (3, 0)),
-        grid('1_1_front', (1, 1), xofs=0, yofs=-221 + 21, layers=('BUILDING', 'Spriteborder')),  # WARNING relative offset nonsense
+        grid('1_1_front', (1, 1), xofs=0, yofs=-220 + 21, layers=('BUILDING', 'Spriteborder')),  # WARNING relative offset nonsense
         func('stomper', 198, 2, 54, 196, xofs=-9, yofs=-158 + 22, layers='STOMPER'),  # NOTE positioned randomly
         toy_grid('plastic', (0, 0), xofs=-11, yofs=-205 + 22),  # NOTE positioned randomly
         toy_grid('toy', (1, 0), xofs=-15, yofs=-178 + 22),  # NOTE positioned randomly
@@ -2096,7 +2096,7 @@ lib.SpriteCollection('toy_factory') \
 
 @lib.template(grf.FileSprite)
 def tmpl_sugar_mine(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(4, 2), xofs=-254, yofs=-135)
+    grid = lib.BuildingSlicesGrid(func=func, offset=(0, 1), z=z, tile_size=(4, 2), height=161)
     grid.set_default(layers=('BUILDING', 'Spriteborder'))
     assert z == 2
     return [
@@ -2145,7 +2145,7 @@ lib.SpriteCollection('sugar_mine') \
 
 @lib.template(grf.FileSprite)
 def tmpl_bubble_generator(func, z):
-    grid = lib.BuildingSlicesGrid(func=func, offset=(z, z), z=z, tile_size=(3, 2), xofs=-190, yofs=-167)
+    grid = lib.BuildingSlicesGrid(func=func, offset=(0, 1), z=z, tile_size=(3, 2), height=161)
     grid.set_default(layers=('BUILDING', 'Spriteborder'))
     assert z == 2
     return [
