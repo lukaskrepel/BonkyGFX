@@ -260,8 +260,9 @@ class BuildingSlicesGrid2(BaseGrid):
 
         self.zheight = height * z + z - 1
         self.zborder = border * z
+        self._ground_sprite = None
 
-    def __call__(self, name, grid_pos, bb=None, **kw):
+    def __call__(self, name, grid_pos, **kw):
         gx, gy = grid_pos
         assert gx < self.tile_size[0] and gy < self.tile_size[1]
         has_left = (gx == self.tile_size[0] - 1)
@@ -287,8 +288,30 @@ class BuildingSlicesGrid2(BaseGrid):
             height=h,
             xofs=(-31 * self.z if has_left else self.z) if xofs is None else xofs,
             yofs=(-h + 31 * self.z) if yofs is None else yofs,
-            **kw
+            **kw,
         )
+
+    def ground(self, name, grid_pos, **kw):
+        gx, gy = grid_pos
+        assert gx < self.tile_size[0] and gy < self.tile_size[1]
+
+        tile_ws = 32 * self.z
+        tile_hs = 16 * self.z
+        x = (gy - gx + self.tile_size[0] - 1) * tile_ws  # left, relative to border
+        ground_h = 32 * self.z - 1
+        y = self.zheight - ground_h + (gx + gy) * tile_hs  # top, relative to border
+
+        return MaskGround(self.func(
+            name,
+            x + self.offset[0] + self.zborder,
+            y + self.offset[1] + self.zborder,
+            tile_ws * 2,
+            ground_h,
+            xofs=-31 * self.z,
+            yofs=- self.z // 2,  # ground sprite offset to align foundations
+            **kw,
+        ))
+
 
 old_sprites = defaultdict(dict)
 new_sprites = defaultdict(lambda: defaultdict(dict))
@@ -416,6 +439,7 @@ class SpriteCollection:
 
             return [s if d is None else CompositeSprite((d, s), exact_size=exact_size) for d, s in l]
 
+        # TODO calculate key combinations for each sprite separately to avoid bloating
         for keys in compose_keys:
             srcl = self.get_sprites(keys)
             dstl = dest.get_sprites(keys)
@@ -644,6 +668,50 @@ class SpriteWrapper(grf.Sprite):
     def prepare_files(self):
         for s in self._iter_sprites():
             s.prepare_files()
+
+
+class MaskGround(SpriteWrapper):
+    def __init__(self, sprite):
+        z = zoom_to_factor(sprite.zoom)
+        assert sprite.w == 64 * z
+        assert sprite.h == 32 * z - 1
+        super().__init__((sprite, ))
+        self.sprite = sprite
+
+    def get_data_layers(self, context):
+        z = zoom_to_factor(self.zoom)
+        assert self.w == 64 * z
+        assert self.h == 32 * z - 1
+        w, h, rgb, alpha, mask = self.sprite.get_data_layers(context)
+        assert w == 64 * z
+        assert h == 32 * z - 1
+
+        assert z == 2  # untested for other z
+        tile_ws = 32 * z
+        tile_hs = 16 * z
+
+        ground_mask = np.full((h, w), True)
+
+        def get_n (i, above):
+            # i -= self.above_h - above
+            n = i if i < tile_hs + above else 31 * z - i + above
+            return max(0, min((n + 1) * 2, tile_ws))
+
+        for i in range(h):
+            nl = get_n(i, 0)
+            nr = get_n(i, 0)
+            ground_mask[i, tile_ws - nl: tile_ws + nr] = False
+        if rgb is not None:
+            rgb = grf.np_make_writable(rgb)
+            rgb[ground_mask, :] = 0
+        if alpha is not None:
+            alpha = grf.np_make_writable(alpha)
+            alpha[ground_mask] = 0
+        if mask is not None:
+            mask = grf.np_make_writable(mask)
+            mask[ground_mask] = 0
+
+        return w, h, rgb, alpha, mask
 
 
 class MoveSprite(SpriteWrapper):
@@ -982,6 +1050,7 @@ class AlphaAndMask(grf.Sprite):
         }
 
 
+# TODO switch anchor tile from bottom to top
 class CutGround(grf.Sprite):
     def __init__(self, sprite, position, name=None, above=0):
         assert sprite.zoom == ZOOM_2X

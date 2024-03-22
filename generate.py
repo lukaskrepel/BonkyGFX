@@ -1149,7 +1149,7 @@ def house1x2(name, sprite_id, *, offset):
         construction_grid = lib.HouseGrid(func=func, height=100, z=z)
         construction_grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
         grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=84, z=z, tile_size=(1, 2))
-        grid.set_default(layers=('REF', 'BUILDING/*', 'Spriteborder'))
+        grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
         return [
             construction_grid('left_stage1', (8, 4)),
             construction_grid('right_stage1', (8, 4)),
@@ -1161,6 +1161,33 @@ def house1x2(name, sprite_id, *, offset):
 
     lib.SpriteCollection(f'houses_temperate_{name}') \
         .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X) \
+        .replace_old(sprite_id)
+
+
+def house2x2(name, sprite_id, *, offset):
+    @lib.template(grf.FileSprite)
+    def tmpl(func, z):
+        # TODO uses common construction sprites for now
+        construction_grid = lib.HouseGrid(func=func, height=100, z=z)
+        construction_grid.set_default(layers=('BUILDING', 'Spriteborder'))
+        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=68, z=z, tile_size=(2, 2))
+        building_layers = ('BUILDING', 'Spriteborder')
+        ground_layers = ('TILE', 'Spriteborder')
+        return [
+            grid.ground('north_ground', (0, 0), layers=ground_layers),
+            grid.ground('east_ground', (0, 1), layers=ground_layers),
+            grid.ground('west_ground', (1, 0), layers=ground_layers),
+            grid.ground('south_ground', (1, 1), layers=ground_layers),
+            grf.EMPTY_SPRITE,  # covered by south
+            grid('east_building', (0, 1), layers=building_layers),
+            grid('west_building', (1, 0), layers=building_layers),
+            grid('south_building', (1, 1), layers=building_layers),
+        ]
+
+    # TODO don't generate climate-specific sprites that aren't used
+    lib.SpriteCollection(f'houses_temperate_{name}') \
+        .add(TOWN_DIR / 'houses_temperate.ase', tmpl, ZOOM_2X) \
+        .compose_on(general_concrete[0], pattern=((0, 0), (0, 1), (0, 2), (0, 3), (None, 4), (None, 5), (None, 6), (None, 7),)) \
         .replace_old(sprite_id)
 
 
@@ -1197,7 +1224,7 @@ house('tall_modern_office_1472', 1470, (0, 0), stages=(0, 3), bb=(2, 0),
 
 house('1475', 1473, (6, 1), stages=(0, 3), bb=(1, 2))
 house('1478', 1476, (7, 1), stages=(0, 3), bb=(1, 0))
-# TODO stadium (2x2)
+house2x2('stadium_1486', 1479, offset=(260, 812))
 house('1488', 1487, (8, 1), stages=(1, 1))
 house('1490', 1489, (0, 2), stages=(1, 1))
 house('1492', 1491, (1, 2), stages=(1, 1))
@@ -1215,7 +1242,7 @@ house('1539', 1538, (3, 3), stages=(1, 1), recolour=STRUCT_BOTH)
 house('1545', 1540, (4, 3), stages=(3, 3))  # NOTE temperate, tropic TODO compose climate
 house('1551', 1546, (5, 3), stages=(3, 3))
 house('1553', 1552, (6, 3), stages=(1, 1))
-# TODO stadium (2x2)# NOTE temperate, arctic, tropic
+house2x2('stadium_1561', 1554, offset=(520, 812))  # NOTE temperate, arctic, tropic
 house('1565', 1562, (0, 1), stages=(2, 2), tall=True)  # NOTE temperate, arctic, tropic
 # TODO arctic house: house('1567', 1566, (5, 3), stages=(1, 1), recolour=STRUCT_BOTH)
 # TODO arctic house: house('1569', 1568, (6, 3), stages=(1, 1), recolour=CREAM_BOTH)
