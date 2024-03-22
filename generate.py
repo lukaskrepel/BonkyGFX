@@ -1148,7 +1148,7 @@ def house1x2(name, sprite_id, *, offset):
         # TODO uses common construction sprites for now
         construction_grid = lib.HouseGrid(func=func, height=100, z=z)
         construction_grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
-        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=84, z=z, tile_size=(1, 2))
+        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=100, z=z, tile_size=(1, 2))
         grid.set_default(layers=('BUILDING/*', 'Spriteborder'))
         return [
             construction_grid('left_stage1', (8, 4)),
@@ -1167,7 +1167,7 @@ def house1x2(name, sprite_id, *, offset):
 def house2x2(name, sprite_id, *, offset):
     @lib.template(grf.FileSprite)
     def tmpl(func, z):
-        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=68, z=z, tile_size=(2, 2))
+        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=100, z=z, tile_size=(2, 2))
         building_layers = ('BUILDING', 'Spriteborder')
         ground_layers = ('TILE', 'Spriteborder')
         return [
@@ -1195,7 +1195,7 @@ def mall(name, sprite_id, *, offset):
         # TODO uses common construction sprites for now
         construction_grid = lib.HouseGrid(func=func, height=100, z=z)
         construction_grid.set_default(layers=('BUILDING', 'Spriteborder'))
-        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=68, z=z, tile_size=(2, 2))
+        grid = lib.BuildingSlicesGrid2(func=func, offset=offset, height=100, z=z, tile_size=(2, 2))
         building_layers = ('BUILDING', 'Spriteborder')
         ground_layers = ('TILE', 'Spriteborder')
 
@@ -1717,7 +1717,7 @@ def tmpl_farm(func, z):
     ground_layers = ('TILE', 'Spriteborder')
     building_layers = ('BUILDING', 'Spriteborder')
     grid = lib.HouseGrid(func=func, height=75, z=z, offset=(194, 0))
-    double_house = lib.BuildingSlicesGrid2(func=func, height=59, tile_size=(1, 2), z=z)
+    double_house = lib.BuildingSlicesGrid2(func=func, height=75, tile_size=(1, 2), z=z)
     double_house.set_default(layers=building_layers)
     double_house.ground.set_default(layers=ground_layers)
     return [

@@ -267,7 +267,7 @@ class BuildingSlicesGrid2(BaseGrid):
             tile_hs = 16 * z
             x = (gy - gx + sx - 1) * tile_ws  # left, relative to border
             ground_h = 32 * z - 1
-            y = self.building_grid.zheight - ground_h + (gx + gy) * tile_hs  # top, relative to border
+            y = self.building_grid.zheight - ground_h - (sx + sy - 2 - gx - gy) * tile_hs  # top, relative to border
 
             kw = {**self.kw, **kw}
             return MaskGround(super().__call__(
@@ -301,19 +301,20 @@ class BuildingSlicesGrid2(BaseGrid):
         return self._ground_grid
 
     def __call__(self, name, grid_pos, *, has_left=None, has_right=None, below=0, **kw):
+        sx, sy = self.tile_size
         gx, gy = grid_pos
-        assert gx < self.tile_size[0] and gy < self.tile_size[1]
+        assert gx < sx and gy < sy
         if has_left is None:
-            has_left = (gx == self.tile_size[0] - 1)
+            has_left = (gx == sx - 1)
         if has_right is None:
-            has_right = (gy == self.tile_size[1] - 1)
+            has_right = (gy == sy - 1)
         assert has_left or has_right
 
         tile_ws = 32 * self.z
         tile_hs = 16 * self.z
 
         x = (gy - gx + self.tile_size[0] - 1) * tile_ws  # left, relative to border
-        y = self.zheight + (gx + gy) * tile_hs  # bottom, relative to border
+        y = self.zheight - (sx + sy - 2 - gx - gy) * tile_hs  # bottom, relative to border
         MAX_HEIGHT = 200 * self.z  # above ground
         assert self.z < 4  # TODO yofs and h are off by one
         h = min(MAX_HEIGHT + 31 * self.z, y)
