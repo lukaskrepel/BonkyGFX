@@ -251,6 +251,37 @@ class BuildingSlicesGrid(BaseGrid):
 
 
 class BuildingSlicesGrid2(BaseGrid):
+    class GroundGrid(BaseGrid):
+        def __init__(self, building_grid):
+            super().__init__(func=building_grid.func)
+            self.building_grid = building_grid
+
+
+        def __call__(self, name, grid_pos, **kw):
+            sx, sy = self.building_grid.tile_size
+            gx, gy = grid_pos
+            z = self.building_grid.z
+            assert gx < sx and gy < sy
+
+            tile_ws = 32 * z
+            tile_hs = 16 * z
+            x = (gy - gx + sx - 1) * tile_ws  # left, relative to border
+            ground_h = 32 * z - 1
+            y = self.building_grid.zheight - ground_h + (gx + gy) * tile_hs  # top, relative to border
+
+            kw = {**self.kw, **kw}
+            return MaskGround(super().__call__(
+                name,
+                x + self.building_grid.offset[0] + self.building_grid.zborder,
+                y + self.building_grid.offset[1] + self.building_grid.zborder,
+                width=tile_ws * 2,
+                height=ground_h,
+                xofs=-31 * z,
+                yofs=-(z // 2),  # ground sprite offset to align foundations
+                **kw,
+            ))
+
+
     def __init__(self, *, func, height, z=1, tile_size=(1, 1), offset=(0, 0), border=1, **kw):
         super().__init__(func=func, **kw)
         self.height = height
@@ -261,6 +292,13 @@ class BuildingSlicesGrid2(BaseGrid):
         self.zheight = height * z + z - 1
         self.zborder = border * z
         self._ground_sprite = None
+        self._ground_grid = None
+
+    @property
+    def ground(self):
+        if self._ground_grid is None:
+            self._ground_grid = self.GroundGrid(self)
+        return self._ground_grid
 
     def __call__(self, name, grid_pos, *, has_left=None, has_right=None, below=0, **kw):
         gx, gy = grid_pos
@@ -292,27 +330,6 @@ class BuildingSlicesGrid2(BaseGrid):
             yofs=(-h + 31 * self.z) if yofs is None else yofs,
             **kw,
         )
-
-    def ground(self, name, grid_pos, **kw):
-        gx, gy = grid_pos
-        assert gx < self.tile_size[0] and gy < self.tile_size[1]
-
-        tile_ws = 32 * self.z
-        tile_hs = 16 * self.z
-        x = (gy - gx + self.tile_size[0] - 1) * tile_ws  # left, relative to border
-        ground_h = 32 * self.z - 1
-        y = self.zheight - ground_h + (gx + gy) * tile_hs  # top, relative to border
-
-        return MaskGround(self.func(
-            name,
-            x + self.offset[0] + self.zborder,
-            y + self.offset[1] + self.zborder,
-            tile_ws * 2,
-            ground_h,
-            xofs=-31 * self.z,
-            yofs=- self.z // 2,  # ground sprite offset to align foundations
-            **kw,
-        ))
 
 
 old_sprites = defaultdict(dict)

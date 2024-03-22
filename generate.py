@@ -1714,22 +1714,25 @@ lib.SpriteCollection('oil_rig') \
 
 @lib.template(grf.FileSprite)
 def tmpl_farm(func, z):
-    ground = func('ground1_whole', 2, 2, 192, 151, xofs=-62, yofs=-56, layers=('TILE/*', 'Spriteborder'))
-    building = func('building1_whole', 2, 2, 192, 151, xofs=-126, yofs=-88, ignore_layers=('TILE/*',))
+    ground_layers = ('TILE', 'Spriteborder')
+    building_layers = ('BUILDING', 'Spriteborder')
     grid = lib.HouseGrid(func=func, height=75, z=z, offset=(194, 0))
+    double_house = lib.BuildingSlicesGrid2(func=func, height=59, tile_size=(1, 2), z=z)
+    double_house.set_default(layers=building_layers)
+    double_house.ground.set_default(layers=ground_layers)
     return [
-        lib.CutGround(ground, (0, 0), name='ground1a'),
-        lib.CutGround(ground, (0, 1), name='ground1b'),
-        cc(lib.CutBuilding(building, (0, 1), name='building1a')),
-        cc(lib.CutBuilding(building, (0, 0), name='building1b')),
-        grid('ground2', (0, 0), layers=('TILE/*', 'Spriteborder')),
-        cc(grid('building2', (0, 0), ignore_layers=('TILE/*',))),
-        grid('ground3', (1, 0), layers=('TILE/*', 'Spriteborder')),
-        grid('building3', (1, 0), ignore_layers=('TILE/*',)),
-        grid('ground4', (2, 0), layers=('TILE/*', 'Spriteborder')),
-        grid('building4', (2, 0), ignore_layers=('TILE/*',)),
-        grid('ground5', (3, 0), layers=('TILE/*', 'Spriteborder')),
-        grid('building5', (3, 0), ignore_layers=('TILE/*',)),
+        double_house.ground('ground1_left', (0, 0)),
+        double_house.ground('ground1_right', (0, 1)),
+        cc(double_house('building1_right', (0, 0))),
+        cc(double_house('building1_left', (0, 1))),
+        grid('ground2', (0, 0), layers=ground_layers),
+        cc(grid('building2', (0, 0), layers=building_layers)),
+        grid('ground3', (1, 0), layers=ground_layers),
+        grid('building3', (1, 0), layers=building_layers),
+        grid('ground4', (2, 0), layers=ground_layers),
+        grid('building4', (2, 0), layers=building_layers),
+        grid('ground5', (3, 0), layers=ground_layers),
+        grid('building5', (3, 0), layers=building_layers),
     ]
 
 
