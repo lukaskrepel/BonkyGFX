@@ -1068,7 +1068,7 @@ statues[1].replace_old(4694)
 statues[2].replace_old(4698)
 
 
-STRUCT_BUILDING, STRUCT_BOTH, CREAM_BOTH, CHURCH_BUILDING = range(4)
+STRUCT_BUILDING, STRUCT_BOTH, CC_BUILDING, CREAM_BOTH, CHURCH_BUILDING = range(5)
 
 
 def house(name, sprite_id, grid_pos, *, stages, ground_last=False, bb=(0, 0), recolour=None,
@@ -1117,9 +1117,14 @@ def house(name, sprite_id, grid_pos, *, stages, ground_last=False, bb=(0, 0), re
                     sprite = globals()['animated'](f'building_{stage}', use_grid, use_pos, bb=bb, layers=building_layers)
                 else:
                     sprite = use_grid(f'building_{stage}', use_pos, bb=bb, layers=building_layers)
-                if recolour is not None and stage <= recolour_stages:
-                    # TODO handle other recolours
-                    sprite = struct(sprite)
+                if stage <= recolour_stages:
+                    if recolour in (STRUCT_BOTH, STRUCT_BUILDING):
+                        sprite = struct(sprite)
+                    elif recolour == CC_BUILDING:
+                        sprite = cc(sprite)
+                    else:
+                        # TODO handle other recolours
+                        sprite = struct(sprite)
             else:
                 assert t == 'ground'
                 sprite = grid.ground(f'ground_{stage}', use_pos, layers=ground_layers)
@@ -1252,7 +1257,7 @@ house('1466', 1464, (4, 1), stages=(0, 3), bb=(3, 1))
 house('1469', 1467, (5, 1), stages=(0, 3), bb=(2, 0), recolour=STRUCT_BUILDING)
 
 house('tall_modern_office_1472', 1470, (0, 0), stages=(0, 3), bb=(2, 0),
-      tall=True, recolour=STRUCT_BUILDING)  # NOTE temperate, arctic, tropic
+      tall=True, recolour=CC_BUILDING)  # NOTE temperate, arctic, tropic
 
 house('1475', 1473, (6, 1), stages=(0, 3), bb=(1, 2))
 house('1478', 1476, (7, 1), stages=(0, 3), bb=(1, 0))
