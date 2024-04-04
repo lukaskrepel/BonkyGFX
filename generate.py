@@ -1286,7 +1286,7 @@ house('1565', 1562, (0, 1), stages=(2, 2), tall=True)  # NOTE temperate, arctic,
 # TODO arctic house: house_all_ground('4571', 4570, (?, 3), stages=(1, 1), recolour=STRUCT_BOTH)
 # TODO arctic house: house_all_ground('4573', 4572, (?, 3), stages=(1, 1), recolour=CREAM_BOTH)
 house('1575', 1570, (7, 3), stages=(3, 3))
-house('4405', 4404, (8, 3), stages=(1, 1))
+house('cinema_4405', 4404, (8, 3), stages=(1, 1), animated=True)
 mall('mall_4417', 4406, offset=(780, 812))
 
 
