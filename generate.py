@@ -1206,11 +1206,11 @@ def mall(name, sprite_id, *, offset):
 
         # We have no sprite for south building so cover it with east and west ones
         res = [
-            construction_grid.ground('north_ground_construction', (8, 4)),
-            construction_grid('north_building_construction', (8, 4)),
-            construction_grid.ground('east_ground_construction', (8, 4)),
-            construction_grid.ground('west_ground_construction', (8, 4)),
-            construction_grid.ground('south_ground_construction', (8, 4)),
+            construction_grid.ground('north_ground_construction', (9, 4), layers=ground_layers),
+            construction_grid('north_building_construction', (9, 4)),
+            construction_grid.ground('east_ground_construction', (8, 4), layers=ground_layers),
+            construction_grid.ground('west_ground_construction', (8, 4), layers=ground_layers),
+            construction_grid.ground('south_ground_construction', (8, 4), layers=ground_layers),
             grid.ground('north_ground', (0, 0), layers=ground_layers),
             grf.EMPTY_SPRITE,  # covered by east and west
             grid.ground('east_ground', (0, 1), layers=ground_layers),
