@@ -633,19 +633,14 @@ class SpriteWrapper(grf.Sprite):
                     sf[k] = None
                 else:
                     f = s.get_fingerprint()
-                    if f is None:
-                        return None
-                    sf[k] = f
+                    sf[k] = s.get_fingerprint()
         else:
             sf = []
             for s in self.sprites:
                 if s is None:
                     sf.append(None)
                     continue
-                f = s.get_fingerprint()
-                if f is None:
-                    return None
-                sf.append(f)
+                sf.append(s.get_fingerprint())
         res['sprites'] = sf
         return res
 
@@ -709,8 +704,8 @@ class MoveSprite(SpriteWrapper):
         return self.sprite.get_data_layers(context)
 
     def get_fingerprint(self):
-        return grf.combine_fingerprint(
-            super().get_fingerprint(),
+        return dict(
+            **super().get_fingerprint(),
             xofs=self.xofs,
             yofs=self.yofs,
         )
@@ -744,8 +739,8 @@ class DebugSprite(SpriteWrapper):
         return w, h, rgb, alpha, mask
 
     def get_fingerprint(self):
-        return grf.combine_fingerprint(
-            super().get_fingerprint(),
+        return dict(
+            **super().get_fingerprint(),
             filename=self.filename
         )
 
@@ -791,8 +786,8 @@ class MagentaToColour(SpriteWrapper):
         return w, h, rgb, alpha, mask
 
     def get_fingerprint(self):
-        return grf.combine_fingerprint(
-            super().get_fingerprint(),
+        return dict(
+            **super().get_fingerprint(),
             colour=self.colour,
         )
 
@@ -831,8 +826,8 @@ class MagentaRecolour(SpriteWrapper):
         return w, h, rgb, alpha, mask
 
     def get_fingerprint(self):
-        return grf.combine_fingerprint(
-            super().get_fingerprint(),
+        return dict(
+            **super().get_fingerprint(),
             map=self.magenta_map[0],
         )
 
