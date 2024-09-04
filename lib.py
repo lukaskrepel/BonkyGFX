@@ -595,61 +595,7 @@ class CCReplacingFileSprite(grf.FileSprite):
         return super().get_resource_files() + (THIS_FILE,)
 
 
-class SpriteWrapper(grf.Sprite):
-    def __init__(self, sprites, *, name=None):
-        self.sprites = sprites
-        try:
-            f = next(iter(self._iter_sprites()))
-        except StopIteration:
-            raise ValueError('SpriteWrapper got no sprites to wrap')
-
-        super().__init__(w=f.w, h=f.h, xofs=f.xofs, yofs=f.yofs, zoom=f.zoom, bpp=f.bpp, crop=f.crop)
-
-    def _iter_sprites(self):
-        if isinstance(self.sprites, dict):
-            i = self.sprites.values()
-        else:
-            i = self.sprites
-        for s in i:
-            if s is not None:
-                yield s
-
-    def get_image_files(self):
-        return ()
-
-    def get_resource_files(self):
-        # TODO add wrapped class __file__, possibly traversing mro (do that globally?)
-        res = super().get_resource_files() + (THIS_FILE,)
-        for s in self._iter_sprites():
-            res += s.get_resource_files()
-        return res
-
-    def get_fingerprint(self):
-        res = {'class': self.__class__.__name__}
-        if isinstance(self.sprites, dict):
-            sf = {}
-            for k, s in self.sprites.items():
-                if s is None:
-                    sf[k] = None
-                else:
-                    f = s.get_fingerprint()
-                    sf[k] = s.get_fingerprint()
-        else:
-            sf = []
-            for s in self.sprites:
-                if s is None:
-                    sf.append(None)
-                    continue
-                sf.append(s.get_fingerprint())
-        res['sprites'] = sf
-        return res
-
-    def prepare_files(self):
-        for s in self._iter_sprites():
-            s.prepare_files()
-
-
-class MaskGround(SpriteWrapper):
+class MaskGround(grf.SpriteWrapper):
     def __init__(self, sprite):
         z = zoom_to_factor(sprite.zoom)
         assert sprite.w == 64 * z
@@ -693,25 +639,7 @@ class MaskGround(SpriteWrapper):
         return w, h, rgb, alpha, mask
 
 
-class MoveSprite(SpriteWrapper):
-    def __init__(self, sprite, *, xofs=0, yofs=0):
-        super().__init__((sprite, ))
-        self.sprite = sprite
-        self.xofs += xofs
-        self.yofs += yofs
-
-    def get_data_layers(self, context):
-        return self.sprite.get_data_layers(context)
-
-    def get_fingerprint(self):
-        return dict(
-            **super().get_fingerprint(),
-            xofs=self.xofs,
-            yofs=self.yofs,
-        )
-
-
-class DebugSprite(SpriteWrapper):
+class DebugSprite(grf.SpriteWrapper):
     def __init__(self, filename, sprite):
         super().__init__((sprite, ))
         self.filename = filename
@@ -755,7 +683,7 @@ def make_magenta_mask(rgb):
     )
 
 
-class MagentaToColour(SpriteWrapper):
+class MagentaToColour(grf.SpriteWrapper):
     def __init__(self, sprite, colour):
         self.colour = colour
         self._oklab_colour = grf.srgb_to_oklab(colour)
@@ -792,7 +720,7 @@ class MagentaToColour(SpriteWrapper):
         )
 
 
-class MagentaRecolour(SpriteWrapper):
+class MagentaRecolour(grf.SpriteWrapper):
     def __init__(self, sprite, magenta_map):
         self.magenta_map = magenta_map
         super().__init__((sprite, ))
@@ -892,9 +820,6 @@ class MagentaToLight(grf.Sprite):
 
         return w, h, npimg, npalpha, npmask
 
-    def get_image_files(self):
-        return ()
-
     def get_resource_files(self):
         return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files() + self.order.get_resource_files()
 
@@ -953,14 +878,8 @@ class MagentaAndMask(grf.Sprite):
 
         return w, h, rgb, alpha, mask
 
-
-    def get_image_files(self):
-        return ()
-
-
     def get_resource_files(self):
         return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files() + self.mask.get_resource_files()
-
 
     def get_fingerprint(self):
         return {
@@ -1012,14 +931,8 @@ class AlphaAndMask(grf.Sprite):
 
         return w, h, npimg, npalpha, npmask
 
-
-    def get_image_files(self):
-        return ()
-
-
     def get_resource_files(self):
         return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files() + self.mask.get_resource_files()
-
 
     def get_fingerprint(self):
         return {
@@ -1084,10 +997,6 @@ class CutGround(grf.Sprite):
 
         return self.w, self.h, rgb, alpha, mask
 
-
-    def get_image_files(self):
-        return ()
-
     def get_resource_files(self):
         return super().get_resource_files() + (THIS_FILE,) + self.sprite.get_resource_files()
 
@@ -1131,6 +1040,7 @@ class AseImageFile(grf.ImageFile):
         return (img, grf.BPP_32)
 
     def load(self):
+        # print('ASE LOAD', self.path, self._kw_requested)
         if self._images is not None:
             return
 

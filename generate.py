@@ -309,7 +309,7 @@ airport_tiles[17].replace_new(0x10, 12)
 
 
 def tmpl_tile_selection(name, paths, zoom, *args):
-    return [lib.MoveSprite(lib.MagentaToSelection(s), yofs=14) for s in tmpl_groundtiles(name, paths, zoom, *args)]
+    return [grf.MoveSprite(lib.MagentaToSelection(s), yofs=14) for s in tmpl_groundtiles(name, paths, zoom, *args)]
 
 
 lib.SpriteCollection('tile_selection') \
