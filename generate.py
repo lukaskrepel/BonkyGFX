@@ -545,32 +545,65 @@ wagon('passengers_gen2+3', 2829, 0, frame=2)
 wagon('mail_gen2+3', 2837, 1, frame=2)
 
 
-def engine(name, sprite_id, tmpl, y):
+def engine(filename, name, sprite_id, tmpl, y, **kw):
     lib.SpriteCollection(name) \
-        .add(VEHICLE_DIR / 'rail_engines_temperate.ase', tmpl, ZOOM_2X, y, 0) \
+        .add(VEHICLE_DIR / filename, tmpl, ZOOM_2X, y, 0, **kw) \
         .replace_old(sprite_id)
 
 
-engine('jubilee_sh8p', 2905, tmpl_vehicle_rail_8view, 0)  # Chaney Jubilee + SH 8P (Steam)
-engine('ginzu', 2913, tmpl_vehicle_rail_8view, 1)  # Ginzu A4 (Steam)
-engine('kirby', 2921, tmpl_vehicle_rail_8view, 2)  # Kirby Paul (Steam)
-engine('sh25_floss47', 2929, tmpl_vehicle_rail_4view, 3)  # SH/Hendry 25 + Floss 47 (Diesel)
-engine('uu37', 2933, tmpl_vehicle_rail_4view, 4)  # UU/37 (Diesel)
-engine('sh30_sh40', 2937, tmpl_vehicle_rail_4view, 5)  # SH/30 + SH/40 (Diesel)
-engine('sh_125', 2941, tmpl_vehicle_rail_8view, 6)  # SH 125 (Diesel)
-engine('manley', 2949, tmpl_vehicle_rail_8view, 7)  # Manley-Morel VT (Diesel)
-engine('dash', 2957, tmpl_vehicle_rail_8view, 8)  # Dash (Diesel)
-engine('asia', 2965, tmpl_vehicle_rail_8view, 9)  # Asia Star (Electric)
-engine('tim', 2973, tmpl_vehicle_rail_8view, 10)  # T.I.M. (Electric)
+def engine_sheet(filename, engines, **kw):
+    for y, (name, sprite_id, tmpl) in enumerate(engines):
+        engine(filename, name, sprite_id, tmpl, y, **kw)
 
-# engine('', 2981, tmpl_vehicle_rail_4view, 0, 0)  # X2001
-# engine('', 2985, tmpl_vehicle_rail_8view, 0, 1)  # Millenium
 
-# engine('', 2993, tmpl_vehicle_rail_8view, 0, 2)  # Lev3 Pegasus
-# engine('', 3001, tmpl_vehicle_rail_8view, 0, 3)  # Lev4 Chimaera
-# engine('', 3009, tmpl_vehicle_rail_4view, 0, 0)  # Lev1 Leviathan
-# engine('', 3013, tmpl_vehicle_rail_4view, 0, 1)  # Lev2 Cyclops
+engine_sheet('rail_engines_temperate.ase', (
+    ('jubilee_sh8p', 2905, tmpl_vehicle_rail_8view),  # Chaney Jubilee + SH 8P (Steam)
+    ('ginzu', 2913, tmpl_vehicle_rail_8view),  # Ginzu A4 (Steam)
+    ('kirby', 2921, tmpl_vehicle_rail_8view),  # Kirby Paul (Steam)
+    ('sh25_floss47', 2929, tmpl_vehicle_rail_4view),  # SH/Hendry 25 + Floss 47 (Diesel)
+    ('uu37', 2933, tmpl_vehicle_rail_4view),  # UU/37 (Diesel)
+    ('sh30_sh40', 2937, tmpl_vehicle_rail_4view),  # SH/30 + SH/40 (Diesel)
+    ('sh125', 2941, tmpl_vehicle_rail_8view),  # SH 125 (Diesel)
+    ('manley', 2949, tmpl_vehicle_rail_8view),  # Manley-Morel VT (Diesel)
+    ('dash', 2957, tmpl_vehicle_rail_8view),  # Dash (Diesel)
+    ('asia', 2965, tmpl_vehicle_rail_8view),  # Asia Star (Electric)
+    ('tim', 2973, tmpl_vehicle_rail_8view),   # T.I.M. (Electric)
+))
 
+engine_sheet('monorail_engines.ase', (
+    ('x2001', 2981, tmpl_vehicle_rail_4view),  # X2001
+    ('millenium', 2985, tmpl_vehicle_rail_8view),  # Millenium
+))
+
+engine_sheet('maglev_engines.ase', (
+    ('lev3', 2993, tmpl_vehicle_rail_8view),  # Lev3 Pegasus
+    ('lev4', 3001, tmpl_vehicle_rail_8view),  # Lev4 Chimaera
+    ('lev1', 3009, tmpl_vehicle_rail_4view),  # Lev1 Leviathan
+    ('lev2', 3013, tmpl_vehicle_rail_4view),  # Lev2 Cyclops
+))
+
+engine_sheet('rail_engines_arctic.ase', (
+    ('cs2400', 3017, tmpl_vehicle_rail_8view),  # CS 2400 (Diesel)
+    ('centennial', 3025, tmpl_vehicle_rail_8view),  # Centennial (Diesel)
+    ('cs4000', 3033, tmpl_vehicle_rail_8view),  # CS 4000 (Diesel)
+    ('wills', 3041, tmpl_vehicle_rail_8view),  # Wills 2-8-0 (Steam)
+    ('kelling', 3049, tmpl_vehicle_rail_4view),  # Kelling 3100 (Diesel)
+    ('turner', 3053, tmpl_vehicle_rail_8view),  # Turner Turbo (Diesel)
+    ('mjs1000', 3061, tmpl_vehicle_rail_4view),  # MJS 1000 (Diesel)
+    ('mjs250', 3065, tmpl_vehicle_rail_8view),  # MJS 250 (Diesel)
+))
+
+# Not doing tropical variants for now
+# engine_sheet('rail_engines_tropical.ase', (
+#     ('cs2400', 3017, tmpl_vehicle_rail_8view),  # CS 2400 (Diesel)
+#     ('centennial', 3025, tmpl_vehicle_rail_8view),  # Centennial (Diesel)
+#     ('cs4000', 3033, tmpl_vehicle_rail_8view),  # CS 4000 (Diesel)
+#     ('wills', 3041, tmpl_vehicle_rail_8view),  # Wills 2-8-0 (Steam)
+#     ('kelling', 3049, tmpl_vehicle_rail_4view),  # Kelling 3100 (Diesel)
+#     ('turner', 3053, tmpl_vehicle_rail_8view),  # Turner Turbo (Diesel)
+#     ('mjs1000', 3061, tmpl_vehicle_rail_4view),  # MJS 1000 (Diesel)
+#     ('mjs250', 3065, tmpl_vehicle_rail_8view),  # MJS 250 (Diesel)
+# ), climate=TROPICAL)
 
 # ------------------------------ Water Vehicles ------------------------------
 
