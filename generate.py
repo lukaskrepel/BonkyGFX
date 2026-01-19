@@ -593,16 +593,17 @@ engine_sheet('rail_engines_arctic.ase', (
     ('mjs250', 3065, tmpl_vehicle_rail_8view),  # MJS 250 (Diesel)
 ))
 
-engine_sheet('rail_engines_tropical.ase', (
-    ('cs2400', 3017, tmpl_vehicle_rail_8view),  # CS 2400 (Diesel)
-    ('centennial', 3025, tmpl_vehicle_rail_8view),  # Centennial (Diesel)
-    ('cs4000', 3033, tmpl_vehicle_rail_8view),  # CS 4000 (Diesel)
-    ('wills', 3041, tmpl_vehicle_rail_8view),  # Wills 2-8-0 (Steam)
-    ('kelling', 3049, tmpl_vehicle_rail_4view),  # Kelling 3100 (Diesel)
-    ('turner', 3053, tmpl_vehicle_rail_8view),  # Turner Turbo (Diesel)
-    ('mjs1000', 3061, tmpl_vehicle_rail_4view),  # MJS 1000 (Diesel)
-    ('mjs250', 3065, tmpl_vehicle_rail_8view),  # MJS 250 (Diesel)
-), climate=TROPICAL)
+# Not doing tropical variants for now
+# engine_sheet('rail_engines_tropical.ase', (
+#     ('cs2400', 3017, tmpl_vehicle_rail_8view),  # CS 2400 (Diesel)
+#     ('centennial', 3025, tmpl_vehicle_rail_8view),  # Centennial (Diesel)
+#     ('cs4000', 3033, tmpl_vehicle_rail_8view),  # CS 4000 (Diesel)
+#     ('wills', 3041, tmpl_vehicle_rail_8view),  # Wills 2-8-0 (Steam)
+#     ('kelling', 3049, tmpl_vehicle_rail_4view),  # Kelling 3100 (Diesel)
+#     ('turner', 3053, tmpl_vehicle_rail_8view),  # Turner Turbo (Diesel)
+#     ('mjs1000', 3061, tmpl_vehicle_rail_4view),  # MJS 1000 (Diesel)
+#     ('mjs250', 3065, tmpl_vehicle_rail_8view),  # MJS 250 (Diesel)
+# ), climate=TROPICAL)
 
 # ------------------------------ Water Vehicles ------------------------------
 
