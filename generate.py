@@ -1058,6 +1058,31 @@ lib.SpriteCollection('signal_pre_exit') \
     .add(INFRA_DIR / 'signals.ase', tmpl_signals, ZOOM_2X, 11, 12) \
     .replace_new(0x4, 32)
 
+
+lib.SpriteCollection('semaphore_block') \
+    .add(INFRA_DIR / 'semaphores.ase', tmpl_signals, ZOOM_2X, 1, 2) \
+    .replace_new(0x4, 48)
+
+lib.SpriteCollection('semaphore_pbs2w') \
+    .add(INFRA_DIR / 'semaphores.ase', tmpl_signals, ZOOM_2X, 3, 4) \
+    .replace_new(0x4, 176)
+
+lib.SpriteCollection('semaphore_pbs1w') \
+    .add(INFRA_DIR / 'semaphores.ase', tmpl_signals, ZOOM_2X, 5, 6) \
+    .replace_new(0x4, 192)
+
+lib.SpriteCollection('semaphore_pre_entry') \
+    .add(INFRA_DIR / 'semaphores.ase', tmpl_signals, ZOOM_2X, 7, 8) \
+    .replace_new(0x4, 64)
+
+lib.SpriteCollection('semaphore_pre_combo') \
+    .add(INFRA_DIR / 'semaphores.ase', tmpl_signals, ZOOM_2X, 9, 10) \
+    .replace_new(0x4, 80)
+
+lib.SpriteCollection('semaphore_pre_exit') \
+    .add(INFRA_DIR / 'semaphores.ase', tmpl_signals, ZOOM_2X, 11, 12) \
+    .replace_new(0x4, 96)
+
 # ------------------------------ Water ------------------------------
 
 @lib.template(grf.FileSprite)
