@@ -1024,6 +1024,40 @@ lib.SpriteCollection('rail_fence') \
     .replace_old(1301)
 
 
+@lib.template(grf.FileSprite)
+def tmpl_signals(func, z, frame_red, frame_green):
+    grid = lib.RectGrid(func=func, width=22, height=30, padding=1)
+    grid.set_default(xofs=-7, yofs=-28)
+    order = ('sw', 'ne', 'nw', 'se', 'e', 'w', 's', 'n')
+    red = [grid(f'red_{d}', (i, 0), frame=frame_red) for i, d in enumerate(order)]
+    green = [grid(f'green_{d}', (i, 0), frame=frame_green) for i, d in enumerate(order)]
+    return [s for pair in zip(red, green) for s in pair]  # intermix two arrays
+
+
+lib.SpriteCollection('signal_block') \
+    .add(INFRA_DIR / 'signals.ase', tmpl_signals, ZOOM_2X, 1, 2) \
+    .replace_old(1275)
+
+lib.SpriteCollection('signal_pbs2w') \
+    .add(INFRA_DIR / 'signals.ase', tmpl_signals, ZOOM_2X, 3, 4) \
+    .replace_new(0x4, 112)
+
+lib.SpriteCollection('signal_pbs1w') \
+    .add(INFRA_DIR / 'signals.ase', tmpl_signals, ZOOM_2X, 5, 6) \
+    .replace_new(0x4, 128)
+
+lib.SpriteCollection('signal_pre_entry') \
+    .add(INFRA_DIR / 'signals.ase', tmpl_signals, ZOOM_2X, 7, 8) \
+    .replace_new(0x4, 0)
+
+lib.SpriteCollection('signal_pre_combo') \
+    .add(INFRA_DIR / 'signals.ase', tmpl_signals, ZOOM_2X, 9, 10) \
+    .replace_new(0x4, 16)
+
+lib.SpriteCollection('signal_pre_exit') \
+    .add(INFRA_DIR / 'signals.ase', tmpl_signals, ZOOM_2X, 11, 12) \
+    .replace_new(0x4, 32)
+
 # ------------------------------ Water ------------------------------
 
 @lib.template(grf.FileSprite)
