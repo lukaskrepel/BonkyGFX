@@ -2205,11 +2205,11 @@ def tmpl_sugar_mine(func, z):
         # 6 SPRINKLE
         # 4789]
 
-        # TODO Add first 4 sprites
-        # grid('0_0', (0, 0), layers=('TILES', 'Spriteborder')),
-        # grid('0_1', (0, 1), layers=('TILES', 'Spriteborder')),
-        # grid('1_0', (1, 0), layers=('TILES', 'Spriteborder')),
-        # grid('1_1', (1, 1), layers=('TILES', 'Spriteborder')),
+        # TODO Animations?
+        grid.ground('0_0', (0, 0), layers=('TILES', 'Spriteborder')),
+        grid.ground('0_1', (0, 1), layers=('TILES', 'Spriteborder')),
+        grid.ground('1_0', (1, 0), layers=('TILES', 'Spriteborder')),
+        grid.ground('1_1', (1, 1), layers=('TILES', 'Spriteborder')),
 
         grid('2_1', (2, 1), layers=('BUILDING', 'Spriteborder')),
         grid('3_1', (3, 1), layers=('BUILDING', 'Spriteborder')),
@@ -2235,9 +2235,13 @@ def tmpl_sugar_mine(func, z):
     ]
 
 
-lib.SpriteCollection('sugar_mine') \
-    .add(INDUSTRY_DIR / 'sugar_mine.ase', tmpl_sugar_mine, ZOOM_2X, name='sugar_mine') \
-    .replace_old(4768+4) # TODO currently skipping the first 4 sprites
+sugar_mine = lib.SpriteCollection('sugar_mine') \
+    .add(INDUSTRY_DIR / 'sugar_mine.ase', tmpl_sugar_mine, ZOOM_2X, name='sugar_mine')
+sugar_mine[:4].compose_on(general_concrete[0]).replace_old(4768)
+# TODO Fix composition with different size
+# sugar_mine[4:7].compose_on(general_concrete[0], exact_size=False, offsets=((0, -226), (0, -226), (0, -226))).replace_old(4768 + 4)
+sugar_mine[4:7].replace_old(4768 + 4)
+sugar_mine[7:].replace_old(4768 + 7)
 
 
 @lib.template(grf.FileSprite)

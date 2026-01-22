@@ -421,8 +421,6 @@ class SpriteCollection:
                 res.append(CompositeSprite((d, s), exact_size=exact_size, offset=offset))
             return res
 
-            return [s if d is None else CompositeSprite((d, s), exact_size=exact_size) for s, d in l]
-
         # TODO calculate key combinations for each sprite separately to avoid bloating
         for keys in compose_keys:
             srcl = self.get_sprites(keys)
