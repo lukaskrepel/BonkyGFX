@@ -832,25 +832,30 @@ lib.SpriteCollection('road_ramps') \
 
 
 @lib.template(lib.CCReplacingFileSprite)
-def tmpl_road_depot(func, z):
+def tmpl_depot(func, z, frame, bb1, bb2):
     # bb values are (dx, dy) from https://github.com/OpenTTD/OpenTTD/blob/master/src/table/road_land.h
     grid = lib.HouseGrid(func=func, height=75, z=z)
-    back_kw = {'layers': ('Behind', 'Spriteborder')}
-    front_kw = {'ignore_layers': ('Behind',)}
+    back_kw = {'layers': ('Behind', 'Spriteborder'), 'frame': frame}
+    front_kw = {'ignore_layers': ('Behind',), 'frame': frame}
     return [
-        grid('se_back', (0, 0), bb=(0, 0), **back_kw),
-        grid('se_front', (0, 0), bb=(15, 0), **front_kw),
-        grid('sw_back', (1, 0), bb=(0, 0), **back_kw),
-        grid('sw_front', (1, 0), bb=(0, 15), **front_kw),
-        grid('ne', (2, 0), bb=(0, 15), **front_kw),
-        grid('nw', (3, 0), bb=(15, 0), **front_kw),
+        grid('se_back', (0, 0), bb=(bb1, bb1), **back_kw),
+        grid('se_front', (0, 0), bb=(bb2, bb1), **front_kw),
+        grid('sw_back', (1, 0), bb=(bb1, bb1), **back_kw),
+        grid('sw_front', (1, 0), bb=(bb1, bb2), **front_kw),
+        grid('ne', (2, 0), bb=(bb1, bb2), **front_kw),
+        grid('nw', (3, 0), bb=(bb2, bb1), **front_kw),
     ]
 
 
 lib.SpriteCollection('road_depot') \
-    .add(STATION_DIR / 'road_depots.ase',
-         tmpl_road_depot, ZOOM_2X) \
+    .add(STATION_DIR / 'depots.ase',
+         tmpl_depot, ZOOM_2X, 1, 0, 15) \
     .replace_old(1408)
+
+lib.SpriteCollection('tram_depot') \
+    .add(STATION_DIR / 'depots.ase',
+         tmpl_depot, ZOOM_2X, 5, 0, 15) \
+    .replace_new(0xB, 49)
 
 
 @lib.template(lib.CCReplacingFileSprite)
@@ -1082,6 +1087,22 @@ lib.SpriteCollection('semaphore_pre_combo') \
 lib.SpriteCollection('semaphore_pre_exit') \
     .add(INFRA_DIR / 'semaphores.ase', tmpl_signals, ZOOM_2X, 11, 12) \
     .replace_new(0x4, 96)
+
+
+lib.SpriteCollection('rail_depot') \
+    .add(STATION_DIR / 'depots.ase',
+         tmpl_depot, ZOOM_2X, 2, 2, 13) \
+    .replace_old(1063)
+
+lib.SpriteCollection('mono_depot') \
+    .add(STATION_DIR / 'depots.ase',
+         tmpl_depot, ZOOM_2X, 3, 2, 13) \
+    .replace_old(1145)
+
+lib.SpriteCollection('maglev_depot') \
+    .add(STATION_DIR / 'depots.ase',
+         tmpl_depot, ZOOM_2X, 4, 2, 13) \
+    .replace_old(1227)
 
 # ------------------------------ Water ------------------------------
 
